@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
 body{
     background-color: #fafafa;
     font-family: 'Comfortaa', cursive;
@@ -10,15 +11,11 @@ main{
 
 /* apresentação */
 #apresentation-div{
+    margin-top: 5rem;
     text-align: center;
-}
-article{
-    height: 30rem;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-article img{
-    height: 100%;
-    filter: opacity(.3);
+    font-family: 'Inter', sans-serif;
+    font-size: 50px;
+    letter-spacing: -.015em;
+    color: #1D1D1F;
+    line-height: 1.05;
 }
