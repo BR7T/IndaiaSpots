@@ -1,3 +1,24 @@
 body{
     background-color: #fafafa;
+    font-family: 'Comfortaa', cursive;
+}
+main{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* apresentação */
+#apresentation-div{
+    text-align: center;
+}
+article{
+    height: 30rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+article img{
+    height: 100%;
+    filter: opacity(.3);
 }

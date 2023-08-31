@@ -136,7 +136,7 @@ form input{
     background-color: transparent;
     border-radius: 50px;
     border: 1px solid black;
-    color: white;
+    color: black;
     outline: none;
     padding: 0 10px;
     backdrop-filter: blur(1.5px);
