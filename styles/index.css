@@ -11,11 +11,18 @@ main{
 
 /* apresentação */
 #apresentation-div{
-    margin-top: 5rem;
+    margin-top: 3rem;
     text-align: center;
     font-family: 'Inter', sans-serif;
-    font-size: 50px;
+    font-size: 45px;
     letter-spacing: -.015em;
     color: #1D1D1F;
     line-height: 1.05;
+}
+#git-title{
+    align-self: center;
+    
+}
+#git-title img{
+height: 20rem;
 }
