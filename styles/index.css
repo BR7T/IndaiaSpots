@@ -4,6 +4,7 @@ body{
     font-family: 'Comfortaa', cursive;
 }
 main{
+    margin-top: 5rem;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -14,15 +15,33 @@ main{
     margin-top: 3rem;
     text-align: center;
     font-family: 'Inter', sans-serif;
-    font-size: 45px;
+    font-size: 55px;
     letter-spacing: -.015em;
     color: #1D1D1F;
     line-height: 1.05;
 }
-#git-title{
+
+
+/* Cards */
+
+#card-spaces{
     align-self: center;
-    
+    margin-top: 8rem;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 20px;
 }
-#git-title img{
-height: 20rem;
+.cards-locals{
+    background-color: #fafafa;
+    box-shadow: 0 0 8px 2px rgb(180, 180, 180);
+    height: 25rem;
+    width: 20rem;
+    border-radius: 15px;
+    transition: all 0.2s ease ;
 }
+.cards-locals:hover {
+    transform: scale(1.05);
+    z-index: 2;
+    box-shadow: 0 0 8px 4px rgb(180, 180, 180);
+}
+
