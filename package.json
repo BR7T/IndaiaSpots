@@ -3,5 +3,24 @@
     "core-util-is": "^1.0.3",
     "express": "^4.18.2",
     "mysql2": "^3.6.0"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "----",
+  "version": "1.0.0",
+  "main": "js.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BR7T/IndaiaSpots.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BR7T/IndaiaSpots/issues"
+  },
+  "homepage": "https://github.com/BR7T/IndaiaSpots#readme",
+  "description": ""
 }
