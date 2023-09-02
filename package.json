@@ -2,6 +2,7 @@
   "dependencies": {
     "core-util-is": "^1.0.3",
     "express": "^4.18.2",
-    "mysql2": "^3.6.0"
+    "mysql2": "^3.6.0",
+    "socket.io": "^4.7.2"
   }
 }

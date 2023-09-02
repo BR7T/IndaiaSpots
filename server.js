@@ -1,13 +1,15 @@
-const { response } = require('express');
 const express = require('express');
 const port = 3060;
 const app = express();
 const mysql = require('mysql2');
+const path = require('path');
+
 
 app.use(express.json());       
 app.use(express.urlencoded({     
   extended: true
 }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -59,7 +61,18 @@ app.post('/login', function(req,res) {
         email : req.body.email,
         password : req.body.password
     }
-    res.send("index.html");
+    con.query(
+        `select * from user where email="${userLogin.email}" and password="${userLogin.password}";`
+        , (err,results) =>{
+            if(err) throw err;
+            if(results.length > 0) {
+                console.log("Exists in the database");
+                res.sendFile("index.html", {root: __dirname });
+            }
+            else {
+                res.status(400).send("Usuário ou senha inválidos");
+            }
+        });
 });
 
 
