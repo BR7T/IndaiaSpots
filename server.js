@@ -1,15 +1,15 @@
 const express = require('express');
-const port = 3060;
+const port = 3080;
 const app = express();
 const mysql = require('mysql2');
 const path = require('path');
 
-
+app.engine('html', require('ejs').renderFile);
 app.use(express.json());       
 app.use(express.urlencoded({     
   extended: true
 }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,11 +19,13 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.set('view engine', 'ejs');
+app.set('views', './views');
 
 const con = mysql.createConnection({
     host : "localhost",
     user : "root",
-    password : "1234",
+    password : "MyJoaol",
     database : "IndaiaSpots"
 });
 
@@ -70,7 +72,9 @@ app.post('/login', function(req,res) {
                 res.sendFile("index.html", {root: __dirname });
             }
             else {
-                res.status(400).send("Usuário ou senha inválidos");
+                //res.sendFile("login.html", {root : __dirname});  
+                res.render(__dirname + "/public/views/login.ejs", {error:"Usuário ou senha inválidos"});  
+                
             }
         });
 });

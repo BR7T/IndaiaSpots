@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit | IndaiaSpots</title>
 
-    <link rel="stylesheet" href="public/styles/common.css">
-    <link rel="stylesheet" href="public/styles/submit.css">
-    <script src="/js.js" async></script>
+    <link rel="stylesheet" type="text/css" href="../public/css/common.css">
+    <link rel="stylesheet" type="text/css" href="../public/css/submit.css">
+    <script src="../js.js" async></script>
 </head>
 <body>
     <header>
         <div id="logo">
-            <a href="index.html"><img src="Captura_de_tela_2023-08-23_201815-removebg-preview.png" alt=""></a>
+            <a href="index.html"><img src="../assets/Captura_de_tela_2023-08-23_195027-removebg-preview.png" alt=""></a>
         </div>
         <div id="enter">
             <a href="#" id="enterbtn" onmouseout="saidaenter()">Entre</a>
@@ -41,7 +41,7 @@
             </div>
 
             <div id="form-aside-right">
-                <form action="http://localhost:3060/login" method="post" id="formSignup">
+                <form  method="post" id="formSignup" action="http://localhost:3080/login">
                     <input type="email" name="email" id="email" placeholder="email" autocomplete="off">
                     <input type="password" name="password" id="password" placeholder="password">
                     <button>Submit</button>
