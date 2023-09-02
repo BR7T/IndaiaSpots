@@ -14,4 +14,10 @@ form.addEventListener("submit", function() {
         email.value = "";
         password.value = "";
     },500);
+<<<<<<< HEAD
 })
+=======
+});
+
+
+>>>>>>> 11b7b6fe0e35fb69b01419d8cdb0252039bf3770
