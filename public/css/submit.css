@@ -25,6 +25,7 @@ main{
    flex-direction: row;
    gap: 20px;
 }
+
 #aside-right{
     
     display: flex;

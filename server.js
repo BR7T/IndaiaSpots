@@ -4,11 +4,11 @@ const app = express();
 const mysql = require('mysql2');
 const path = require('path');
 
-app.engine('html', require('ejs').renderFile);
 app.use(express.json());       
-app.use(express.urlencoded({     
+/*app.use(express.urlencoded({     
   extended: true
-}));
+}));*/
+
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.use(function (req, res, next) {
@@ -18,9 +18,6 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
-
-app.set('view engine', 'ejs');
-app.set('views', './views');
 
 const con = mysql.createConnection({
     host : "localhost",
@@ -63,22 +60,24 @@ app.post('/login', function(req,res) {
         email : req.body.email,
         password : req.body.password
     }
+    console.log(req.body.email);
     con.query(
         `select * from user where email="${userLogin.email}" and password="${userLogin.password}";`
         , (err,results) =>{
             if(err) throw err;
             if(results.length > 0) {
                 console.log("Exists in the database");
-                res.sendFile("index.html", {root: __dirname });
+                res.send({message : "true"});
             }
-            else {
-                //res.sendFile("login.html", {root : __dirname});  
-                res.render(__dirname + "/public/views/login.ejs", {error:"Usuário ou senha inválidos"});  
-                
+            else {    
+                res.send({message: "Email ou senha inválidos"});
             }
         });
 });
 
+app.get('/SuccessHome', (req,res) => {
+    res.sendFile('public/css/index.html', {root : __dirname});
+})
 
 app.post('/signup', (req,res) => {
     const user = [req.body.email,req.body.username,req.body.password];

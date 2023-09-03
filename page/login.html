@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" type="text/css" href="../public/css/common.css">
     <link rel="stylesheet" type="text/css" href="../public/css/submit.css">
-    <script src="../js.js" async></script>
+    <script src="../login.js" async></script>
 </head>
 <body>
     <header>
@@ -38,10 +38,11 @@
                 <div id="subtitle-right">
                     Descubra seu próximo lugar favorito em indaiatuba
                 </div>
+                <div id="errorMessage"></div>
             </div>
-
+            
             <div id="form-aside-right">
-                <form  method="post" id="formSignup" action="http://localhost:3080/login">
+                <form  method="post" id="formLogin">
                     <input type="email" name="email" id="email" placeholder="email" autocomplete="off">
                     <input type="password" name="password" id="password" placeholder="password">
                     <button>Submit</button>

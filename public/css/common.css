@@ -23,7 +23,7 @@ header{
     flex-direction: row;
     margin: 0px 0%;
     align-items: center;
-<<<<<<< HEAD:styles/common.css
+
     
     
     
@@ -65,9 +65,7 @@ header #nav-search input{
 }
 input:focus{
     outline: none;
-=======
     backdrop-filter: blur(20px) saturate(180%);
->>>>>>> 11b7b6fe0e35fb69b01419d8cdb0252039bf3770:public/styles/common.css
 }
 
 header #enter{
