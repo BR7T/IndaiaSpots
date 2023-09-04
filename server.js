@@ -60,14 +60,13 @@ app.post('/login', function(req,res) {
         email : req.body.email,
         password : req.body.password
     }
-    console.log(req.body.email);
     con.query(
         `select * from user where email="${userLogin.email}" and password="${userLogin.password}";`
         , (err,results) =>{
             if(err) throw err;
             if(results.length > 0) {
                 console.log("Exists in the database");
-                res.send({message : "true"});
+                res.send({credentials : true});
             }
             else {    
                 res.send({message: "Email ou senha inválidos"});
