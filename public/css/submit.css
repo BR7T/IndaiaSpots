@@ -40,6 +40,33 @@ main{
     width: 100%;
 }
 
+.errorMessage {
+    color: red;
+    margin-top: 2rem;
+}
+
+.successMessage {
+    color: green;
+    margin-top: 2rem;
+}
+
+.errorInput{ 
+    animation: shakeInput 0.2s;
+    border: 1px solid red;
+}
+
+@keyframes shakeInput {
+    0% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+    100% {
+        transform: translateX(-5px);
+    }
+}
+
 /*Formulário*/
 #form-aside-right{
     margin: 20px 0 ;

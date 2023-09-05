@@ -31,11 +31,11 @@ form.addEventListener('submit', async function(event) {
             window.location.href = "../public/index.html";
         }
         else{
-            let errorMessage = document.createElement('div');
-            errorMessage.innerHTML = response.message;
-            errorMessage.classList.add('errorMessage');
-            document.body.appendChild(errorMessage);
-            texts.appendChild(errorMessage);
+            document.getElementById('errorMessage').innerHTML = response.message;
+            email.style.border = '1px solid red';
+            email.style.animation = "none";
+            void email.offsetWidth;
+            email.style.animation = 'errorInput 0.1s linear';
         }
     })
     

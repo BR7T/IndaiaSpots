@@ -1,13 +1,13 @@
 const express = require('express');
-const port = 3080;
+const port = 3100;
 const app = express();
 const mysql = require('mysql2');
 const path = require('path');
 
 app.use(express.json());       
-/*app.use(express.urlencoded({     
+app.use(express.urlencoded({     
   extended: true
-}));*/
+}));
 
 app.use(express.static(path.join(__dirname, '/public')));
 
@@ -22,7 +22,7 @@ app.use(function (req, res, next) {
 const con = mysql.createConnection({
     host : "localhost",
     user : "root",
-    password : "MyJoaol",
+    password : "1234",
     database : "IndaiaSpots"
 });
 
@@ -33,27 +33,6 @@ function mySqlConnection() {
 }
 
 mySqlConnection();
-
-function mySqlQueryInsert(mySqlquery,data) {
-    const query = mySqlquery;
-    const values = [data];
-    con.query(query,values,function(err,result) {
-        if(err) {throw err}
-        console.log("Query Successful");
-    });
-}
-
-app.get('/checkUser', function(req,res) {
-    con.connect(function(err) {
-        if (err) throw err;
-        con.query("SELECT * FROM user", function (err, result, fields) {
-          if (err) throw err;
-          console.log(result);
-        });
-    })
-});
-
-
 
 app.post('/login', function(req,res) {
     const userLogin = {
@@ -74,14 +53,39 @@ app.post('/login', function(req,res) {
         });
 });
 
-app.get('/SuccessHome', (req,res) => {
-    res.sendFile('public/css/index.html', {root : __dirname});
-})
 
-app.post('/signup', (req,res) => {
-    const user = [req.body.email,req.body.username,req.body.password];
-    res.status(204).send();
-    mySqlQueryInsert("insert into user (email,userName,password) values(?)",user);
+app.post('/signup', function(req,res) {
+    const user = {
+        username : req.body.username,
+        email : req.body.email,
+        password : req.body.password
+    }
+    con.query(`select * from user where userName="${user.username}";`, (err,results) =>{
+        if(err) throw err;
+        if(results.length > 0) {
+            res.send({errorMessage : "Nome de usuário já está em uso"});
+            return;
+        }
+    })
+    con.query(`select * from user where email="${user.email}";`, (err,results) =>{
+        if(err) throw err;
+        if(results.length > 0) {
+            res.send({errorMessage : "Email já está em uso"});
+            return;
+        }
+    })
+    con.query(`select * from user where password="${user.password}";`, (err,results) =>{
+        if(err) throw err;
+        if(results.length > 0) {
+            res.send({errorMessage : "Senha já está em uso"});
+            return;
+        }
+    })
+    con.query(`insert into user(userName,email,password) values("${user.username}","${user.email}","${user.password}");`, (err,results)=>{
+        if(err) throw err;
+        res.send({ message: "Cadastro concluído!",credentials : true});
+        return;
+    })
 });
 
 

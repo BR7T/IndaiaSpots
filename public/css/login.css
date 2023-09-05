@@ -6,8 +6,6 @@ body{
     background-size: cover;
     height: 100vh;
     
-    
-    
 
 }
 header{
@@ -40,7 +38,24 @@ main{
     width: 100%;
 }
 
-.errorMessage {
+.errorinput {
+    animation: errorinput 0.1s;
+    border: 1px solid red;
+}
+
+@keyframes shakeInput {
+    0% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+    100% {
+        transform: translateX(-5px);
+    }
+}
+
+#errorMessage {
     color: red;
     margin-top: 4rem;
 }
