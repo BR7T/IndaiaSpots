@@ -10,12 +10,23 @@ function saidaenter(){
     botao.classList.add('nada')
 }
 
-form.addEventListener("submit", async function(event) {
-    /*setTimeout(function() {
-        usernameInput.value = "";
+function resetForm() {
+    setTimeout(function() {
+        username.value = "";
         email.value = "";
         password.value = "";
-    },500);*/
+    },500);
+}
+
+function resetInputStyle() {
+    for(let i = 0; i< formInputs.length; i++) {
+        formInputs[i].classList.remove('errorInput');
+    }
+}
+
+
+form.addEventListener("submit", async function(event) {
+    resetInputStyle();
     event.preventDefault();
     
         fetch('http://localhost:3100/signup', {
@@ -38,16 +49,17 @@ form.addEventListener("submit", async function(event) {
             if(response.credentials) {
                 formMessage.innerHTML = response.message;
                 formMessage.classList.add('successMessage');
+                resetForm();
             }
             else{
                 formMessage.innerHTML = response.errorMessage;
                 formMessage.classList.add('errorMessage');
-                for(let i = 0; i < formInputs.length; i++) {
-                    formInputs[i].style.animation = "none";
-                    void formInputs[i].offsetWidth;
-                    formInputs[i].style.animation = 'shakeInput 0.2s';
-                    formInputs[i].classList.add('errorInput');
-                }
+                
+                inputIndex = response.inputIndex;
+                formInputs[inputIndex].style.animation = "none";
+                void formInputs[inputIndex].offsetWidth;
+                formInputs[inputIndex].style.animation = 'shakeInput 0.2s';
+                formInputs[inputIndex].classList.add('errorInput');
             }
         })
         

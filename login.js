@@ -12,7 +12,7 @@ function saidaenter(){
 form.addEventListener('submit', async function(event) {
     event.preventDefault();
 
-    fetch('http://localhost:3080/login', {
+    fetch('http://localhost:3100/login', {
         method : 'POST',
         body : JSON.stringify({
             email : email.value,
@@ -28,7 +28,7 @@ form.addEventListener('submit', async function(event) {
     .then(response => response.json()).then(response => {
         console.log(response);
         if(response.credentials) {
-            window.location.href = "../public/index.html";
+            window.location.href = "../index.html";
         }
         else{
             document.getElementById('errorMessage').innerHTML = response.message;

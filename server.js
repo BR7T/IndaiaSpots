@@ -23,7 +23,8 @@ const con = mysql.createConnection({
     host : "localhost",
     user : "root",
     password : "1234",
-    database : "IndaiaSpots"
+    database : "IndaiaSpots",
+    multipleStatements : true
 });
 
 function mySqlConnection() {
@@ -55,36 +56,33 @@ app.post('/login', function(req,res) {
 
 
 app.post('/signup', function(req,res) {
+    let message = null;
     const user = {
         username : req.body.username,
         email : req.body.email,
         password : req.body.password
     }
-    con.query(`select * from user where userName="${user.username}";`, (err,results) =>{
-        if(err) throw err;
-        if(results.length > 0) {
-            res.send({errorMessage : "Nome de usuário já está em uso"});
-            return;
+    con.query(`select * from user where userName="${user.username}";select * from user where email="${user.email}";select * from user where password="${user.password}";`, (err,results) => {
+        if(results[0].length > 0) {
+            message  = "Nome de usuário já está em uso";
+            inputIndex = 0;
         }
-    })
-    con.query(`select * from user where email="${user.email}";`, (err,results) =>{
-        if(err) throw err;
-        if(results.length > 0) {
-            res.send({errorMessage : "Email já está em uso"});
-            return;
+        else if(results[1].length > 0) {
+            message = "Email já está em uso";
+            inputIndex = 1;
         }
-    })
-    con.query(`select * from user where password="${user.password}";`, (err,results) =>{
-        if(err) throw err;
-        if(results.length > 0) {
-            res.send({errorMessage : "Senha já está em uso"});
-            return;
+        else if(results[2].length > 0) {
+            message = "Senha já está em uso";
+            inputIndex = 2;
         }
-    })
-    con.query(`insert into user(userName,email,password) values("${user.username}","${user.email}","${user.password}");`, (err,results)=>{
-        if(err) throw err;
-        res.send({ message: "Cadastro concluído!",credentials : true});
-        return;
+        if(message != null) {
+            res.send({errorMessage : message, inputIndex : inputIndex});
+        }
+        else if(message === null) {
+            con.query(`insert into user(userName,email,password) values ("${user.username}","${user.email}","${user.password}");`, (err,results) => {
+                res.send({credentials : true, message : "Cadastro Concluído"});
+            });
+        }
     })
 });
 

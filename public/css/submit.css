@@ -106,6 +106,7 @@ form{
     background-color: rgb(40, 63, 30);
 }
 
+
 #alter-enter{
     align-self: center;
 }
@@ -177,7 +178,6 @@ form input{
 input:focus{
     box-shadow: none;
     outline: none;
-    
 }
 input::-webkit-input-placeholder{
     transition: all 0.3s ease-in-out;
