@@ -22,7 +22,7 @@ app.use(function (req, res, next) {
 const con = mysql.createConnection({
     host : "localhost",
     user : "root",
-    password : "1234",
+    password : "MyJoaol",
     database : "IndaiaSpots",
     multipleStatements : true
 });
@@ -57,12 +57,18 @@ app.post('/login', function(req,res) {
 
 app.post('/signup', function(req,res) {
     let message = null;
+    
     const user = {
         username : req.body.username,
         email : req.body.email,
         password : req.body.password
     }
-    con.query(`select * from user where userName="${user.username}";select * from user where email="${user.email}";select * from user where password="${user.password}";`, (err,results) => {
+
+    const query1 = `select * from user where userName="${user.username}";`;
+    const query2 = `select * from user where email="${user.email}";`;
+    const query3 = `select * from user where password="${user.password}";`;
+
+    con.query(query1 + query2 + query3, (err,results) => {
         if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
             inputIndex = 0;
