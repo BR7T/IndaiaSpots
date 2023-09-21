@@ -4,10 +4,12 @@ const email = document.getElementById("email");
 const password = document.getElementById("password");
 const formMessage = document.getElementById('formMessage');
 const formInputs = document.getElementsByClassName('inputs');
+const enterBtn = document.getElementById('enter');
 
-function saidaenter(){
-    let botao = document.getElementById('enter');
-    botao.classList.add('nada')
+
+function addClass(element,className){
+    const elementName = document.getElementById(element);
+    elementName.classList.add(className);
 }
 
 function resetForm() {
@@ -15,36 +17,18 @@ function resetForm() {
         username.value = "";
         email.value = "";
         password.value = "";
-    },500);
+    },300);
 }
 
-function resetInputStyle() {
-    for(let i = 0; i< formInputs.length; i++) {
-        formInputs[i].classList.remove('errorInput');
-    }
-}
-
-function responseMessage(type) {
-    if(type == "success") {
-        formMessage.innerHTML = response.message;
-        formMessage.classList.add('successMessage');
-    }
-    else if(type == "error"){
-        formMessage.innerHTML = response.errorMessage;
-        formMessage.classList.add('errorMessage');
+function resetInputsStyle(inputs) {
+    for(let i = 0; i< inputs.length; i++) {
+        inputs[i].classList.remove('errorInput');
     }
 }
 
 
 form.addEventListener("submit", async function(event) {
-    resetInputStyle();
     event.preventDefault();
-    
-    const userData =  JSON.stringify({
-        username: username.value,
-        email: email.value,
-        password: password.value
-    })
     
     fetch('http://localhost:3100/signup', {
             method : 'POST',
@@ -64,8 +48,7 @@ form.addEventListener("submit", async function(event) {
             else{
                 responseMessage("error");
                 inputIndex = response.inputIndex;
-                formInputs[inputIndex].style.animation = "none";
-                void formInputs[inputIndex].offsetWidth;
+                resetAnimation(formInputs[inputIndex]);
                 formInputs[inputIndex].style.animation = 'shakeInput 0.2s';
                 formInputs[inputIndex].classList.add('errorInput');
             }
