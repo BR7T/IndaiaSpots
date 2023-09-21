@@ -62,7 +62,11 @@ app.post('/signup', function(req,res) {
         email : req.body.email,
         password : req.body.password
     }
-    con.query(`select * from user where userName="${user.username}";select * from user where email="${user.email}";select * from user where password="${user.password}";`, (err,results) => {
+    
+    const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}";select * from user where password="${user.password}";`
+    const insertToDatabaseQuery = `insert into user(userName,email,password) values ("${user.username}","${user.email}","${user.password}");`
+    
+    con.query(signupCheckQuery, (err,results) => {
         if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
             inputIndex = 0;
@@ -79,7 +83,7 @@ app.post('/signup', function(req,res) {
             res.send({errorMessage : message, inputIndex : inputIndex});
         }
         else if(message === null) {
-            con.query(`insert into user(userName,email,password) values ("${user.username}","${user.email}","${user.password}");`, (err,results) => {
+            con.query(insertToDatabaseQuery, (err,results) => {
                 res.send({credentials : true, message : "Cadastro Concluído"});
             });
         }

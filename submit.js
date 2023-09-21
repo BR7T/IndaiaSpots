@@ -24,37 +24,45 @@ function resetInputStyle() {
     }
 }
 
+function responseMessage(type) {
+    if(type == "success") {
+        formMessage.innerHTML = response.message;
+        formMessage.classList.add('successMessage');
+    }
+    else if(type == "error"){
+        formMessage.innerHTML = response.errorMessage;
+        formMessage.classList.add('errorMessage');
+    }
+}
+
 
 form.addEventListener("submit", async function(event) {
     resetInputStyle();
     event.preventDefault();
     
-        fetch('http://localhost:3100/signup', {
+    const userData =  JSON.stringify({
+        username: username.value,
+        email: email.value,
+        password: password.value
+    })
+    
+    fetch('http://localhost:3100/signup', {
             method : 'POST',
-            body : JSON.stringify({
-                username : username.value,
-                email : email.value,
-                password : password.value
-
-            }), 
+            body : userData, 
             mode: 'cors',
             cache: 'default',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-        })
-        .then(response => response.json()).then(response => {
+    }).then(response => response.json()).then(response => {
             console.log(response);
             if(response.credentials) {
-                formMessage.innerHTML = response.message;
-                formMessage.classList.add('successMessage');
+                responseMessage("success")
                 resetForm();
             }
             else{
-                formMessage.innerHTML = response.errorMessage;
-                formMessage.classList.add('errorMessage');
-                
+                responseMessage("error");
                 inputIndex = response.inputIndex;
                 formInputs[inputIndex].style.animation = "none";
                 void formInputs[inputIndex].offsetWidth;

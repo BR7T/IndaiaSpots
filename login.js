@@ -8,16 +8,29 @@ function saidaenter(){
     botao.classList.add('nada')
 }
 
+function successLogin() {
+    window.location.href = "../index.html";
+}
+
+function loginErrorMessage() {
+    document.getElementById('errorMessage').innerHTML = response.message;
+    email.style.border = '1px solid red';
+    email.style.animation = "none";
+    void email.offsetWidth;
+    email.style.animation = 'errorInput 0.1s linear';
+}
 
 form.addEventListener('submit', async function(event) {
     event.preventDefault();
 
+    const userData = JSON.stringify({
+        email : email.value,
+        password : password.value
+    })
+    
     fetch('http://localhost:3100/login', {
         method : 'POST',
-        body : JSON.stringify({
-            email : email.value,
-            password : password.value
-        }), 
+        body : userData, 
         mode: 'cors',
         cache: 'default',
         headers: {
@@ -28,14 +41,10 @@ form.addEventListener('submit', async function(event) {
     .then(response => response.json()).then(response => {
         console.log(response);
         if(response.credentials) {
-            window.location.href = "../index.html";
+            successLogin();
         }
         else{
-            document.getElementById('errorMessage').innerHTML = response.message;
-            email.style.border = '1px solid red';
-            email.style.animation = "none";
-            void email.offsetWidth;
-            email.style.animation = 'errorInput 0.1s linear';
+            loginErrorMessage();
         }
     })
     
