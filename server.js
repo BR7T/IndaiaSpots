@@ -22,8 +22,8 @@ app.use(function (req, res, next) {
 const con = mysql.createConnection({
     host : "localhost",
     user : "root",
-    password : "MyJoaol",
-    database : "IndaiaSpots",
+    password : "1234",
+    database : "indaiaspots",
     multipleStatements : true
 });
 
@@ -63,7 +63,11 @@ app.post('/signup', function(req,res) {
         email : req.body.email,
         password : req.body.password
     }
-    con.query(`select * from user where userName="${user.username}";select * from user where email="${user.email}";select * from user where password="${user.password}";`, (err,results) => {
+    
+    const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}";select * from user where password="${user.password}";`
+    const insertToDatabaseQuery = `insert into user(userName,email,password) values ("${user.username}","${user.email}","${user.password}");`
+    
+    con.query(signupCheckQuery, (err,results) => {
         if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
             inputIndex = 0;
@@ -86,6 +90,18 @@ app.post('/signup', function(req,res) {
         }
     })
 });
+
+
+
+app.get('/estab', function(req,res) {     
+    const getAllRestaurants = 'select * from establishments';
+    con.query(getAllRestaurants, (err, results) => {
+        for(let i = 0; i < results.length; i++) {
+        
+        }
+        res.send(results);
+    })
+})
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
