@@ -24,7 +24,9 @@ async function addNewCard() {
     .then(response => {
         successElement = document.createElement('p');
         successElement.innerHTML = response.message;
-        document.body.appendChild(successElement); 
+        successElement.classList.add('successMessage');
+        document.body.appendChild(successElement);
+        form.reset(); 
     });
 }
 

@@ -96,11 +96,8 @@ app.post('/signup', function(req,res) {
 app.get('/estab', function(req,res) {     
     const getAllRestaurants = 'select * from establishments';
     con.query(getAllRestaurants, (err, results) => {
-        for(let i = 0; i < results.length; i++) {
-        
-        }
         res.send(results);
-    })
+    });
 })
 
 app.post('/addEstab', function(req,res) {
@@ -110,11 +107,22 @@ app.post('/addEstab', function(req,res) {
         description : req.body.description
     }
     
-    const query = `insert into establishments(name,imageUrl,description) values('${data.estabName}','${data.imageUrl}','${data.description}')`;
-    con.query(query, (err,results) => {
-        console.log('success');
-        res.send({message : "new establishment added successfully"});
+    const insertQuery = `insert into establishments(name,imageUrl,description) values('${data.estabName}','${data.imageUrl}','${data.description}')`;
+    const checkIfExistsQuery = `select * from establishments where name = '${data.estabName}'or where imageUrl = '${data.imageUrl}'or description = '${data.description}'`;
+    
+    con.query(checkIfExistsQuery, (err,results) => {
+        if(results[0].length > 0) {
+            res.send({message : "Information already in use"});
+        }
+        else {
+            con.query(insertQuery, (err,results) => {
+                console.log('success');
+                res.send({message : "new establishment added successfully"});
+            })
+        }
     })
+    
+
 })
 
 

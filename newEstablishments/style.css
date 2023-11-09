@@ -15,12 +15,7 @@ body {
 }
 
 #form {
-    margin-top: 5rem;
-}
-
-.inputs {
-    display: flex;
-    justify-content: center;
+    margin-top: 4rem;
 }
 
 .inputs input {
@@ -54,4 +49,9 @@ body {
     font-weight: 600;
     transition: 0.2s all ease-in-out;
     border: 1px solid black;
+}
+
+.successMessage {
+    color: green;
+    margin-top: 1.5rem;
 }

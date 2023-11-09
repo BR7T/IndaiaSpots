@@ -1,9 +1,3 @@
-
-
-/*let boxImage = ['https://media-cdn.tripadvisor.com/media/photo-s/17/dc/56/1a/pezao-bar.jpg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-ZVnVGIgWPPAHP3gD87Lx5K5KQWRp-nAgfQ&usqp=CAU','https://media-cdn.tripadvisor.com/media/photo-s/07/c6/e8/6f/tinhos-restaurante.jpg','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLV6TTp088dTG4-lltk63MNQv5GiWdMsW6PA&usqp=CAU']
-let boxNome = ['Pezão','Caipirão', "Tinho's" , 'Bar do Bode', 'Duckbill', 'mcdonalds', 'Burger King','Mister Texas']
-let boxText = ['Linguica','Caipiras com frango']*/
-
 let boxNome = [];
 let boxImage = [];
 let boxText = [];
