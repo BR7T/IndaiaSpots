@@ -23,7 +23,7 @@ const con = mysql.createConnection({
     host : "localhost",
     user : "root",
     password : "1234",
-    database : "IndaiaSpots",
+    database : "indaiaspots",
     multipleStatements : true
 });
 
@@ -57,12 +57,17 @@ app.post('/login', function(req,res) {
 
 app.post('/signup', function(req,res) {
     let message = null;
+    
     const user = {
         username : req.body.username,
         email : req.body.email,
         password : req.body.password
     }
-    con.query(`select * from user where userName="${user.username}";select * from user where email="${user.email}";select * from user where password="${user.password}";`, (err,results) => {
+    
+    const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}";select * from user where password="${user.password}";`
+    const insertToDatabaseQuery = `insert into user(userName,email,password) values ("${user.username}","${user.email}","${user.password}");`
+    
+    con.query(signupCheckQuery, (err,results) => {
         if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
             inputIndex = 0;
@@ -79,12 +84,38 @@ app.post('/signup', function(req,res) {
             res.send({errorMessage : message, inputIndex : inputIndex});
         }
         else if(message === null) {
-            con.query(`insert into user(userName,email,password) values ("${user.username}","${user.email}","${user.password}");`, (err,results) => {
+            con.query(insertToDatabaseQuery, (err,results) => {
                 res.send({credentials : true, message : "Cadastro Concluído"});
             });
         }
     })
 });
+
+
+
+app.get('/estab', function(req,res) {     
+    const getAllRestaurants = 'select * from establishments';
+    con.query(getAllRestaurants, (err, results) => {
+        for(let i = 0; i < results.length; i++) {
+        
+        }
+        res.send(results);
+    })
+})
+
+app.post('/addEstab', function(req,res) {
+    const data = {
+        estabName : req.body.name,
+        imageUrl : req.body.imageUrl,
+        description : req.body.description
+    }
+    
+    const query = `insert into establishments(name,imageUrl,description) values('${data.estabName}','${data.imageUrl}','${data.description}')`;
+    con.query(query, (err,results) => {
+        console.log('success');
+        res.send({message : "new establishment added successfully"});
+    })
+})
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
