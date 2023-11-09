@@ -112,12 +112,12 @@ app.post('/addEstab', function(req,res) {
     
     con.query(checkIfExistsQuery, (err,results) => {
         if(results[0].length > 0) {
-            res.send({message : "Information already in use"});
+            res.send({message : "Information already in use", query: false});
         }
         else {
             con.query(insertQuery, (err,results) => {
                 console.log('success');
-                res.send({message : "new establishment added successfully"});
+                res.send({message : "new establishment added successfully", query : true});
             })
         }
     })
