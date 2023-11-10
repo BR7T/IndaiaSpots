@@ -3,6 +3,9 @@ const port = 3100;
 const app = express();
 const mysql = require('mysql2');
 const path = require('path');
+const bcrypt = require('bcrypt');
+
+const saltRounds = 12;
 
 app.use(express.json());       
 app.use(express.urlencoded({     
@@ -40,8 +43,15 @@ app.post('/login', function(req,res) {
         email : req.body.email,
         password : req.body.password
     }
+    
+    let hashedPassword = null;
+    
+    bcrypt.hash(req.body.password, saltRounds).then(hash => {
+        hashedPassword = hash;
+    }); 
+
     con.query(
-        `select * from user where email="${userLogin.email}" and password="${userLogin.password}";`
+        `select * from user where email="${userLogin.email}" and password="${hashedPassword}";`
         , (err,results) =>{
             if(err) throw err;
             if(results.length > 0) {
@@ -57,11 +67,16 @@ app.post('/login', function(req,res) {
 
 app.post('/signup', function(req,res) {
     let message = null;
+    let hashedPassword = null;
+    
+    bcrypt.hash(req.body.name, saltRounds).then(hash => {
+        hashedPassword = hash;
+    });
     
     const user = {
         username : req.body.username,
         email : req.body.email,
-        password : req.body.password
+        password : hashedPassword
     }
     
     const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}";select * from user where password="${user.password}";`
