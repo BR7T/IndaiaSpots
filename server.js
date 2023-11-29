@@ -42,7 +42,7 @@ app.post('/login', function(req,res) {
                         console.log("Exists in the database");
                     }
                 }))
-                else if(results.length == 0){    
+                if(results.length == 0){    
                     res.send({message: "Email ou senha inválidos"});
                 }
             }
