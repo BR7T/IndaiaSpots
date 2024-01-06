@@ -43,7 +43,7 @@ app.post('/login', function(req,res) {
                         res.send({credentials : true});
                         console.log("Exists in the database");
                     }
-                })
+                }))
                 if(results.length == 0){    
                     res.send({message: "Email ou senha inválidos"});
                 }
