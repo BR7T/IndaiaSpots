@@ -1,5 +1,6 @@
 //Express
 const express = require('express');
+const path = require('path');
 const port = 3100;
 const app = express();
 //mySQL
@@ -9,6 +10,7 @@ const mysqlCon = require('./db/mysql.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 
+app.use(express.static(path.join(__dirname, 'Login_and_Signup')));
 app.use(express.json());       
 app.use(express.urlencoded({     
   extended: true
@@ -22,7 +24,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-mysqlCon.mySqlConnection;
+mySqlConnection = mysqlCon.newConnection();
 
 app.post('/login', function(req,res) {
     const userLogin = {
@@ -30,19 +32,19 @@ app.post('/login', function(req,res) {
         password : req.body.password
     }
     
-    mysqlCon.con.query(
+    mySqlConnection.query(
         `select * from user where email="${userLogin.email}";`
         , (err,results) => {
             if(err) throw err;
             if(results.length > 0) {
-                if(bcrypt.compare(userLogin.password,results[0].password, (err,data) => {
+                if(bcrypt.compare(userLogin.password,results[0].password), (err,data) => {
                     if(err) throw err;
                     if (data) {
                         res.send({credentials : true});
                         console.log("Exists in the database");
                     }
-                }))
-                else if(results.length == 0){    
+                })
+                if(results.length == 0){    
                     res.send({message: "Email ou senha inválidos"});
                 }
             }
@@ -66,7 +68,7 @@ app.post('/signup', async function(req,res) {
     const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}"`;
     const insertToDatabaseQuery = `insert into user(userName,email,password) values ("${user.username}","${user.email}","${user.password}");`
     
-    mysqlCon.con.query(signupCheckQuery, (err,results) => {
+    mySqlConnection.query(signupCheckQuery, (err,results) => {
         if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
         }
@@ -77,7 +79,7 @@ app.post('/signup', async function(req,res) {
                 res.send({errorMessage : message});
         }
         else if(message == null) {
-            mysqlCon.con.query(insertToDatabaseQuery, (err,results) => {
+            mySqlConnection.query(insertToDatabaseQuery, (err,results) => {
                 res.send({credentials : true, message : "Cadastro Concluído"});
             });
         }
@@ -87,8 +89,10 @@ app.post('/signup', async function(req,res) {
 
 app.get('/getEstabs', function(req,res) {     
     const getAllRestaurants = 'select * from establishments';
-    mysqlCon.con.query(getAllRestaurants, (err, results) => {
+    mySqlConnection.query(getAllRestaurants, (err, results) => {
         res.send(results);
+        bcrypt.compare(results);
+
     });
 })
 
@@ -102,10 +106,14 @@ app.post('/addEstab', function(req,res) {
     const insertQuery = `insert into establishments(name,imageUrl,description) values("${data.estabName}","${data.imageUrl}","${data.description}")`;
     const checkIfExistsQuery = `select * from establishments where name = "${data.estabName}"or where imageUrl = "${data.imageUrl}"or description = "${data.description}"`;
     
-    mysqlCon.con.query(insertQuery, (err,results) => {
+    mySqlConnection.query(insertQuery, (err,results) => {
         console.log('success');
         res.send({message : "new establishment added successfully", query : true});
     })
+})
+
+app.get('/home', (req,res) => {
+    res.sendFile(path.join(__dirname, 'Login_and_Signup', 'index.html'));
 })
 
 

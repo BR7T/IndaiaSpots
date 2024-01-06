@@ -12,6 +12,8 @@ function successLogin() {
     window.location.href = "../Home/home.html";
 }
 
+let res;
+
 async function signupOrLogin(method,body) {
     fetch(`http://localhost:3100/${method}`, {
         method : 'POST',
@@ -23,12 +25,12 @@ async function signupOrLogin(method,body) {
             'Content-Type': 'application/json',
         },
     }).then(response => response.json()).then(response => {
-        return response
+        res = response;
     })
 }
 
 let signup = false;
-let response = '';
+//let response = '';
 form.addEventListener('submit', async function(event) {
     event.preventDefault();
     const userData = JSON.stringify({
@@ -38,17 +40,22 @@ form.addEventListener('submit', async function(event) {
     })
     
     if(signup) {
-        await signupOrLogin('signup',userData)
-        .then(response => {
-            console.log(response);
-            if(response.credentials) {
-                console.log('Cadastro concluído')
+        signupOrLogin('signup',userData)
+        .then(function() {
+            if(res.credentials) {
+                console.log('notgu');
+            }
+            })
+        }
+    
+    else {
+        signupOrLogin('login', userData)
+        .then(function() {
+            if(res.credentials) {
+                successLogin();
             }
         })
-    }
-    else {
-        await signupOrLogin('login',userData)
-        .then(response => response.json()).then(response => console.log(response.credentials))
+
     }
 });
 
