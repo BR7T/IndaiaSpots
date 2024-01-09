@@ -10,7 +10,7 @@ const mysqlCon = require('./db/mysql.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 
-app.use(express.static(path.join(__dirname, 'Login_and_Signup')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());       
 app.use(express.urlencoded({     
   extended: true
@@ -25,6 +25,24 @@ app.use(function (req, res, next) {
 });
 
 mySqlConnection = mysqlCon.newConnection();
+
+function pageRoutes(routesArray) {
+    for(let i = 0; i < routesArray.length; i++) {
+        app.get(`/${routesArray[i].routeName}`, (req,res) => {
+            res.sendFile(path.join(__dirname, 'public', routesArray[i].fileName));
+        })
+    }
+}
+
+let routesArray = {
+    pages : [
+        {routeName : 'login', fileName : 'loginAndSignup.html'},
+        {routeName : 'home', fileName : 'home.html'},
+        {routeName : 'addEstabs', fileName : 'addEstab.html'}
+    ]
+}
+
+pageRoutes(routesArray['pages']);
 
 app.post('/login', function(req,res) {
     const userLogin = {
@@ -43,7 +61,7 @@ app.post('/login', function(req,res) {
                         res.send({credentials : true});
                         console.log("Exists in the database");
                     }
-                }))
+                })
                 if(results.length == 0){    
                     res.send({message: "Email ou senha inválidos"});
                 }
@@ -111,10 +129,5 @@ app.post('/addEstab', function(req,res) {
         res.send({message : "new establishment added successfully", query : true});
     })
 })
-
-app.get('/home', (req,res) => {
-    res.sendFile(path.join(__dirname, 'Login_and_Signup', 'index.html'));
-})
-
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
