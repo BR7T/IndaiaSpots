@@ -26,6 +26,7 @@ app.use(function (req, res, next) {
 
 mySqlConnection = mysqlCon.newConnection();
 
+//Page serving
 function pageRoutes(routesArray) {
     for(let i = 0; i < routesArray.length; i++) {
         app.get(`/${routesArray[i].routeName}`, (req,res) => {
@@ -34,49 +35,53 @@ function pageRoutes(routesArray) {
     }
 }
 
-let routesArray = {
+let routes = {
     pages : [
         {routeName : 'login', fileName : 'loginAndSignup.html'},
         {routeName : 'home', fileName : 'home.html'},
         {routeName : 'addEstabs', fileName : 'addEstab.html'}
     ]
 }
+pageRoutes(routes['pages']);
 
-pageRoutes(routesArray['pages']);
 
-app.post('/login', function(req,res) {
+app.post('/loginUser', function(req,res) {
     const userLogin = {
         email : req.body.email,
         password : req.body.password
     }
-    
+ 
     mySqlConnection.query(
-        `select * from user where email="${userLogin.email}";`
-        , (err,results) => {
+        `select * from user where email="${userLogin.email}";`, (err,results) => {
             if(err) throw err;
             if(results.length > 0) {
-                if(bcrypt.compare(userLogin.password,results[0].password), (err,data) => {
-                    if(err) throw err;
-                    if (data) {
-                        res.send({credentials : true});
-                        console.log("Exists in the database");
+                bcrypt.compare(req.body.password, results[0].password, function(err, resp) {
+                    if (err){
+                      console.log(err);
                     }
-                })
-                if(results.length == 0){    
-                    res.send({message: "Email ou senha inválidos"});
-                }
+                    else if (resp) {
+                      res.send({credentials : true});
+                    } else {
+                        res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
+                    }
+                });
             }
-        });
+            else {
+                res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
+            }
+    });
+    
 });
+
+async function hashPassword(password,saltRounds) {
+    const hash = await bcrypt.hash(password,saltRounds);
+    return hash;
+}
 
 app.post('/signup', async function(req,res) {
     let message = null;
-    let hashedPassword = null;
+    let hashedPassword = await hashPassword(req.body.password,saltRounds);
     
-    await bcrypt.hash(req.body.password, saltRounds).then(hash => {
-            hashedPassword = hash;
-    });
-
     const user = {
         username : req.body.username,
         email : req.body.email,
@@ -94,14 +99,14 @@ app.post('/signup', async function(req,res) {
             message = "Email já está em uso";
         }
         if(message != null) {
-                res.send({errorMessage : message});
+            res.send({errorMessage : message, credentials : false});
         }
         else if(message == null) {
             mySqlConnection.query(insertToDatabaseQuery, (err,results) => {
-                res.send({credentials : true, message : "Cadastro Concluído"});
+                res.send({credentials : true, errorMessage : "Cadastro Concluído"});
             });
         }
-        });
+    });
 })
 
 
@@ -109,8 +114,6 @@ app.get('/getEstabs', function(req,res) {
     const getAllRestaurants = 'select * from establishments';
     mySqlConnection.query(getAllRestaurants, (err, results) => {
         res.send(results);
-        bcrypt.compare(results);
-
     });
 })
 

@@ -8,12 +8,15 @@ function saidaenter(){
     botao.classList.add('nada')
 }
 
-function successLogin() {
-    window.location.href = "../Home/home.html";
+function errorMessage(message) {
+    const errorMessage = document.createElement('p');
+    errorMessage.innerHTML = message;
+    errorMessage.style.color = 'red';
+    errorMessage.style.fontSize = '1.2rem';
+    form.appendChild(errorMessage);
 }
 
 let res;
-
 async function signupOrLogin(method,body) {
     fetch(`http://localhost:3100/${method}`, {
         method : 'POST',
@@ -26,11 +29,13 @@ async function signupOrLogin(method,body) {
         },
     }).then(response => response.json()).then(response => {
         res = response;
+        if(res.credentials == false) {
+            errorMessage(res.errorMessage);
+        }
     })
 }
 
 let signup = false;
-//let response = '';
 form.addEventListener('submit', async function(event) {
     event.preventDefault();
     const userData = JSON.stringify({
@@ -40,29 +45,15 @@ form.addEventListener('submit', async function(event) {
     })
     
     if(signup) {
-        signupOrLogin('signup',userData)
-        .then(function() {
-            if(res.credentials) {
-                console.log('notgu');
-            }
-            })
-        }
-    
+        await signupOrLogin('signup',userData)
+    }
     else {
-        signupOrLogin('login', userData)
-        .then(function() {
-            if(res.credentials) {
-                successLogin();
-            }
-        })
-
+        await signupOrLogin('loginUser',userData)
     }
 });
 
 
-
 function register(){
-    const html = document.documentElement
     let entra = document.getElementById('button-enter')
     let muda = document.getElementById('mudar-texto')
     let add = document.getElementById('username')
@@ -75,7 +66,6 @@ function register(){
             document.querySelector("button").innerHTML='Entrar'
             add.style.display='block'
             entra.value='Cadastre-se'
-
             //document.querySelector('footer').style.color='white';
         },TempoAnimacao)
         signup = true;
