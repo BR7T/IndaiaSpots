@@ -142,10 +142,8 @@ app.post('/addEstab', function(req,res) {
     })
 })
 
-app.post('/googleSignIn', function(req,res) {
-    const homeUrl = ""
-    
-    fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${req.body.token}`, {   
+async function checkGoogleToken(token) {
+    await fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`, {   
         method : 'GET',
         mode: 'cors',
         cache: 'default',
@@ -154,13 +152,26 @@ app.post('/googleSignIn', function(req,res) {
             'Content-Type': 'application/json',
         },
     }).then(response => response.json()).then(response => {
-        if(response.error_description == "Invalid Value") {
-            console.log('token invalid');
+        return response;
+    })
+}
+
+app.post('/googleSignIn', function(req,res) {
+    const homeUrl = "http://localhost:3100/home";
+    const googleUserInfoQuery = `insert into user(username,email,authentication_type) values("${req.body.username}","${req.body.email}", "google")`;
+    
+    const isValidGoogleToken = checkGoogleToken(req.body.token).then(function() {
+        if(isValidGoogleToken.error_description == "Invalid Value") {
+            throw new Error('token invalid');
         }
         else {
-            res.send({redirect : 'http://localhost:3100/home'});
+            mySqlConnection.query(googleUserInfoQuery, (err,results) => {
+                console.log('done');
+            })
+            res.send({redirect : homeUrl});
         }
     })
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+

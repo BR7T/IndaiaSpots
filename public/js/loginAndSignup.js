@@ -96,10 +96,10 @@ const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({prompt: "select_account"});
 
 
-function postGoogleToken(accessToken) {
+function postGoogleToken(accessToken, email, username) {
     fetch('http://localhost:3100/googleSignIn', {   
         method : 'POST',
-        body : JSON.stringify({token : accessToken}),
+        body : JSON.stringify({token : accessToken, email : email, username : username}),
         mode: 'cors',
         cache: 'default',
         headers: {
@@ -108,7 +108,6 @@ function postGoogleToken(accessToken) {
         },
     }).then(response => response.json())
     .then(response => {
-        console.log("nosd");
         document.location.href = response.redirect;
     })
 }
@@ -119,7 +118,10 @@ async function signinGoogle(){
     auth.signInWithPopup(provider).then(result => {
         credential = result.credential;
         token = credential.accessToken;
-        postGoogleToken(token);
+        let userInfo = result.user;
+        const userEmail = userInfo.email;
+        const username = userInfo.displayName;
+        postGoogleToken(token,userEmail, username);
     })
 }
 
