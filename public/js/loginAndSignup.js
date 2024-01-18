@@ -2,21 +2,25 @@ const form = document.getElementById('form');
 const email = document.getElementById('email');
 const password = document.getElementById('password');
 const texts = document.getElementById('texts');
+const googleIcon = document.getElementById('googleIcon');
 
 function saidaenter(){
     let botao = document.getElementById('enter');
-    botao.classList.add('nada')
+    botao.classList.add('nada');
 }
 
-function errorMessage(message) {
-    const errorMessage = document.createElement('p');
+let errorMessage = null;
+function showErrorMessage(message) {
+    if(errorMessage != null) {
+        errorMessage.remove();
+    }
+    errorMessage = document.createElement('p');
     errorMessage.innerHTML = message;
     errorMessage.style.color = 'red';
     errorMessage.style.fontSize = '1.2rem';
     form.appendChild(errorMessage);
 }
 
-let res;
 async function signupOrLogin(method,body) {
     fetch(`http://localhost:3100/${method}`, {
         method : 'POST',
@@ -28,9 +32,11 @@ async function signupOrLogin(method,body) {
             'Content-Type': 'application/json',
         },
     }).then(response => response.json()).then(response => {
-        res = response;
-        if(res.credentials == false) {
-            errorMessage(res.errorMessage);
+        if(response.credentials == false) {
+            showErrorMessage(res.errorMessage);
+        }
+        else if(method == 'loginUser' && response.credentials) {
+            document.location.href = response.redirect;
         }
     })
 }
@@ -43,17 +49,19 @@ form.addEventListener('submit', async function(event) {
         email : email.value,
         password : password.value
     })
-    
+
     if(signup) {
         await signupOrLogin('signup',userData)
     }
     else {
         await signupOrLogin('loginUser',userData)
     }
+    
 });
 
 
 function register(){
+    const html = document.documentElement;
     let entra = document.getElementById('button-enter')
     let muda = document.getElementById('mudar-texto')
     let add = document.getElementById('username')
@@ -66,7 +74,6 @@ function register(){
             document.querySelector("button").innerHTML='Entrar'
             add.style.display='block'
             entra.value='Cadastre-se'
-            //document.querySelector('footer').style.color='white';
         },TempoAnimacao)
         signup = true;
     }
@@ -83,4 +90,18 @@ function register(){
 }
 
 
+//Firebase
+const provider = new firebase.auth.GoogleAuthProvider();
+provider.setCustomParameters({prompt: "select_account"});
+const auth = firebase.auth();
+
+async function signinGoogle(){
+    auth.signInWithPopup(provider).then(result => {
+    console.log(user);
+    })  
+}
+
+googleIcon.addEventListener('click', function() {
+    signinGoogle();
+})
 

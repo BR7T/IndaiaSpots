@@ -10,6 +10,14 @@ const mysqlCon = require('./db/mysql.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 
+//firebase
+const admin = require('firebase-admin');
+const firebaseCredentials = require("./serviceAccountKey.json");
+admin.initializeApp({
+    credential : admin.credential.cert(firebaseCredentials)
+})
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());       
 app.use(express.urlencoded({     
@@ -51,6 +59,7 @@ app.post('/loginUser', function(req,res) {
         password : req.body.password
     }
  
+    const homeUrl = 'http://localhost:3100/home';
     mySqlConnection.query(
         `select * from user where email="${userLogin.email}";`, (err,results) => {
             if(err) throw err;
@@ -60,7 +69,7 @@ app.post('/loginUser', function(req,res) {
                       console.log(err);
                     }
                     else if (resp) {
-                      res.send({credentials : true});
+                      res.send({credentials : true, redirect : homeUrl});
                     } else {
                         res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
                     }

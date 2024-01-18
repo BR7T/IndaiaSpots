@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IndaiaSpots | Login </title>
     <link rel="stylesheet" href="css/loginAndSignup.css">
-    <script src="js/loginAndSignup.js" async></script>
+    <script src="js/loginAndSignup.js" async type="module"></script>
 </head>
 <body>
     <main>
@@ -41,7 +41,7 @@
                 <div id="icons">
                     <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
                     <a href="#"><ion-icon name="logo-apple"></ion-icon></a>
-                    <a href="#"><ion-icon name="logo-google"></ion-icon></a>
+                    <a href="#" id="googleIcon"><ion-icon name="logo-google"></ion-icon></a>
                 </div>
 
             </div>
@@ -51,6 +51,21 @@
     
     
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGUvffFLk-YZqJKpEhx2CIvF6YKsbJs4I",
+            authDomain: "indaiaspots.firebaseapp.com",
+            projectId: "indaiaspots",
+            storageBucket: "indaiaspots.appspot.com",
+            messagingSenderId: "1039724625697",
+            appId: "1:1039724625697:web:e4589d3bfc7c02d6700860",
+            measurementId: "G-CJ7L3WRBPK"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
 </body>
 </html>
