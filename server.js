@@ -142,4 +142,25 @@ app.post('/addEstab', function(req,res) {
     })
 })
 
+app.post('/googleSignIn', function(req,res) {
+    const homeUrl = ""
+    
+    fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${req.body.token}`, {   
+        method : 'GET',
+        mode: 'cors',
+        cache: 'default',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    }).then(response => response.json()).then(response => {
+        if(response.error_description == "Invalid Value") {
+            console.log('token invalid');
+        }
+        else {
+            res.send({redirect : 'http://localhost:3100/home'});
+        }
+    })
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

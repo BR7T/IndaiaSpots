@@ -91,14 +91,36 @@ function register(){
 
 
 //Firebase
+const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({prompt: "select_account"});
-const auth = firebase.auth();
 
+
+function postGoogleToken(accessToken) {
+    fetch('http://localhost:3100/googleSignIn', {   
+        method : 'POST',
+        body : JSON.stringify({token : accessToken}),
+        mode: 'cors',
+        cache: 'default',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    }).then(response => response.json())
+    .then(response => {
+        console.log("nosd");
+        document.location.href = response.redirect;
+    })
+}
+
+let credential = "";
+let token = "";
 async function signinGoogle(){
     auth.signInWithPopup(provider).then(result => {
-    console.log(user);
-    })  
+        credential = result.credential;
+        token = credential.accessToken;
+        postGoogleToken(token);
+    })
 }
 
 googleIcon.addEventListener('click', function() {
