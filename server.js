@@ -52,32 +52,36 @@ let routes = {
 }
 pageRoutes(routes['pages']);
 
+app.get('/', function(req,res) {
+    res.redirect('/login');
+})
 
-app.post('/loginUser', function(req,res) {
+
+app.post('/userSignin', function(req,res) {
     const userLogin = {
         email : req.body.email,
         password : req.body.password
     }
  
     const homeUrl = 'http://localhost:3100/home';
-    mySqlConnection.query(
-        `select * from user where email="${userLogin.email}";`, (err,results) => {
-            if(err) throw err;
-            if(results.length > 0) {
-                bcrypt.compare(req.body.password, results[0].password, function(err, resp) {
-                    if (err){
-                      console.log(err);
-                    }
-                    else if (resp) {
-                      res.send({credentials : true, redirect : homeUrl});
-                    } else {
-                        res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
-                    }
+    const checkEmailQuery =  `select * from user where email="${userLogin.email}";`
+    mySqlConnection.query(checkEmailQuery, (err,results) => {
+        if(err) throw err;
+        if(results.length > 0) {
+            bcrypt.compare(req.body.password, results[0].password, function(err, resp) {
+                if (err){
+                    console.log(err);
+                }
+                else if (resp) {
+                    res.send({credentials : true, redirect : homeUrl});
+                } else {
+                    res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
+                }
                 });
             }
-            else {
-                res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
-            }
+        else {
+            res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
+        }
     });
     
 });
@@ -87,7 +91,7 @@ async function hashPassword(password,saltRounds) {
     return hash;
 }
 
-app.post('/signup', async function(req,res) {
+app.post('/userSignup', async function(req,res) {
     let message = null;
     let hashedPassword = await hashPassword(req.body.password,saltRounds);
     
@@ -134,12 +138,20 @@ app.post('/addEstab', function(req,res) {
     }
     
     const insertQuery = `insert into establishments(name,imageUrl,description) values("${data.estabName}","${data.imageUrl}","${data.description}")`;
-    const checkIfExistsQuery = `select * from establishments where name = "${data.estabName}"or where imageUrl = "${data.imageUrl}"or description = "${data.description}"`;
+    const checkIfExistsQuery = `select * from establishments where name = "${data.estabName}"or imageUrl = "${data.imageUrl}"or description = "${data.description}";`;
     
-    mySqlConnection.query(insertQuery, (err,results) => {
-        console.log('success');
-        res.send({message : "new establishment added successfully", query : true});
+    mySqlConnection.query(checkIfExistsQuery, (err,results) => {
+        if(results.length == 0) {
+            mySqlConnection.query(insertQuery, (err,results) => {
+                console.log('success');
+                res.send({message : "new establishment added successfully", query : true});
+            })
+        }
+        else {
+           res.send({message : "name or background image URL already in use", query : false});
+        }
     })
+
 })
 
 async function checkGoogleToken(token) {
@@ -165,12 +177,16 @@ app.post('/googleSignIn', function(req,res) {
             throw new Error('token invalid');
         }
         else {
-            mySqlConnection.query(googleUserInfoQuery, (err,results) => {
-                console.log('done');
-            })
+            if(req.body.isNewUser) {
+                mySqlConnection.query(googleUserInfoQuery, (err,results) => {})
+            }
             res.send({redirect : homeUrl});
         }
     })
+})
+
+app.post('firebaseSignup', function(req,res) {
+
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
