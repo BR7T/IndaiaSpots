@@ -16,6 +16,7 @@ const firebaseCredentials = require("./serviceAccountKey.json");
 admin.initializeApp({
     credential : admin.credential.cert(firebaseCredentials)
 })
+const auth = admin.auth();
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -91,19 +92,30 @@ async function hashPassword(password,saltRounds) {
     return hash;
 }
 
+app.post('/checkUserExist', function(req,res) {
+    const user = {
+        username : req.body.username,
+        email : req.body.email,
+    }
+    
+    const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}"`;
+    mySqlConnection.query(signupCheckQuery, (err,results) => {
+        if(results.length > 0 ){ res.send({exists : true}) }
+        else { res.send({exists : false}) }
+    })
+})
+
 app.post('/userSignup', async function(req,res) {
     let message = null;
-    let hashedPassword = await hashPassword(req.body.password,saltRounds);
+    let hashedPassword = await hashPassword(req.body.password,12);
     
     const user = {
         username : req.body.username,
         email : req.body.email,
         password : hashedPassword
     }
-    
-    const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}"`;
     const insertToDatabaseQuery = `insert into user(userName,email,password) values ("${user.username}","${user.email}","${user.password}");`
-    
+    const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}"`;
     mySqlConnection.query(signupCheckQuery, (err,results) => {
         if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
@@ -185,7 +197,7 @@ app.post('/googleSignIn', function(req,res) {
     })
 })
 
-app.post('firebaseSignup', function(req,res) {
+app.post('/firebaseSignup', async function(req,res) {
 
 })
 

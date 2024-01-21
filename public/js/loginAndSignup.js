@@ -2,24 +2,63 @@ const form = document.getElementById('form');
 const email = document.getElementById('email');
 const password = document.getElementById('password');
 const texts = document.getElementById('texts');
+const buttonTrasition = document.getElementById('button-transition');
 const googleIcon = document.getElementById('googleIcon');
 const appleIcon = document.getElementById('appleIcon');
+
+import {sendEmailVerification, createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup, getAdditionalUserInfo, signInWithEmailAndPassword} from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAGUvffFLk-YZqJKpEhx2CIvF6YKsbJs4I",
+    authDomain: "indaiaspots.firebaseapp.com",
+    projectId: "indaiaspots",
+    storageBucket: "indaiaspots.appspot.com",
+    messagingSenderId: "1039724625697",
+    appId: "1:1039724625697:web:e4589d3bfc7c02d6700860",
+    measurementId: "G-CJ7L3WRBPK"
+}
+
+await initializeApp(firebaseConfig);
+const auth = getAuth();
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({prompt: "select_account"});
 
 function saidaenter(){
     let botao = document.getElementById('enter');
     botao.classList.add('nada');
 }
 
-let errorMessage = null;
-function showErrorMessage(message) {
-    if(errorMessage != null) {
-        errorMessage.remove();
+let messageElement = null;
+function showMessage(message) {
+    if(messageElement != null) {
+        messageElement.remove();
     }
-    errorMessage = document.createElement('p');
-    errorMessage.innerHTML = message;
-    errorMessage.style.color = 'red';
-    errorMessage.style.fontSize = '1.2rem';
-    form.appendChild(errorMessage);
+    messageElement = document.createElement('p');
+    messageElement.innerHTML = message;
+    messageElement.style.color = 'red';
+    messageElement.style.fontSize = '1.2rem';
+    form.appendChild(messageElement);
+}
+
+async function fetchToServer(route, body) {
+    await fetch(`http://localhost:3100/${route}`, {   
+        method : 'POST',
+        body : body,
+        mode: 'cors',
+        cache: 'default',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    }).then(response => response.json()).then(response => {
+        if(route == 'userSignin') {
+            if(response.credentials) {
+                document.location.href = response.redirect;
+            }
+        }
+        return response;
+    })
 }
 
 
@@ -35,13 +74,15 @@ async function signupOrLogin(route,body) {
         },
     }).then(response => response.json()).then(response => {
         if(response.credentials == false) {
-            showErrorMessage(res.errorMessage);
+            showMessage(res.errorMessage);
         }
         else if(route == 'userSignin' && response.credentials) {
             document.location.href = response.redirect;
         }
     })
 }
+
+
 
 let signup = false;
 form.addEventListener('submit', async function(event) {
@@ -53,13 +94,30 @@ form.addEventListener('submit', async function(event) {
     })
 
     if(signup) {
-        //await signupOrLogin('userSignup',userData)
-        firebaseSignup(userData.email,userData.password);
+        const response = fetchToServer('checkUserExist',userData).then(async function() {
+            if(!response.exists) {
+                const userCredentials = await createUserWithEmailAndPassword(auth,email.value,password.value);
+                await sendEmailVerification(userCredentials.user);
+                form.reset();
+                const dbSignup = await fetchToServer('userSignup',userData).then(function() {
+                    console.log(dbSignup.credentials);
+                })
+                showMessage('Verification Email sent to your email adress');
+            }
+            else if(response.exists){
+                showMessage('Email ou senha já estão em uso');
+            }
+        })
     }
     else {
-        await signupOrLogin('userSignin',userData)
+        await signInWithEmailAndPassword(auth, email.value, password.value).then(result => {
+            credential = GoogleAuthProvider.credentialFromResult(result);
+            let userInfo = result.user;
+            if(userInfo.emailVerified) {
+                const response = fetchToServer('userSignin',userData)
+            }
+        })  
     }
-    
 });
 
 
@@ -91,23 +149,9 @@ function register(){
         signup = false;
     }
 }
-
+buttonTrasition.addEventListener('click', register);
 
 //Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyAGUvffFLk-YZqJKpEhx2CIvF6YKsbJs4I",
-    authDomain: "indaiaspots.firebaseapp.com",
-    projectId: "indaiaspots",
-    storageBucket: "indaiaspots.appspot.com",
-    messagingSenderId: "1039724625697",
-    appId: "1:1039724625697:web:e4589d3bfc7c02d6700860",
-    measurementId: "G-CJ7L3WRBPK"
-}
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const googleProvider = new firebase.auth.GoogleAuthProvider();
-googleProvider.setCustomParameters({prompt: "select_account"});
 
 function googleAuthInfo(accessToken, email, username, isNewUser) {
     fetch('http://localhost:3100/googleSignIn', {   
@@ -128,11 +172,11 @@ function googleAuthInfo(accessToken, email, username, isNewUser) {
 let credential = "";
 let token = "";
 async function signinGoogle(){
-    auth.signInWithPopup(googleProvider).then(result => {
-        credential = result.credential;
+    signInWithPopup(auth,googleProvider).then(result => {
+        credential = GoogleAuthProvider.credentialFromResult(result);
         token = credential.accessToken;
         let userInfo = result.user;
-        const isNewUser = result.additionalUserInfo.isNewUser;
+        const isNewUser = getAdditionalUserInfo(result).isNewUser;
         const userEmail = userInfo.email;
         const username = userInfo.displayName;
         googleAuthInfo(token,userEmail, username, isNewUser);
