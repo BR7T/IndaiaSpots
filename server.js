@@ -48,7 +48,8 @@ let routes = {
     pages : [
         {routeName : 'login', fileName : 'loginAndSignup.html'},
         {routeName : 'home', fileName : 'home.html'},
-        {routeName : 'addEstabs', fileName : 'addEstab.html'}
+        {routeName : 'addEstabs', fileName : 'addEstab.html'},
+        {routeName : 'emailVerification', fileName : 'emailVerification.html'}
     ]
 }
 pageRoutes(routes['pages']);

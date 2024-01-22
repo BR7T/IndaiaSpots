@@ -99,10 +99,8 @@ form.addEventListener('submit', async function(event) {
                 const userCredentials = await createUserWithEmailAndPassword(auth,email.value,password.value);
                 await sendEmailVerification(userCredentials.user);
                 form.reset();
-                const dbSignup = await fetchToServer('userSignup',userData).then(function() {
-                    console.log(dbSignup.credentials);
-                })
-                showMessage('Verification Email sent to your email adress');
+                const dbSignup = await fetchToServer('userSignup',userData);
+                document.location.href = 'http://localhost:3100/emailVerification';
             }
             else if(response.exists){
                 showMessage('Email ou senha já estão em uso');
