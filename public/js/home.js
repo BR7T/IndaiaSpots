@@ -1,16 +1,17 @@
+const searchInput = document.getElementById('searchInput');
+
 window.onload = async function(){
     await getEstabs();
     createCards();
 }
 
+let boxarea = document.getElementById('box-area');
 let boxNome = [];
 let boxImage = [];
 let boxText = [];
 
 function createCards(){
-    boxarea = document.getElementById('box-area')
     for(let i=0; boxNome.length > i;i++){
-        
         let geral = document.createElement('article')
         let top = document.createElement('div')
         let bottom = document.createElement('div')
@@ -49,3 +50,42 @@ async function getEstabs() {
         boxText[i] = [data.description]
     }
 }
+
+async function searchStab(keyword) {
+    await fetch('http://localhost:3100/searchEstab',{
+        method : 'POST',
+        body : JSON.stringify({keyword : keyword}),
+        mode: 'cors',
+        cache: 'default',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+    }).then(response => response.json())
+    .then(response => {
+            boxarea.innerHTML = "";
+            console.log(response);
+            boxImage.length = 0;
+            boxNome.length = 0;
+            boxText.length = 0;
+            console.log(boxText.length);
+            for(let i = 0; i < response.length; i++) {
+                const data = {
+                    estabName : response[i].name,
+                    image : response[i].imageUrl,
+                    description : response[i].description
+                }
+                boxImage[i] = [data.image]
+                boxNome[i] = [data.estabName]
+                boxText[i] = [data.description]
+            }
+            createCards();
+    })
+}
+
+searchInput.addEventListener('input', async function() {
+    setTimeout(async function() {
+        searchStab(searchInput.value);
+    },1000);
+    
+})

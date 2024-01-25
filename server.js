@@ -167,6 +167,19 @@ app.post('/addEstab', function(req,res) {
 
 })
 
+app.post('/searchEstab', function(req,res) {
+    const searchQuery = `select * from establishments where name like '%${req.body.keyword}%';`;
+    mySqlConnection.query(searchQuery, (err,results) => {
+        if(results.length > 0) {
+            res.status(301);
+            res.send(results);
+        }
+        else {
+            res.status(404);
+        }
+    })
+})
+
 async function checkGoogleToken(token) {
     await fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`, {   
         method : 'GET',
