@@ -1,4 +1,4 @@
-import {sendEmailVerification, createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup, getAdditionalUserInfo, signInWithEmailAndPassword} from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
+import {GoogleAuthProvider, signInWithPopup, getAdditionalUserInfo, signInWithEmailAndPassword} from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
 
 export async function initializeFirebase() {
@@ -16,7 +16,7 @@ export async function initializeFirebase() {
 
 const googleProvider = new GoogleAuthProvider();
 
-export function googleAuthInfo(accessToken, email, username, isNewUser) {
+function googleAuthInfo(accessToken, email, username, isNewUser) {
     fetch('http://localhost:3100/googleSignIn', {   
         method : 'POST',
         body : JSON.stringify({token : accessToken, email : email, username : username, isNewUser : isNewUser}),
@@ -32,14 +32,11 @@ export function googleAuthInfo(accessToken, email, username, isNewUser) {
     })
 }
 
-export async function signinGoogle(){
-    const firebaseAuth = getAuth();
+export async function signinGoogle(firebaseAuth){
     googleProvider.setCustomParameters({prompt: "select_account"});
     signInWithPopup(firebaseAuth,googleProvider).then(result => {
-        let credential = "";
-        let token = "";
-        credential = GoogleAuthProvider.credentialFromResult(result);
-        token = credential.accessToken;
+        let credential = GoogleAuthProvider.credentialFromResult(result);
+        let token = credential.accessToken;
         let userInfo = result.user;
         const isNewUser = getAdditionalUserInfo(result).isNewUser;
         const userEmail = userInfo.email;
@@ -48,31 +45,8 @@ export async function signinGoogle(){
     })
 }
 
-export async function fetchToServer(route,body) {
-    await fetch(`http://localhost:3100/${route}`, {   
-            method : 'POST',
-            body : body,
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }).then(response => response.json()).then(response => {
-            if(route == 'userSignin') {
-                if(response.credentials) {
-                    document.location.href = response.redirect;
-                }
-            }
-            return response;
-        })
-    
-}
-
-export async function signIn(userData) {
-    const firebaseAuth = getAuth();
+export async function signIn(firebaseAuth,userData) {
     await signInWithEmailAndPassword(firebaseAuth, email.value, password.value).then(result => {
-        //let credential = GoogleAuthProvider.credentialFromResult(result);
         let userInfo = result.user;
         if(userInfo.emailVerified) {
             fetchToServer('userSignin',userData)

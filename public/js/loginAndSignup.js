@@ -5,7 +5,6 @@ const texts = document.getElementById('texts');
 const buttonTrasition = document.getElementById('button-transition');
 const googleIcon = document.getElementById('googleIcon');
 
-
 function saidaenter(){
     let botao = document.getElementById('enter');
     botao.classList.add('nada');
@@ -23,27 +22,24 @@ function showMessage(message) {
     form.appendChild(messageElement);
 }
 
-
-
-
-async function signupOrLogin(route,body) {
-    fetch(`http://localhost:3100/${route}`, {
-        method : 'POST',
-        body : body,
-        mode: 'cors',
-        cache: 'default',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
+async function fetchToServer(route,body) {
+    await fetch(`http://localhost:3100/${route}`, {   
+            method : 'POST',
+            body : body,
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
     }).then(response => response.json()).then(response => {
-        if(response.credentials == false) {
-            showMessage(res.errorMessage);
-        }
-        else if(route == 'userSignin' && response.credentials) {
-            document.location.href = response.redirect;
-        }
-    })
+            if(route == 'userSignin') {
+                if(response.credentials) {
+                    document.location.href = response.redirect;
+                }
+            }
+            return response;
+        })
 }
 
 function register(){
@@ -78,12 +74,12 @@ buttonTrasition.addEventListener('click', register);
 
 //Firebase
 import {sendEmailVerification, createUserWithEmailAndPassword, getAuth} from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
-import {initializeFirebase,signinGoogle,signIn,fetchToServer} from './firebase.js';
+import {initializeFirebase,signinGoogle,signIn} from './firebase.js';
 
 initializeFirebase();
+let firebaseAuth = getAuth();
 
 let signup = false;
-const firebaseAuth = getAuth();
 form.addEventListener('submit', async function(event) {
     event.preventDefault();
     const userData = JSON.stringify({
@@ -107,12 +103,12 @@ form.addEventListener('submit', async function(event) {
         })
     }
     else {
-        signIn(userData);
+        signIn(firebaseAuth,userData);
     }
 });
 
 googleIcon.addEventListener('click', function() {
-    signinGoogle();
+    signinGoogle(firebaseAuth);
 })
 
 

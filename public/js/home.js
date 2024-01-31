@@ -86,8 +86,8 @@ function resetArrays(array) {
     }
 }
 
+let timer;
 searchInput.addEventListener('input', async function() {
-    let timer;
     clearTimeout(timer);
     timer = setTimeout(async function() {
         searchStab(searchInput.value);
