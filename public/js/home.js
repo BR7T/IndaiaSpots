@@ -18,21 +18,22 @@ function createCards(){
         let h1 = document.createElement('h1')
         let text = document.createElement('p')
 
-        boxarea.appendChild(geral)
-        geral.appendChild(top)
-        geral.appendChild(bottom)
-        bottom.appendChild(h1);bottom.appendChild(text)
+        boxarea.appendChild(geral);
+        geral.appendChild(top);
+        geral.appendChild(bottom);
+        bottom.appendChild(h1);
+        bottom.appendChild(text);
 
-        geral.classList.add('geral')
-        top.classList.add('top')
-        bottom.classList.add('bottom')
+        geral.classList.add('geral');
+        top.classList.add('top');
+        bottom.classList.add('bottom');
 
         h1.innerHTML = boxNome[i]
         text.innerHTML = boxText[i]
         
-        top.style.backgroundImage=`url(${boxImage[i]})`
-        top.style.backgroundPosition=`center`
-        top.style.backgroundSize='cover'
+        top.style.backgroundImage=`url(${boxImage[i]})`;
+        top.style.backgroundPosition=`center`;
+        top.style.backgroundSize='cover';
     }
 }
 
@@ -63,29 +64,32 @@ async function searchStab(keyword) {
         }
     }).then(response => response.json())
     .then(response => {
-            boxarea.innerHTML = "";
-            console.log(response);
-            boxImage.length = 0;
-            boxNome.length = 0;
-            boxText.length = 0;
-            console.log(boxText.length);
-            for(let i = 0; i < response.length; i++) {
-                const data = {
-                    estabName : response[i].name,
-                    image : response[i].imageUrl,
-                    description : response[i].description
+        boxarea.innerHTML = "";
+        resetArrays([boxImage,boxNome,boxText]);
+        for(let i = 0; i < response.length; i++) {
+            const data = {
+                estabName : response[i].name,
+                image : response[i].imageUrl,
+                description : response[i].description
                 }
-                boxImage[i] = [data.image]
-                boxNome[i] = [data.estabName]
-                boxText[i] = [data.description]
+            boxImage[i] = [data.image];
+            boxNome[i] = [data.estabName];
+            boxText[i] = [data.description];
             }
-            createCards();
+        createCards();
     })
 }
 
+function resetArrays(array) {
+    for(let i = 0; i < array.length; i++) {
+        array[i].length = 0;
+    }
+}
+
 searchInput.addEventListener('input', async function() {
-    setTimeout(async function() {
+    let timer;
+    clearTimeout(timer);
+    timer = setTimeout(async function() {
         searchStab(searchInput.value);
     },1000);
-    
 })

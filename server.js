@@ -16,8 +16,6 @@ const firebaseCredentials = require("./serviceAccountKey.json");
 admin.initializeApp({
     credential : admin.credential.cert(firebaseCredentials)
 })
-const auth = admin.auth();
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());       
@@ -58,16 +56,15 @@ app.get('/', function(req,res) {
     res.redirect('/login');
 })
 
-
 app.post('/userSignin', function(req,res) {
-    const userLogin = {
+    const userData = {
         email : req.body.email,
         password : req.body.password
     }
  
     const homeUrl = 'http://localhost:3100/home';
-    const checkEmailQuery =  `select * from user where email="${userLogin.email}";`
-    mySqlConnection.query(checkEmailQuery, (err,results) => {
+    const checkEmailQuery =  'select * from user where email=?';
+    mySqlConnection.query(checkEmailQuery,[userData.email], (err,results) => {
         if(err) throw err;
         if(results.length > 0) {
             bcrypt.compare(req.body.password, results[0].password, function(err, resp) {
@@ -94,13 +91,13 @@ async function hashPassword(password,saltRounds) {
 }
 
 app.post('/checkUserExist', function(req,res) {
-    const user = {
+    const userData = {
         username : req.body.username,
         email : req.body.email,
     }
     
-    const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}"`;
-    mySqlConnection.query(signupCheckQuery, (err,results) => {
+    const signupCheckQuery =  'select * from user where userName=? or where email=?';
+    mySqlConnection.query(signupCheckQuery,[userData.username, userData.email], (err,results) => {
         if(results.length > 0 ){ res.send({exists : true}) }
         else { res.send({exists : false}) }
     })
@@ -110,14 +107,15 @@ app.post('/userSignup', async function(req,res) {
     let message = null;
     let hashedPassword = await hashPassword(req.body.password,12);
     
-    const user = {
+    const userData = {
         username : req.body.username,
         email : req.body.email,
         password : hashedPassword
     }
-    const insertToDatabaseQuery = `insert into user(userName,email,password) values ("${user.username}","${user.email}","${user.password}");`
-    const signupCheckQuery =  `select * from user where userName="${user.username}";select * from user where email="${user.email}"`;
-    mySqlConnection.query(signupCheckQuery, (err,results) => {
+    const signupCheckQuery =  'select * from user where userName=?; select * from user where email=?';
+    const insertToDatabaseQuery = 'insert into user(userName,email,password) values (?,?,?)';
+
+    mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err,results) => {
         if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
         }
@@ -128,7 +126,7 @@ app.post('/userSignup', async function(req,res) {
             res.send({errorMessage : message, credentials : false});
         }
         else if(message == null) {
-            mySqlConnection.query(insertToDatabaseQuery, (err,results) => {
+            mySqlConnection.query(insertToDatabaseQuery,[userData.username,userData.email,userData.password], (err,results) => {
                 res.send({credentials : true, errorMessage : "Cadastro Concluído"});
             });
         }
@@ -149,13 +147,12 @@ app.post('/addEstab', function(req,res) {
         imageUrl : req.body.imageUrl,
         description : req.body.description
     }
+    const checkIfExistsQuery = 'select * from establishments where name = ? or imageUrl = ? or description = ?';
+    const insertQuery = 'insert into establishments(name,imageUrl,description) values(?,?,?)';
     
-    const insertQuery = `insert into establishments(name,imageUrl,description) values("${data.estabName}","${data.imageUrl}","${data.description}")`;
-    const checkIfExistsQuery = `select * from establishments where name = "${data.estabName}"or imageUrl = "${data.imageUrl}"or description = "${data.description}";`;
-    
-    mySqlConnection.query(checkIfExistsQuery, (err,results) => {
+    mySqlConnection.query(checkIfExistsQuery,[data.estabName,data.imageUrl,data.description], (err,results) => {
         if(results.length == 0) {
-            mySqlConnection.query(insertQuery, (err,results) => {
+            mySqlConnection.query(insertQuery,[data.estabName,data.imageUrl,data.description], (err,results) => {
                 console.log('success');
                 res.send({message : "new establishment added successfully", query : true});
             })
@@ -164,18 +161,18 @@ app.post('/addEstab', function(req,res) {
            res.send({message : "name or background image URL already in use", query : false});
         }
     })
-
+    
 })
 
 app.post('/searchEstab', function(req,res) {
-    const searchQuery = `select * from establishments where name like '%${req.body.keyword}%';`;
-    mySqlConnection.query(searchQuery, (err,results) => {
+    const searchQuery = "select * from establishments where name like CONCAT('%',?,'%')";
+    const keyword = req.body.keyword;
+    mySqlConnection.query(searchQuery,[keyword], (err,results) => {
         if(results.length > 0) {
-            res.status(301);
-            res.send(results);
+            res.status(301).send(results);
         }
         else {
-            res.status(404);
+            res.status(404).send({error : 'nothing found'});
         }
     })
 })
@@ -196,7 +193,9 @@ async function checkGoogleToken(token) {
 
 app.post('/googleSignIn', function(req,res) {
     const homeUrl = "http://localhost:3100/home";
-    const googleUserInfoQuery = `insert into user(username,email,authentication_type) values("${req.body.username}","${req.body.email}", "google")`;
+    const userName = req.body.username;
+    const userEmail = req.body.email;
+    const googleUserInfoQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
     
     const isValidGoogleToken = checkGoogleToken(req.body.token).then(function() {
         if(isValidGoogleToken.error_description == "Invalid Value") {
@@ -204,15 +203,11 @@ app.post('/googleSignIn', function(req,res) {
         }
         else {
             if(req.body.isNewUser) {
-                mySqlConnection.query(googleUserInfoQuery, (err,results) => {})
+                mySqlConnection.query(googleUserInfoQuery,[userName,userEmail], (err,results) => {})
             }
             res.send({redirect : homeUrl});
         }
     })
-})
-
-app.post('/firebaseSignup', async function(req,res) {
-
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
