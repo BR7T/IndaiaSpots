@@ -110,6 +110,3 @@ form.addEventListener('submit', async function(event) {
 googleIcon.addEventListener('click', function() {
     signinGoogle(firebaseAuth);
 })
-
-
-

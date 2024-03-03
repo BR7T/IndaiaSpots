@@ -32,6 +32,26 @@ function googleAuthInfo(accessToken, email, username, isNewUser) {
     })
 }
 
+async function fetchToServer(route,body) {
+    await fetch(`http://localhost:3100/${route}`, {   
+            method : 'POST',
+            body : body,
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+    }).then(response => response.json()).then(response => {
+            if(route == 'userSignin') {
+                if(response.credentials) {
+                    document.location.href = response.redirect;
+                }
+            }
+            return response;
+        })
+}
+
 export async function signinGoogle(firebaseAuth){
     googleProvider.setCustomParameters({prompt: "select_account"});
     signInWithPopup(firebaseAuth,googleProvider).then(result => {
