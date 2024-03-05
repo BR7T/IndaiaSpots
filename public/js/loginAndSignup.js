@@ -79,6 +79,9 @@ import {initializeFirebase,signinGoogle,signIn} from './firebase.js';
 initializeFirebase();
 let firebaseAuth = getAuth();
 
+let user = firebaseAuth.currentUser;
+console.log(user);
+
 let signup = false;
 form.addEventListener('submit', async function(event) {
     event.preventDefault();

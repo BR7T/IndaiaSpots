@@ -1,5 +1,5 @@
-import { JsTyping, JsonObjectExpression } from "typescript";
-export {};
+import { Request, Response } from "express";
+
 //Express
 const express = require('express');
 const path = require('path');
@@ -63,7 +63,13 @@ let routes = {
 }
 pageRoutes(routes['pages']);
 
-app.get('/', async function(req : any,res : Response) {
+type userData  = {
+    username : string,
+    email : string,
+    password : string
+}
+
+app.get('/', async function(req : Request,res : Response) {
     if(req.cookies.jwt6) {
         try {
             /*if(await admin.auth().verifyIdToken(req.cookies.jwt6)) {
@@ -73,21 +79,22 @@ app.get('/', async function(req : any,res : Response) {
             
         }
         catch(error) {
-            console.log(error);
+            return error;
         }
     }
-    //res.redirect('/login');
+    res.redirect('/login');
 })
 
-app.post('/userSignin', function(req : any,res : any) {
-    const userData : any = {
+app.post('/userSignin', async function(req : Request,res : Response) {
+    const userData : userData = {
+        username : "",
         email : req.body.email,
         password : req.body.password
     }
  
     const homeUrl = 'http://localhost:3100/home';
     const checkEmailQuery =  'select * from user where email=?';
-    mySqlConnection.query(checkEmailQuery,[userData.email], (err : string,results : Array<any>) => {
+    mySqlConnection.query(checkEmailQuery,[userData.email], (err : string,results : any) => {
         if(err) throw err;
         if(results.length > 0) {
             bcrypt.compare(req.body.password, results[0].password, function(err : string, resp : string) {
@@ -105,7 +112,6 @@ app.post('/userSignin', function(req : any,res : any) {
             res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
         }
     });
-    
 });
 
 async function hashPassword(password : string ,saltRounds : number) {
@@ -114,10 +120,11 @@ async function hashPassword(password : string ,saltRounds : number) {
 }
 
 
-app.post('/checkUserExist', function(req : any,res : any) {
-    const userData  = {
+app.post('/checkUserExist', function(req : Request,res : Response) {
+    const userData : userData = {
         username : req.body.username,
         email : req.body.email,
+        password : ""
     }
     
     const signupCheckQuery =  'select * from user where userName=? or where email=?';
@@ -127,11 +134,11 @@ app.post('/checkUserExist', function(req : any,res : any) {
     })
 })
 
-app.post('/userSignup', async function(req : any, res : any) {
+app.post('/userSignup', async function(req : Request, res : Response) {
     let message : unknown = null;
     let hashedPassword = await hashPassword(req.body.password,12);
     
-    const userData = {
+    const userData : userData = {
         username : req.body.username,
         email : req.body.email,
         password : hashedPassword
@@ -139,7 +146,7 @@ app.post('/userSignup', async function(req : any, res : any) {
     const signupCheckQuery =  'select * from user where userName=?; select * from user where email=?';
     const insertToDatabaseQuery = 'insert into user(userName,email,password) values (?,?,?)';
 
-    mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err : string,results : any) => {
+    await mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err : string,results : any) => {
         if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
         }
@@ -158,14 +165,14 @@ app.post('/userSignup', async function(req : any, res : any) {
 })
 
 
-app.get('/getEstabs', function(req : Request,res : any) {     
+app.get('/getEstabs', function(req : Request,res : Response) {     
     const getAllRestaurants = 'select * from establishments';
     mySqlConnection.query(getAllRestaurants, (err : string, results : Array<any>) => {
         res.send(results);
     });
 })
 
-app.post('/addEstab', function(req : any,res : any) {
+app.post('/addEstab', async function(req : Request,res : Response) {
     const data = {
         estabName : req.body.name,
         imageUrl : req.body.imageUrl,
@@ -185,10 +192,9 @@ app.post('/addEstab', function(req : any,res : any) {
            res.send({message : "name or background image URL already in use", query : false});
         }
     })
-    
 })
 
-app.post('/searchEstab', function(req :any ,res : any) {
+app.post('/searchEstab', function(req :Request ,res : Response) {
     const searchQuery = "select * from establishments where name like CONCAT('%',?,'%')";
     const keyword = req.body.keyword;
     mySqlConnection.query(searchQuery,[keyword], (err : string,results : any) => {
@@ -215,7 +221,7 @@ async function checkGoogleToken(token : string) {
     })
 }
 
-app.post('/googleSignIn', function(req : any,res :any) {
+app.post('/googleSignIn', function(req : Request,res :Response) {
     const homeUrl = "http://localhost:3100/home";
     const userName = req.body.username;
     const userEmail = req.body.email;
@@ -228,17 +234,7 @@ app.post('/googleSignIn', function(req : any,res :any) {
         if(req.body.isNewUser) {
             mySqlConnection.query(googleUserInfoQuery,[userName,userEmail], (err : string,results : any) => {})
         }
-        const idToken = req.body.idToken;
-        const payload = {
-            userId : idToken
-        }
-        const options = {'expiresIn' : '1h',
-            algorithm: 'RS256',
-            header : {
-                kid: idToken
-            }
-        }
-        let jwtToken : string = jwt.sign(payload,privateKey,options);
+        //res.send({redirect : homeUrl});
         /*admin.auth.createCustomToken(jwtToken).then(token => {
             res.cookie('jwt6', token, {secure : true, httpOnly : true});
             res.send({redirect : homeUrl});

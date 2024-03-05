@@ -56,6 +56,7 @@ export async function signinGoogle(firebaseAuth){
     googleProvider.setCustomParameters({prompt: "select_account"});
     signInWithPopup(firebaseAuth,googleProvider).then(result => {
         let credential = GoogleAuthProvider.credentialFromResult(result);
+        let idToken = credential.idToken;
         let token = credential.accessToken;
         let userInfo = result.user;
         const isNewUser = getAdditionalUserInfo(result).isNewUser;

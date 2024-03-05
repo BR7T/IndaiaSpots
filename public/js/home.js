@@ -93,3 +93,12 @@ searchInput.addEventListener('input', async function() {
         searchStab(searchInput.value);
     },1000);
 })
+
+import {sendEmailVerification, createUserWithEmailAndPassword, getAuth} from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
+import {initializeFirebase,signinGoogle,signIn} from './firebase.js';
+
+initializeFirebase();
+let firebaseAuth = getAuth();
+
+let user = firebaseAuth.currentUser;
+console.log(user);

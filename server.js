@@ -105,39 +105,47 @@ app.get('/', function (req, res) {
                     }*/
                 }
                 catch (error) {
-                    console.log(error);
+                    return [2 /*return*/, error];
                 }
             }
+            res.redirect('/login');
             return [2 /*return*/];
         });
     });
 });
 app.post('/userSignin', function (req, res) {
-    var userData = {
-        email: req.body.email,
-        password: req.body.password
-    };
-    var homeUrl = 'http://localhost:3100/home';
-    var checkEmailQuery = 'select * from user where email=?';
-    mySqlConnection.query(checkEmailQuery, [userData.email], function (err, results) {
-        if (err)
-            throw err;
-        if (results.length > 0) {
-            bcrypt.compare(req.body.password, results[0].password, function (err, resp) {
-                if (err) {
-                    console.log(err);
-                }
-                else if (resp) {
-                    res.send({ credentials: true, redirect: homeUrl });
+    return __awaiter(this, void 0, void 0, function () {
+        var userData, homeUrl, checkEmailQuery;
+        return __generator(this, function (_a) {
+            userData = {
+                username: "",
+                email: req.body.email,
+                password: req.body.password
+            };
+            homeUrl = 'http://localhost:3100/home';
+            checkEmailQuery = 'select * from user where email=?';
+            mySqlConnection.query(checkEmailQuery, [userData.email], function (err, results) {
+                if (err)
+                    throw err;
+                if (results.length > 0) {
+                    bcrypt.compare(req.body.password, results[0].password, function (err, resp) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else if (resp) {
+                            res.send({ credentials: true, redirect: homeUrl });
+                        }
+                        else {
+                            res.send({ credentials: false, errorMessage: "Email ou senha inválidos" });
+                        }
+                    });
                 }
                 else {
                     res.send({ credentials: false, errorMessage: "Email ou senha inválidos" });
                 }
             });
-        }
-        else {
-            res.send({ credentials: false, errorMessage: "Email ou senha inválidos" });
-        }
+            return [2 /*return*/];
+        });
     });
 });
 function hashPassword(password, saltRounds) {
@@ -157,6 +165,7 @@ app.post('/checkUserExist', function (req, res) {
     var userData = {
         username: req.body.username,
         email: req.body.email,
+        password: ""
     };
     var signupCheckQuery = 'select * from user where userName=? or where email=?';
     mySqlConnection.query(signupCheckQuery, [userData.username, userData.email], function (err, results) {
@@ -185,22 +194,24 @@ app.post('/userSignup', function (req, res) {
                     };
                     signupCheckQuery = 'select * from user where userName=?; select * from user where email=?';
                     insertToDatabaseQuery = 'insert into user(userName,email,password) values (?,?,?)';
-                    mySqlConnection.query(signupCheckQuery, [userData.username, userData.email], function (err, results) {
-                        if (results[0].length > 0) {
-                            message = "Nome de usuário já está em uso";
-                        }
-                        else if (results[1].length > 0) {
-                            message = "Email já está em uso";
-                        }
-                        if (message != null) {
-                            res.send({ errorMessage: message, credentials: false });
-                        }
-                        else if (message == null) {
-                            mySqlConnection.query(insertToDatabaseQuery, [userData.username, userData.email, userData.password], function (err, results) {
-                                res.send({ credentials: true, errorMessage: "Cadastro Concluído" });
-                            });
-                        }
-                    });
+                    return [4 /*yield*/, mySqlConnection.query(signupCheckQuery, [userData.username, userData.email], function (err, results) {
+                            if (results[0].length > 0) {
+                                message = "Nome de usuário já está em uso";
+                            }
+                            else if (results[1].length > 0) {
+                                message = "Email já está em uso";
+                            }
+                            if (message != null) {
+                                res.send({ errorMessage: message, credentials: false });
+                            }
+                            else if (message == null) {
+                                mySqlConnection.query(insertToDatabaseQuery, [userData.username, userData.email, userData.password], function (err, results) {
+                                    res.send({ credentials: true, errorMessage: "Cadastro Concluído" });
+                                });
+                            }
+                        })];
+                case 2:
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
@@ -213,23 +224,29 @@ app.get('/getEstabs', function (req, res) {
     });
 });
 app.post('/addEstab', function (req, res) {
-    var data = {
-        estabName: req.body.name,
-        imageUrl: req.body.imageUrl,
-        description: req.body.description
-    };
-    var checkIfExistsQuery = 'select * from establishments where name = ? or imageUrl = ? or description = ?';
-    var insertQuery = 'insert into establishments(name,imageUrl,description) values(?,?,?)';
-    mySqlConnection.query(checkIfExistsQuery, [data.estabName, data.imageUrl, data.description], function (err, results) {
-        if (results.length == 0) {
-            mySqlConnection.query(insertQuery, [data.estabName, data.imageUrl, data.description], function (err, results) {
-                console.log('success');
-                res.send({ message: "new establishment added successfully", query: true });
+    return __awaiter(this, void 0, void 0, function () {
+        var data, checkIfExistsQuery, insertQuery;
+        return __generator(this, function (_a) {
+            data = {
+                estabName: req.body.name,
+                imageUrl: req.body.imageUrl,
+                description: req.body.description
+            };
+            checkIfExistsQuery = 'select * from establishments where name = ? or imageUrl = ? or description = ?';
+            insertQuery = 'insert into establishments(name,imageUrl,description) values(?,?,?)';
+            mySqlConnection.query(checkIfExistsQuery, [data.estabName, data.imageUrl, data.description], function (err, results) {
+                if (results.length == 0) {
+                    mySqlConnection.query(insertQuery, [data.estabName, data.imageUrl, data.description], function (err, results) {
+                        console.log('success');
+                        res.send({ message: "new establishment added successfully", query: true });
+                    });
+                }
+                else {
+                    res.send({ message: "name or background image URL already in use", query: false });
+                }
             });
-        }
-        else {
-            res.send({ message: "name or background image URL already in use", query: false });
-        }
+            return [2 /*return*/];
+        });
     });
 });
 app.post('/searchEstab', function (req, res) {
@@ -278,17 +295,7 @@ app.post('/googleSignIn', function (req, res) {
         if (req.body.isNewUser) {
             mySqlConnection.query(googleUserInfoQuery, [userName, userEmail], function (err, results) { });
         }
-        var idToken = req.body.idToken;
-        var payload = {
-            userId: idToken
-        };
-        var options = { 'expiresIn': '1h',
-            algorithm: 'RS256',
-            header: {
-                kid: idToken
-            }
-        };
-        var jwtToken = jwt.sign(payload, privateKey, options);
+        //res.send({redirect : homeUrl});
         /*admin.auth.createCustomToken(jwtToken).then(token => {
             res.cookie('jwt6', token, {secure : true, httpOnly : true});
             res.send({redirect : homeUrl});
