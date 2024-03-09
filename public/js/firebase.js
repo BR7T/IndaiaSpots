@@ -73,5 +73,6 @@ export async function signIn(firebaseAuth,userData) {
         if(userInfo.emailVerified) {
             fetchToServer('userSignin',userData)
         }
-    }) 
+    })
+    //fetchToServer('userSignin',userData);
 }

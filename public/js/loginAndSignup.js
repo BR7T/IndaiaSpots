@@ -89,9 +89,9 @@ form.addEventListener('submit', async function(event) {
     if(signup) {
         const response = fetchToServer('checkUserExist',userData).then(async function() {
             if(!response.exists) {
-                const userCredentials = await createUserWithEmailAndPassword(firebaseAuth,email.value,password.value);
+                /*const userCredentials = await createUserWithEmailAndPassword(firebaseAuth,email.value,password.value);
                 await sendEmailVerification(userCredentials.user);
-                form.reset();
+                form.reset();*/
                 const dbSignup = await fetchToServer('userSignup',userData);
                 document.location.href = 'http://localhost:3100/emailVerification';
             }

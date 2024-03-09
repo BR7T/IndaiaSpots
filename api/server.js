@@ -15,14 +15,11 @@ const path = require('path');
 const port = 3100;
 const app = express();
 //mySQL
-const mysql = require('mysql2');
 const mysqlCon = require('./db/mysql.js');
 const getEstab = require('./establishment/getEstab.js');
+const addUser = require('./user/addUser.js');
 //bcrypt
 const hashing = require('./bcrypt/hashing.js');
-// Jwt Authentication
-const jwt = require('jsonwebtoken');
-const jwtSecret = require('../jwtSecret.json');
 //Cookie parser
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -62,17 +59,6 @@ let routes = {
 pageRoutes(routes['pages']);
 app.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (req.cookies.jwt6) {
-            try {
-                /*if(await admin.auth().verifyIdToken(req.cookies.jwt6)) {
-                    res.redirect('/home');
-                    console.log('auth succeded');
-                }*/
-            }
-            catch (error) {
-                return error;
-            }
-        }
         res.redirect('/login');
     });
 });
@@ -100,17 +86,18 @@ app.post('/userSignin', function (req, res) {
         });
     });
 });
-let si = hashing.compare('sadcsdh', 'sdifnvosd');
-console.log(si);
 app.post('/checkUserExist', function (req, res) {
     const userData = {
         username: req.body.username,
         email: req.body.email,
         password: ""
     };
-    const signupCheckQuery = 'select * from user where userName=? or where email=?';
+    const signupCheckQuery = 'select * from user where userName=? or email=?';
     mySqlConnection.query(signupCheckQuery, [userData.username, userData.email], (err, results) => {
-        if (results.length > 0) {
+        if (err) {
+            console.log(err);
+        }
+        else if (results && results.length > 0) {
             res.send({ exists: true });
         }
         else {
@@ -127,22 +114,20 @@ app.post('/userSignup', function (req, res) {
             email: req.body.email,
             password: hashedPassword
         };
-        const signupCheckQuery = 'select * from user where userName=?; select * from user where email=?';
-        const insertToDatabaseQuery = 'insert into user(userName,email,password) values (?,?,?)';
-        yield mySqlConnection.query(signupCheckQuery, [userData.username, userData.email], (err, results) => {
-            if (results[0].length > 0) {
-                message = "Nome de usuário já está em uso";
+        const signupCheckQuery = 'select * from user where userName=? or email=?';
+        mySqlConnection.query(signupCheckQuery, [userData.username, userData.email], (err, results) => {
+            if (err) {
+                console.log(err);
             }
-            else if (results[1].length > 0) {
-                message = "Email já está em uso";
+            else if (results.length > 0) {
+                message = "Nome de usuário já está em uso";
             }
             if (message != null) {
                 res.send({ errorMessage: message, credentials: false });
             }
             else if (message == null) {
-                mySqlConnection.query(insertToDatabaseQuery, [userData.username, userData.email, userData.password], (err, results) => {
-                    res.send({ credentials: true, errorMessage: "Cadastro Concluído" });
-                });
+                addUser.addNewUser(mySqlConnection, userData);
+                res.send({ credentials: true, errorMessage: "Cadastro Concluído" });
             }
         });
     });
@@ -175,28 +160,24 @@ app.post('/addEstab', function (req, res) {
     });
 });
 app.post('/searchEstab', function (req, res) {
-    const searchQuery = "select * from establishments where name like CONCAT('%',?,'%')";
     const keyword = req.body.keyword;
-    mySqlConnection.query(searchQuery, [keyword], (err, results) => {
-        if (results.length > 0) {
-            res.status(301).send(results);
-        }
-        else {
-            res.status(404).send({ error: 'nothing found' });
-        }
+    getEstab.searchEstab(mySqlConnection, keyword).then(results => {
+        res.send(results);
     });
 });
 app.post('/googleSignIn', function (req, res) {
-    const homeUrl = "http://localhost:3100/home";
-    const userName = req.body.username;
-    const userEmail = req.body.email;
-    const googleUserInfoQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
+    const userData = {
+        username: req.body.username,
+        email: req.body.email,
+        password: ""
+    };
+    const googleUserInsertQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
     const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function () {
         if (isValidGoogleToken.error_description == "Invalid Value") {
-            throw new Error('token invalid');
+            throw Error('token invalid');
         }
-        if (req.body.isNewUser) {
-            mySqlConnection.query(googleUserInfoQuery, [userName, userEmail], (err, results) => { });
+        else if (req.body.isNewUser) {
+            mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
         }
         res.redirect('http://localhost:3100/home');
     });

@@ -20,16 +20,18 @@ function hashPassword(password, saltRounds) {
 }
 exports.hashPassword = hashPassword;
 function compare(string1, string2) {
-    bcrypt.compare(string1, string2, function (err, resp) {
-        if (err) {
-            throw Error('comparison failed');
-        }
-        else if (resp) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    return __awaiter(this, void 0, void 0, function* () {
+        bcrypt.compare(string1, string2, function (err, resp) {
+            if (err) {
+                throw Error('comparison failed');
+            }
+            else if (resp) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
     });
 }
 exports.compare = compare;

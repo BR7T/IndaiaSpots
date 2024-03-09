@@ -6,15 +6,11 @@ const path = require('path');
 const port = 3100;
 const app = express();
 //mySQL
-const mysql = require('mysql2');
 const mysqlCon = require('./db/mysql.js');
 const getEstab = require('./establishment/getEstab.js');
+const addUser = require('./user/addUser.js');
 //bcrypt
 const hashing = require('./bcrypt/hashing.js');
-
-// Jwt Authentication
-const jwt = require('jsonwebtoken');
-const jwtSecret = require('../jwtSecret.json');
 
 //Cookie parser
 const cookieParser = require('cookie-parser');
@@ -24,7 +20,6 @@ let privateKey = fs.readFileSync('privateKey.key', 'utf8');
 
 //firebase
 const firebase = require('./firebase/auth.js');
-
 
 app.use(express.static(path.join('C:/VScode projects/IndaiaSpots/IndaiaSpots', 'public')));
 app.use(express.json());       
@@ -67,19 +62,13 @@ type userData  = {
     password : string
 }
 
+type estabData = {
+    estabName : string,
+    imageUrl : string,
+    description : string
+}
+
 app.get('/', async function(req : Request,res : Response) {
-    if(req.cookies.jwt6) {
-        try {
-            /*if(await admin.auth().verifyIdToken(req.cookies.jwt6)) {
-                res.redirect('/home');
-                console.log('auth succeded');
-            }*/
-            
-        }
-        catch(error) {
-            return error;
-        }
-    }
     res.redirect('/login');
 })
 
@@ -113,43 +102,43 @@ app.post('/checkUserExist', function(req : Request,res : Response) {
         password : ""
     }
     
-    const signupCheckQuery =  'select * from user where userName=? or where email=?';
-    mySqlConnection.query(signupCheckQuery,[userData.username, userData.email], (err : string,results : any) => {
-        if(results.length > 0 ){ res.send({exists : true}) }
+    const signupCheckQuery =  'select * from user where userName=? or email=?';
+    mySqlConnection.query(signupCheckQuery,[userData.username, userData.email], (err : string,results : Array<any>) => {
+        if (err) {
+            console.log(err);
+        }
+        else if( results && results.length > 0 ) { 
+            res.send({exists : true}) 
+        }
         else { res.send({exists : false}) }
     })
 })
 
 app.post('/userSignup', async function(req : Request, res : Response) {
     let message : string;
-    let hashedPassword = await hashing.hashPassword(req.body.password,12);
+    let hashedPassword : string = await hashing.hashPassword(req.body.password,12);
     
     const userData : userData = {
         username : req.body.username,
         email : req.body.email,
         password : hashedPassword
     }
-    const signupCheckQuery =  'select * from user where userName=?; select * from user where email=?';
-    const insertToDatabaseQuery = 'insert into user(userName,email,password) values (?,?,?)';
 
-    await mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err : string,results : any) => {
-        if(results[0].length > 0) {
+    const signupCheckQuery =  'select * from user where userName=? or email=?';
+    mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err : string,results : Array<any>) => {
+        if(err) {console.log(err)}
+        else if(results.length > 0) {
             message  = "Nome de usuário já está em uso";
-        }
-        else if(results[1].length > 0) {
-            message = "Email já está em uso";
         }
         if(message != null) {
             res.send({errorMessage : message, credentials : false});
         }
         else if(message == null) {
-            mySqlConnection.query(insertToDatabaseQuery,[userData.username,userData.email,userData.password], (err : string,results : any) => {
-                res.send({credentials : true, errorMessage : "Cadastro Concluído"});
-            });
+            addUser.addNewUser(mySqlConnection,userData);
+            res.send({credentials : true, errorMessage : "Cadastro Concluído"});
         }
     });
 })
-
 
 app.get('/getEstabs', function(req : Request,res : Response) {     
     getEstab.getAllEstabs(mySqlConnection).then(results => {
@@ -158,11 +147,12 @@ app.get('/getEstabs', function(req : Request,res : Response) {
 })
 
 app.post('/addEstab', async function(req : Request,res : Response) {
-    const data = {
+    const data : estabData =  {
         estabName : req.body.name,
         imageUrl : req.body.imageUrl,
         description : req.body.description
     }
+    
     const checkIfExistsQuery = 'select * from establishments where name = ? or imageUrl = ? or description = ?';
     const insertQuery = 'insert into establishments(name,imageUrl,description) values(?,?,?)';
     
@@ -180,30 +170,27 @@ app.post('/addEstab', async function(req : Request,res : Response) {
 })
 
 app.post('/searchEstab', function(req :Request ,res : Response) {
-    const searchQuery = "select * from establishments where name like CONCAT('%',?,'%')";
     const keyword : string = req.body.keyword;
-    mySqlConnection.query(searchQuery,[keyword], (err : string,results : Array<JSON>) => {
-        if(results.length > 0) {
-            res.status(301).send(results);
-        }
-        else {
-            res.status(404).send({error : 'nothing found'});
-        }
+    getEstab.searchEstab(mySqlConnection,keyword).then(results => {
+        res.send(results);
     })
 })
 
 app.post('/googleSignIn', function(req : Request,res :Response) {
-    const homeUrl = "http://localhost:3100/home";
-    const userName = req.body.username;
-    const userEmail = req.body.email;
-    const googleUserInfoQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
+    const userData : userData = {
+        username : req.body.username,
+        email : req.body.email,
+        password : ""
+    }
+    
+    const googleUserInsertQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
     
     const isValidGoogleToken : any = firebase.checkGoogleToken(req.body.token).then(function() {
         if(isValidGoogleToken.error_description == "Invalid Value") {
-            throw new Error('token invalid');
+            throw Error('token invalid');
         }
-        if(req.body.isNewUser) {
-            mySqlConnection.query(googleUserInfoQuery,[userName,userEmail], (err : string,results : any) => {})
+        else if(req.body.isNewUser) {
+            mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {})
         }
         res.redirect('http://localhost:3100/home');
     })
