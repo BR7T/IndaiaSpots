@@ -19,8 +19,7 @@ const mysql = require('mysql2');
 const mysqlCon = require('./db/mysql.js');
 const getEstab = require('./establishment/getEstab.js');
 //bcrypt
-const bcrypt = require('bcrypt');
-const saltRounds = 12;
+const hashing = require('./bcrypt/hashing.js');
 // Jwt Authentication
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('../jwtSecret.json');
@@ -30,11 +29,7 @@ app.use(cookieParser());
 const fs = require('fs');
 let privateKey = fs.readFileSync('privateKey.key', 'utf8');
 //firebase
-const admin = require('firebase-admin');
-const firebaseCredentials = require("../serviceAccountKey.json");
-admin.initializeApp({
-    credential: admin.credential.cert(firebaseCredentials)
-});
+const firebase = require('./firebase/auth.js');
 app.use(express.static(path.join('C:/VScode projects/IndaiaSpots/IndaiaSpots', 'public')));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -94,30 +89,19 @@ app.post('/userSignin', function (req, res) {
             if (err)
                 throw err;
             if (results.length > 0) {
-                bcrypt.compare(req.body.password, results[0].password, function (err, resp) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    else if (resp) {
-                        res.send({ credentials: true, redirect: homeUrl });
-                    }
-                    else {
-                        res.send({ credentials: false, errorMessage: "Email ou senha inválidos" });
-                    }
-                });
-            }
-            else {
-                res.send({ credentials: false, errorMessage: "Email ou senha inválidos" });
+                let isEqual = hashing.compare(req.body.password, results[0].password);
+                if (isEqual) {
+                    res.send({ credentials: true, redirect: homeUrl });
+                }
+                else {
+                    res.send({ credentials: false, errorMessage: "Email ou senha inválidos" });
+                }
             }
         });
     });
 });
-function hashPassword(password, saltRounds) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const hash = yield bcrypt.hash(password, saltRounds);
-        return hash;
-    });
-}
+let si = hashing.compare('sadcsdh', 'sdifnvosd');
+console.log(si);
 app.post('/checkUserExist', function (req, res) {
     const userData = {
         username: req.body.username,
@@ -137,7 +121,7 @@ app.post('/checkUserExist', function (req, res) {
 app.post('/userSignup', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         let message;
-        let hashedPassword = yield hashPassword(req.body.password, 12);
+        let hashedPassword = yield hashing.hashPassword(req.body.password, 12);
         const userData = {
             username: req.body.username,
             email: req.body.email,
@@ -164,12 +148,7 @@ app.post('/userSignup', function (req, res) {
     });
 });
 app.get('/getEstabs', function (req, res) {
-    /*const getAllRestaurants = 'select * from establishments';
-    mySqlConnection.query(getAllRestaurants, (err : string, results : Array<any>) => {
-        res.send(results);
-    });*/
-    getEstab.getAllEstabs(mySqlConnection)
-        .then(results => {
+    getEstab.getAllEstabs(mySqlConnection).then(results => {
         res.send(results);
     });
 });
@@ -207,39 +186,19 @@ app.post('/searchEstab', function (req, res) {
         }
     });
 });
-function checkGoogleToken(token) {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'default',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }).then(response => response.json()).then(response => {
-            return response;
-        });
-    });
-}
 app.post('/googleSignIn', function (req, res) {
     const homeUrl = "http://localhost:3100/home";
     const userName = req.body.username;
     const userEmail = req.body.email;
     const googleUserInfoQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
-    const isValidGoogleToken = checkGoogleToken(req.body.token).then(function () {
+    const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function () {
         if (isValidGoogleToken.error_description == "Invalid Value") {
             throw new Error('token invalid');
         }
         if (req.body.isNewUser) {
             mySqlConnection.query(googleUserInfoQuery, [userName, userEmail], (err, results) => { });
         }
-        //res.send({redirect : homeUrl});
-        /*admin.auth.createCustomToken(jwtToken).then(token => {
-            res.cookie('jwt6', token, {secure : true, httpOnly : true});
-            res.send({redirect : homeUrl});
-        })*/
+        res.redirect('http://localhost:3100/home');
     });
 });
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-module.exports = { hashPassword };

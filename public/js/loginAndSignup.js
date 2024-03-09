@@ -33,11 +33,6 @@ async function fetchToServer(route,body) {
                 'Content-Type': 'application/json',
             },
     }).then(response => response.json()).then(response => {
-            if(route == 'userSignin') {
-                if(response.credentials) {
-                    document.location.href = response.redirect;
-                }
-            }
             return response;
         })
 }

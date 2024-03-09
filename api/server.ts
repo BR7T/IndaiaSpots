@@ -10,8 +10,8 @@ const mysql = require('mysql2');
 const mysqlCon = require('./db/mysql.js');
 const getEstab = require('./establishment/getEstab.js');
 //bcrypt
-const bcrypt = require('bcrypt');
-const saltRounds = 12;
+const hashing = require('./bcrypt/hashing.js');
+
 // Jwt Authentication
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('../jwtSecret.json');
@@ -23,11 +23,8 @@ const fs = require('fs');
 let privateKey = fs.readFileSync('privateKey.key', 'utf8');
 
 //firebase
-const admin = require('firebase-admin');
-const firebaseCredentials = require("../serviceAccountKey.json");
-admin.initializeApp({
-    credential : admin.credential.cert(firebaseCredentials)
-})
+const firebase = require('./firebase/auth.js');
+
 
 app.use(express.static(path.join('C:/VScode projects/IndaiaSpots/IndaiaSpots', 'public')));
 app.use(express.json());       
@@ -98,28 +95,16 @@ app.post('/userSignin', async function(req : Request,res : Response) {
     mySqlConnection.query(checkEmailQuery,[userData.email], (err : string,results : any) => {
         if(err) throw err;
         if(results.length > 0) {
-            bcrypt.compare(req.body.password, results[0].password, function(err : string, resp : string) {
-                if (err){
-                    console.log(err);
-                }
-                else if (resp) {
-                    res.send({credentials : true, redirect : homeUrl});
-                } else {
-                    res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
-                }
-                });
+            let isEqual = hashing.compare(req.body.password, results[0].password);
+            if(isEqual) {
+                res.send({credentials : true, redirect : homeUrl});
             }
-        else {
+            else {
             res.send({credentials : false,errorMessage: "Email ou senha inválidos"});
+            }
         }
     });
-});
-
-async function hashPassword(password : string ,saltRounds : number) {
-    const hash = await bcrypt.hash(password,saltRounds);
-    return hash;
-}
-
+})
 
 app.post('/checkUserExist', function(req : Request,res : Response) {
     const userData : userData = {
@@ -137,7 +122,7 @@ app.post('/checkUserExist', function(req : Request,res : Response) {
 
 app.post('/userSignup', async function(req : Request, res : Response) {
     let message : string;
-    let hashedPassword = await hashPassword(req.body.password,12);
+    let hashedPassword = await hashing.hashPassword(req.body.password,12);
     
     const userData : userData = {
         username : req.body.username,
@@ -167,12 +152,7 @@ app.post('/userSignup', async function(req : Request, res : Response) {
 
 
 app.get('/getEstabs', function(req : Request,res : Response) {     
-    /*const getAllRestaurants = 'select * from establishments';
-    mySqlConnection.query(getAllRestaurants, (err : string, results : Array<any>) => {
-        res.send(results);
-    });*/
-    getEstab.getAllEstabs(mySqlConnection)
-    .then(results => {
+    getEstab.getAllEstabs(mySqlConnection).then(results => {
         res.send(results);
     })
 })
@@ -212,41 +192,22 @@ app.post('/searchEstab', function(req :Request ,res : Response) {
     })
 })
 
-async function checkGoogleToken(token : string) {
-    await fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`, {   
-        method : 'GET',
-        mode: 'cors',
-        cache: 'default',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-    }).then(response => response.json()).then(response => {
-        return response;
-    })
-}
-
 app.post('/googleSignIn', function(req : Request,res :Response) {
     const homeUrl = "http://localhost:3100/home";
     const userName = req.body.username;
     const userEmail = req.body.email;
     const googleUserInfoQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
     
-    const isValidGoogleToken : any = checkGoogleToken(req.body.token).then(function() {
+    const isValidGoogleToken : any = firebase.checkGoogleToken(req.body.token).then(function() {
         if(isValidGoogleToken.error_description == "Invalid Value") {
             throw new Error('token invalid');
         }
         if(req.body.isNewUser) {
             mySqlConnection.query(googleUserInfoQuery,[userName,userEmail], (err : string,results : any) => {})
         }
-        //res.send({redirect : homeUrl});
-        /*admin.auth.createCustomToken(jwtToken).then(token => {
-            res.cookie('jwt6', token, {secure : true, httpOnly : true});
-            res.send({redirect : homeUrl});
-        })*/
+        res.redirect('http://localhost:3100/home');
     })
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
-module.exports = {hashPassword}
