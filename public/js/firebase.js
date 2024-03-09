@@ -63,6 +63,7 @@ export async function signinGoogle(firebaseAuth){
         const userEmail = userInfo.email;
         const username = userInfo.displayName;
         googleAuthInfo(token,userEmail, username, isNewUser);
+        document.location.href = 'http://localhost:3100/home';
     })
 }
 

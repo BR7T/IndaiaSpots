@@ -8,27 +8,28 @@ const app = express();
 //mySQL
 const mysql = require('mysql2');
 const mysqlCon = require('./db/mysql.js');
+const getEstab = require('./establishment/getEstab.js');
 //bcrypt
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 // Jwt Authentication
 const jwt = require('jsonwebtoken');
-const jwtSecret = require('./jwtSecret.json')
+const jwtSecret = require('../jwtSecret.json');
 
 //Cookie parser
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 const fs = require('fs');
-let privateKey = fs.readFileSync('PrivateKey.key', 'utf8');
+let privateKey = fs.readFileSync('privateKey.key', 'utf8');
 
 //firebase
 const admin = require('firebase-admin');
-const firebaseCredentials = require("./serviceAccountKey.json");
+const firebaseCredentials = require("../serviceAccountKey.json");
 admin.initializeApp({
     credential : admin.credential.cert(firebaseCredentials)
 })
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join('C:/VScode projects/IndaiaSpots/IndaiaSpots', 'public')));
 app.use(express.json());       
 app.use(express.urlencoded({     
   extended: true
@@ -48,7 +49,7 @@ const mySqlConnection : any = mysqlCon.newConnection();
 function pageRoutes(routesArray : Array<any>) {
     for(let i = 0; i < routesArray.length; i++) {
         app.get(`/${routesArray[i].routeName}`, (req : Request,res : any) => {
-            res.sendFile(path.join(__dirname, 'public', routesArray[i].fileName));
+            res.sendFile(path.join('C:/VScode projects/IndaiaSpots/IndaiaSpots', 'public', routesArray[i].fileName));
         })
     }
 }
@@ -135,7 +136,7 @@ app.post('/checkUserExist', function(req : Request,res : Response) {
 })
 
 app.post('/userSignup', async function(req : Request, res : Response) {
-    let message : unknown = null;
+    let message : string;
     let hashedPassword = await hashPassword(req.body.password,12);
     
     const userData : userData = {
@@ -166,10 +167,14 @@ app.post('/userSignup', async function(req : Request, res : Response) {
 
 
 app.get('/getEstabs', function(req : Request,res : Response) {     
-    const getAllRestaurants = 'select * from establishments';
+    /*const getAllRestaurants = 'select * from establishments';
     mySqlConnection.query(getAllRestaurants, (err : string, results : Array<any>) => {
         res.send(results);
-    });
+    });*/
+    getEstab.getAllEstabs(mySqlConnection)
+    .then(results => {
+        res.send(results);
+    })
 })
 
 app.post('/addEstab', async function(req : Request,res : Response) {
@@ -196,8 +201,8 @@ app.post('/addEstab', async function(req : Request,res : Response) {
 
 app.post('/searchEstab', function(req :Request ,res : Response) {
     const searchQuery = "select * from establishments where name like CONCAT('%',?,'%')";
-    const keyword = req.body.keyword;
-    mySqlConnection.query(searchQuery,[keyword], (err : string,results : any) => {
+    const keyword : string = req.body.keyword;
+    mySqlConnection.query(searchQuery,[keyword], (err : string,results : Array<JSON>) => {
         if(results.length > 0) {
             res.status(301).send(results);
         }

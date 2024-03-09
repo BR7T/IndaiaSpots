@@ -1,6 +1,6 @@
 //const hashing = require('./hashPassword');
 const bcrypt  = require('bcrypt');
-const { hashPassword } = require('./server');
+const { hashPassword } = require('./api/server');
 
 test('Hashing Password', () => {
     return hashPassword("MatheusSilva123",12).then(hash => {
