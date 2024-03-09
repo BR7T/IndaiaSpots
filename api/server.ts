@@ -9,6 +9,7 @@ const app = express();
 const mysqlCon = require('./db/mysql.js');
 const getEstab = require('./establishment/getEstab.js');
 const addUser = require('./user/addUser.js');
+const getUser = require('./user/getUser.js');
 //bcrypt
 const hashing = require('./bcrypt/hashing.js');
 
@@ -102,20 +103,18 @@ app.post('/checkUserExist', function(req : Request,res : Response) {
         password : ""
     }
     
-    const signupCheckQuery =  'select * from user where userName=? or email=?';
-    mySqlConnection.query(signupCheckQuery,[userData.username, userData.email], (err : string,results : Array<any>) => {
-        if (err) {
-            console.log(err);
+    getUser.checkIfUserExists(mySqlConnection,userData).then(result => {
+        if(result) {
+            res.send({exists : true})
         }
-        else if( results && results.length > 0 ) { 
-            res.send({exists : true}) 
+        else {
+            res.send({exists : false})
         }
-        else { res.send({exists : false}) }
     })
 })
 
 app.post('/userSignup', async function(req : Request, res : Response) {
-    let message : string;
+    let message : string | null = null;
     let hashedPassword : string = await hashing.hashPassword(req.body.password,12);
     
     const userData : userData = {
@@ -130,7 +129,7 @@ app.post('/userSignup', async function(req : Request, res : Response) {
         else if(results.length > 0) {
             message  = "Nome de usuário já está em uso";
         }
-        if(message != null) {
+        if(message) {
             res.send({errorMessage : message, credentials : false});
         }
         else if(message == null) {
@@ -182,10 +181,9 @@ app.post('/googleSignIn', function(req : Request,res :Response) {
         email : req.body.email,
         password : ""
     }
-    
-    const googleUserInsertQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
-    
-    const isValidGoogleToken : any = firebase.checkGoogleToken(req.body.token).then(function() {
+
+    const googleUserInsertQuery : string = 'insert into user(username,email,authentication_type) values(?,?,"google")';    
+    const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function() {
         if(isValidGoogleToken.error_description == "Invalid Value") {
             throw Error('token invalid');
         }

@@ -24,3 +24,20 @@ export function getAllUsers(mysqlCon) {
     });
 }
 
+export function checkIfUserExists(mysqlCon,userData) {
+    const signupCheckQuery =  'select * from user where userName=? or email=?';
+    return new Promise((resolve,reject) => {
+        mysqlCon.query(signupCheckQuery,[userData.username, userData.email], (err : string,results : Array<any>) => {
+            if (err) {
+                reject(err);
+            }
+            else if(results && results.length > 0){
+                resolve(true)
+            }
+            else {
+                resolve(false)
+            }
+        })
+    })
+}
+

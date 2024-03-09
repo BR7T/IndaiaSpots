@@ -18,6 +18,7 @@ const app = express();
 const mysqlCon = require('./db/mysql.js');
 const getEstab = require('./establishment/getEstab.js');
 const addUser = require('./user/addUser.js');
+const getUser = require('./user/getUser.js');
 //bcrypt
 const hashing = require('./bcrypt/hashing.js');
 //Cookie parser
@@ -92,12 +93,8 @@ app.post('/checkUserExist', function (req, res) {
         email: req.body.email,
         password: ""
     };
-    const signupCheckQuery = 'select * from user where userName=? or email=?';
-    mySqlConnection.query(signupCheckQuery, [userData.username, userData.email], (err, results) => {
-        if (err) {
-            console.log(err);
-        }
-        else if (results && results.length > 0) {
+    getUser.checkIfUserExists(mySqlConnection, userData).then(result => {
+        if (result) {
             res.send({ exists: true });
         }
         else {
@@ -107,7 +104,7 @@ app.post('/checkUserExist', function (req, res) {
 });
 app.post('/userSignup', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        let message;
+        let message = null;
         let hashedPassword = yield hashing.hashPassword(req.body.password, 12);
         const userData = {
             username: req.body.username,
@@ -122,7 +119,7 @@ app.post('/userSignup', function (req, res) {
             else if (results.length > 0) {
                 message = "Nome de usuário já está em uso";
             }
-            if (message != null) {
+            if (message) {
                 res.send({ errorMessage: message, credentials: false });
             }
             else if (message == null) {
