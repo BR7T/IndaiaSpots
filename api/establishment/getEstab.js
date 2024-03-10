@@ -14,9 +14,10 @@ function getEstab(mysqlCon, estabId) {
 }
 exports.getEstab = getEstab;
 function getAllEstabs(mysqlCon) {
-    const getEstabQuery = 'select * from establishments';
+    const getEstabQuery = 'select * from establishments where approved=?';
+    const isApproved = true;
     return new Promise((resolve, reject) => {
-        mysqlCon.query(getEstabQuery, (err, results) => {
+        mysqlCon.query(getEstabQuery, [isApproved], (err, results) => {
             if (err) {
                 reject(err);
             }
@@ -28,9 +29,10 @@ function getAllEstabs(mysqlCon) {
 }
 exports.getAllEstabs = getAllEstabs;
 function searchEstab(mysqlCon, keyword) {
-    const searchQuery = "select * from establishments where name like CONCAT('%',?,'%')";
+    const searchQuery = "select * from establishments where name like CONCAT('%',?,'%') and approved=?";
+    const isApproved = true;
     return new Promise((resolve, reject) => {
-        mysqlCon.query(searchQuery, [keyword], (err, results) => {
+        mysqlCon.query(searchQuery, [keyword, isApproved], (err, results) => {
             if (err)
                 reject(err);
             else {

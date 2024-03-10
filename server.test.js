@@ -1,4 +1,4 @@
-const { hashPassword } = require('./api/bcrypt/hashing.js');
+const { hashPassword } = require('./api/middleware/bcrypt/hashing.js');
 
 test('Hashing Password', () => {
     return hashPassword("MatheusSilva123",12).then(hash => {

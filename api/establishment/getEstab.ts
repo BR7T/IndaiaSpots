@@ -1,4 +1,3 @@
-
 export function getEstab(mysqlCon, estabId) {
     const getEstabQuery = 'select * from establishments where id_establishments = ?';
     mysqlCon.query(getEstabQuery,[estabId], (err : string,results : Array<JSON>) => {
@@ -11,11 +10,11 @@ export function getEstab(mysqlCon, estabId) {
         })
 }
 
-export function getAllEstabs(mysqlCon) {
-    const getEstabQuery = 'select * from establishments';
-        
+export function getAllEstabs (mysqlCon) : Promise<Array<JSON>> {
+    const getEstabQuery = 'select * from establishments where approved=?';
+    const isApproved = true; 
     return new Promise((resolve, reject) => {
-        mysqlCon.query(getEstabQuery, (err : string, results : Array<any>) => {
+        mysqlCon.query(getEstabQuery,[isApproved], (err : string, results : Array<any>) => {
             if (err) {
                 reject(err);
             } else {
@@ -25,11 +24,11 @@ export function getAllEstabs(mysqlCon) {
     });
 }
 
-export function searchEstab(mysqlCon,keyword) {
-    const searchQuery : string = "select * from establishments where name like CONCAT('%',?,'%')";
-
+export function searchEstab(mysqlCon,keyword) : Promise<Array<JSON>> {
+    const searchQuery : string = "select * from establishments where name like CONCAT('%',?,'%') and approved=?";
+    const isApproved = true;
     return new Promise((resolve,reject) => {
-        mysqlCon.query(searchQuery,[keyword], (err : string,results : Array<JSON>) => {
+        mysqlCon.query(searchQuery,[keyword,isApproved], (err : string,results : Array<JSON>) => {
             if(err) reject(err);
             else {
                 resolve(results);

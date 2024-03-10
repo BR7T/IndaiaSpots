@@ -10,7 +10,7 @@ export function getUser(mysqlCon, userId : number) {
     })
 }
 
-export function getAllUsers(mysqlCon) {
+export function getAllUsers(mysqlCon) : Promise<Array<JSON>> {
     const getUserQuery = 'select * from establishments';
         
     return new Promise((resolve, reject) => {
@@ -24,7 +24,7 @@ export function getAllUsers(mysqlCon) {
     });
 }
 
-export function checkIfUserExists(mysqlCon,userData) {
+export function checkIfUserExists(mysqlCon,userData) : Promise<boolean> {
     const signupCheckQuery =  'select * from user where userName=? or email=?';
     return new Promise((resolve,reject) => {
         mysqlCon.query(signupCheckQuery,[userData.username, userData.email], (err : string,results : Array<any>) => {

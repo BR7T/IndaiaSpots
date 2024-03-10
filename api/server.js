@@ -15,12 +15,12 @@ const path = require('path');
 const port = 3100;
 const app = express();
 //mySQL
-const mysqlCon = require('./db/mysql.js');
+const mysqlCon = require('./middleware/db/mysql.js');
 const getEstab = require('./establishment/getEstab.js');
 const addUser = require('./user/addUser.js');
 const getUser = require('./user/getUser.js');
 //bcrypt
-const hashing = require('./bcrypt/hashing.js');
+const hashing = require('./middleware/bcrypt/hashing.js');
 //Cookie parser
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -94,9 +94,8 @@ app.post('/checkUserExist', function (req, res) {
         password: ""
     };
     getUser.checkIfUserExists(mySqlConnection, userData).then(result => {
-        if (result) {
+        if (result)
             res.send({ exists: true });
-        }
         else {
             res.send({ exists: false });
         }
