@@ -10,7 +10,7 @@ export function getEstab(mysqlCon, estabId) {
         })
 }
 
-export function getAllEstabs (mysqlCon) : Promise<Array<JSON>> {
+export function getAllEstabs(mysqlCon) : Promise<Array<JSON>> {
     const getEstabQuery = 'select * from establishments where approved=?';
     const isApproved = true; 
     return new Promise((resolve, reject) => {

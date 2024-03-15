@@ -17,15 +17,11 @@ const app = express();
 //mySQL
 const mysqlCon = require('./middleware/db/mysql.js');
 const getEstab = require('./establishment/getEstab.js');
+const addEstab = require('./establishment/addEstab.js');
 const addUser = require('./user/addUser.js');
 const getUser = require('./user/getUser.js');
 //bcrypt
 const hashing = require('./middleware/bcrypt/hashing.js');
-//Cookie parser
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
-const fs = require('fs');
-let privateKey = fs.readFileSync('privateKey.key', 'utf8');
 //firebase
 const firebase = require('./firebase/auth.js');
 app.use(express.static(path.join('C:/VScode projects/IndaiaSpots/IndaiaSpots', 'public')));
@@ -103,6 +99,10 @@ app.post('/checkUserExist', function (req, res) {
 });
 app.post('/userSignup', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (req.body.password.length < 8) {
+            res.send({ error: 'Tamanho da senha inválido' });
+            return;
+        }
         let message = null;
         let hashedPassword = yield hashing.hashPassword(req.body.password, 12);
         const userData = {
@@ -142,17 +142,7 @@ app.post('/addEstab', function (req, res) {
         };
         const checkIfExistsQuery = 'select * from establishments where name = ? or imageUrl = ? or description = ?';
         const insertQuery = 'insert into establishments(name,imageUrl,description) values(?,?,?)';
-        mySqlConnection.query(checkIfExistsQuery, [data.estabName, data.imageUrl, data.description], (err, results) => {
-            if (results.length == 0) {
-                mySqlConnection.query(insertQuery, [data.estabName, data.imageUrl, data.description], (err, results) => {
-                    console.log('success');
-                    res.send({ message: "new establishment added successfully", query: true });
-                });
-            }
-            else {
-                res.send({ message: "name or background image URL already in use", query: false });
-            }
-        });
+        addEstab.addEstab(mySqlConnection, data);
     });
 });
 app.post('/searchEstab', function (req, res) {

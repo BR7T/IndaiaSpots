@@ -21,14 +21,5 @@ module.exports = {
             if(err) throw err;
             return results;
         });
-    },
-    addEstabQuery(connection,data) {
-        const checkIfExistsQuery = 'select * from establishments where name = ? or imageUrl = ? or description = ?';
-        const insertQuery = 'insert into establishments(name,imageUrl,description) values(?,?,?)';
-    
-        connection.query(checkIfExistsQuery,[data.estabName,data.imageUrl,data.description], (err : string,results : any) => {
-            return results
-        })
     }
-
 }

@@ -1,23 +1,18 @@
-import { Request, Response } from "express";
-
 //Express
 const express = require('express');
+import { Request, Response } from "express";
 const path = require('path');
 const port = 3100;
 const app = express();
 //mySQL
 const mysqlCon = require('./middleware/db/mysql.js');
 const getEstab = require('./establishment/getEstab.js');
+const addEstab = require('./establishment/addEstab.js');
 const addUser = require('./user/addUser.js');
 const getUser = require('./user/getUser.js');
+
 //bcrypt
 const hashing = require('./middleware/bcrypt/hashing.js');
-
-//Cookie parser
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
-const fs = require('fs');
-let privateKey = fs.readFileSync('privateKey.key', 'utf8');
 
 //firebase
 const firebase = require('./firebase/auth.js');
@@ -37,11 +32,12 @@ app.use(function (req : Request, res : any, next : any) {
 });
 
 const mySqlConnection : any = mysqlCon.newConnection();
+const domainUrl = 'http://localhost:3100';
 
 //Page serving
 function pageRoutes(routesArray : Array<any>) {
     for(let i = 0; i < routesArray.length; i++) {
-        app.get(`/${routesArray[i].routeName}`, (req : Request,res : any) => {
+        app.get(`/${routesArray[i].routeName}`, (req : Request,res : Response) => {
             res.sendFile(path.join('C:/VScode projects/IndaiaSpots/IndaiaSpots', 'public', routesArray[i].fileName));
         })
     }
@@ -80,7 +76,7 @@ app.post('/userSignin', async function(req : Request,res : Response) {
         password : req.body.password
     }
  
-    const homeUrl = 'http://localhost:3100/home';
+    const homeUrl = `${domainUrl}/home`;
     const checkEmailQuery =  'select * from user where email=?';
     mySqlConnection.query(checkEmailQuery,[userData.email], (err : string,results : any) => {
         if(err) throw err;
@@ -112,6 +108,11 @@ app.post('/checkUserExist', function(req : Request,res : Response) {
 })
 
 app.post('/userSignup', async function(req : Request, res : Response) {
+    if(req.body.password.length < 8 ) {
+        res.send({error : 'Tamanho da senha inválido'});
+        return;
+    }
+    
     let message : string | null = null;
     let hashedPassword : string = await hashing.hashPassword(req.body.password,12);
     
@@ -121,11 +122,14 @@ app.post('/userSignup', async function(req : Request, res : Response) {
         password : hashedPassword
     }
 
-    const signupCheckQuery =  'select * from user where userName=? or email=?';
+    const signupCheckQuery =  'select * from user where userName=? or email=?;select * from user where email=?';
     mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err : string,results : Array<any>) => {
         if(err) {console.log(err)}
-        else if(results.length > 0) {
+        else if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
+        }
+        else if(results[1].length > 0) {
+            message = 'email já está em uso'
         }
         if(message) {
             res.send({errorMessage : message, credentials : false});
@@ -149,21 +153,7 @@ app.post('/addEstab', async function(req : Request,res : Response) {
         imageUrl : req.body.imageUrl,
         description : req.body.description
     }
-    
-    const checkIfExistsQuery = 'select * from establishments where name = ? or imageUrl = ? or description = ?';
-    const insertQuery = 'insert into establishments(name,imageUrl,description) values(?,?,?)';
-    
-    mySqlConnection.query(checkIfExistsQuery,[data.estabName,data.imageUrl,data.description], (err : string,results : any) => {
-        if(results.length == 0) {
-            mySqlConnection.query(insertQuery,[data.estabName,data.imageUrl,data.description], (err : string,results : any) => {
-                console.log('success');
-                res.send({message : "new establishment added successfully", query : true});
-            })
-        }
-        else {
-           res.send({message : "name or background image URL already in use", query : false});
-        }
-    })
+    addEstab.addEstab(mySqlConnection,data);
 })
 
 app.post('/searchEstab', function(req :Request ,res : Response) {
@@ -180,7 +170,7 @@ app.post('/googleSignIn', function(req : Request,res :Response) {
         password : ""
     }
 
-    const googleUserInsertQuery : string = 'insert into user(username,email,authentication_type) values(?,?,"google")';    
+    const googleUserInsertQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';    
     const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function() {
         if(isValidGoogleToken.error_description == "Invalid Value") {
             throw Error('token invalid');
@@ -188,7 +178,7 @@ app.post('/googleSignIn', function(req : Request,res :Response) {
         else if(req.body.isNewUser) {
             mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {})
         }
-        res.redirect('http://localhost:3100/home');
+        res.redirect(`${domainUrl}/home`);
     })
 })
 
