@@ -37,6 +37,7 @@ app.use(function (req, res, next) {
     next();
 });
 const mySqlConnection = mysqlCon.newConnection();
+const domainUrl = 'http://localhost:3100';
 //Page serving
 function pageRoutes(routesArray) {
     for (let i = 0; i < routesArray.length; i++) {
@@ -66,7 +67,7 @@ app.post('/userSignin', function (req, res) {
             email: req.body.email,
             password: req.body.password
         };
-        const homeUrl = 'http://localhost:3100/home';
+        const homeUrl = `${domainUrl}/home`;
         const checkEmailQuery = 'select * from user where email=?';
         mySqlConnection.query(checkEmailQuery, [userData.email], (err, results) => {
             if (err)
@@ -100,8 +101,7 @@ app.post('/checkUserExist', function (req, res) {
 app.post('/userSignup', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.body.password.length < 8) {
-            res.send({ error: 'Tamanho da senha inválido' });
-            return;
+            res.status(400);
         }
         let message = null;
         let hashedPassword = yield hashing.hashPassword(req.body.password, 12);
@@ -110,13 +110,16 @@ app.post('/userSignup', function (req, res) {
             email: req.body.email,
             password: hashedPassword
         };
-        const signupCheckQuery = 'select * from user where userName=? or email=?';
+        const signupCheckQuery = 'select * from user where userName=? or email=?;select * from user where email=?';
         mySqlConnection.query(signupCheckQuery, [userData.username, userData.email], (err, results) => {
             if (err) {
                 console.log(err);
             }
-            else if (results.length > 0) {
+            else if (results[0].length > 0) {
                 message = "Nome de usuário já está em uso";
+            }
+            else if (results[1].length > 0) {
+                message = 'email já está em uso';
             }
             if (message) {
                 res.send({ errorMessage: message, credentials: false });
@@ -133,6 +136,16 @@ app.get('/getEstabs', function (req, res) {
         res.send(results);
     });
 });
+app.get('/getEstab/:id', function (req, res) {
+    getEstab.getEstab(mySqlConnection, req.params.id, res).then(results => {
+        if (results.length == 0) {
+            res.status(404).send('Not found');
+        }
+        else {
+            res.send(results);
+        }
+    });
+});
 app.post('/addEstab', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const data = {
@@ -140,14 +153,12 @@ app.post('/addEstab', function (req, res) {
             imageUrl: req.body.imageUrl,
             description: req.body.description
         };
-        const checkIfExistsQuery = 'select * from establishments where name = ? or imageUrl = ? or description = ?';
-        const insertQuery = 'insert into establishments(name,imageUrl,description) values(?,?,?)';
         addEstab.addEstab(mySqlConnection, data);
     });
 });
 app.post('/searchEstab', function (req, res) {
     const keyword = req.body.keyword;
-    getEstab.searchEstab(mySqlConnection, keyword).then(results => {
+    getEstab.searchEstab(mySqlConnection, keyword, res).then(results => {
         res.send(results);
     });
 });
@@ -165,7 +176,7 @@ app.post('/googleSignIn', function (req, res) {
         else if (req.body.isNewUser) {
             mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
         }
-        res.redirect('http://localhost:3100/home');
+        res.redirect(`${domainUrl}/home`);
     });
 });
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

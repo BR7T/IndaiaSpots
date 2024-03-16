@@ -1,13 +1,13 @@
 export function getEstab(mysqlCon, estabId) {
     const getEstabQuery = 'select * from establishments where id_establishments = ?';
-    mysqlCon.query(getEstabQuery,[estabId], (err : string,results : Array<JSON>) => {
-        if(results.length == 0) {
-            throw Error('establishment with that id not found');
-        }
-        else {
-            return results;
-        }
+    return new Promise((resolve, reject) => {
+        mysqlCon.query(getEstabQuery,[estabId], (err : string,results : Array<JSON>) => {
+            if(err) reject(err)
+            else {
+                resolve(results);
+            }
         })
+    })
 }
 
 export function getAllEstabs(mysqlCon) : Promise<Array<JSON>> {
@@ -15,12 +15,11 @@ export function getAllEstabs(mysqlCon) : Promise<Array<JSON>> {
     const isApproved = true; 
     return new Promise((resolve, reject) => {
         mysqlCon.query(getEstabQuery,[isApproved], (err : string, results : Array<any>) => {
-            if (err) {
-                reject(err);
-            } else {
+            if (err) reject(err);
+            else {
                 resolve(results);
             }
-            });
+        });
     });
 }
 

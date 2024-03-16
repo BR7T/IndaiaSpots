@@ -109,8 +109,7 @@ app.post('/checkUserExist', function(req : Request,res : Response) {
 
 app.post('/userSignup', async function(req : Request, res : Response) {
     if(req.body.password.length < 8 ) {
-        res.send({error : 'Tamanho da senha inválido'});
-        return;
+        res.status(400);
     }
     
     let message : string | null = null;
@@ -147,6 +146,17 @@ app.get('/getEstabs', function(req : Request,res : Response) {
     })
 })
 
+app.get('/getEstab/:id', function(req : Request,res : Response) {     
+    getEstab.getEstab(mySqlConnection,req.params.id,res).then(results => {
+        if(results.length == 0) {
+            res.status(404).send('Not found')
+        }
+        else {
+            res.send(results);
+        }
+    })
+})
+
 app.post('/addEstab', async function(req : Request,res : Response) {
     const data : estabData =  {
         estabName : req.body.name,
@@ -158,7 +168,7 @@ app.post('/addEstab', async function(req : Request,res : Response) {
 
 app.post('/searchEstab', function(req :Request ,res : Response) {
     const keyword : string = req.body.keyword;
-    getEstab.searchEstab(mySqlConnection,keyword).then(results => {
+    getEstab.searchEstab(mySqlConnection,keyword,res).then(results => {
         res.send(results);
     })
 })
