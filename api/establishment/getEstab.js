@@ -19,9 +19,8 @@ function getAllEstabs(mysqlCon) {
     const isApproved = true;
     return new Promise((resolve, reject) => {
         mysqlCon.query(getEstabQuery, [isApproved], (err, results) => {
-            if (err) {
+            if (err)
                 reject(err);
-            }
             else {
                 resolve(results);
             }

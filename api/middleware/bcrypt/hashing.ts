@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const saltRounds = 12;
 
 export async function hashPassword(password : string ,saltRounds : number) {
     const hash = await bcrypt.hash(password,saltRounds);
@@ -14,6 +13,8 @@ export async function compare(string1 : string, string2 : string) {
         else if(resp) {
             return true;
         }
-        else {return false}
+        else {
+            return false
+        }
     })      
 }

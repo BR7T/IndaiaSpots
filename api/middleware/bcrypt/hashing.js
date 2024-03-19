@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.compare = exports.hashPassword = void 0;
 const bcrypt = require('bcrypt');
-const saltRounds = 12;
 function hashPassword(password, saltRounds) {
     return __awaiter(this, void 0, void 0, function* () {
         const hash = yield bcrypt.hash(password, saltRounds);

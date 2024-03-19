@@ -17,7 +17,7 @@ export async function initializeFirebase() {
 const googleProvider = new GoogleAuthProvider();
 
 function googleAuthInfo(accessToken, email, username, isNewUser) {
-    fetch('http://localhost:3100/googleSignIn', {   
+    fetch('http://localhost:3100/user/googleSignIn', {   
         method : 'POST',
         body : JSON.stringify({token : accessToken, email : email, username : username, isNewUser : isNewUser}),
         mode: 'cors',
@@ -28,7 +28,6 @@ function googleAuthInfo(accessToken, email, username, isNewUser) {
         },
     }).then(response => response.json())
     .then(response => {
-        document.location.href = response.redirect;
     })
 }
 
@@ -63,7 +62,7 @@ export async function signinGoogle(firebaseAuth){
         const userEmail = userInfo.email;
         const username = userInfo.displayName;
         googleAuthInfo(token,userEmail, username, isNewUser);
-        document.location.href = 'http://localhost:3100/home';
+        //document.location.href = 'http://localhost:3100/home';
     })
 }
 
@@ -71,7 +70,7 @@ export async function signIn(firebaseAuth,userData) {
     await signInWithEmailAndPassword(firebaseAuth, email.value, password.value).then(result => {
         let userInfo = result.user;
         if(userInfo.emailVerified) {
-            fetchToServer('userSignin',userData)
+            fetchToServer('userSignIn',userData)
         }
     })
     //fetchToServer('userSignin',userData);

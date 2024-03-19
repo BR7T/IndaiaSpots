@@ -38,7 +38,7 @@ function createCards(){
 }
 
 async function getEstabs() {
-    const response = await fetch('http://localhost:3100/getEstabs');
+    const response = await fetch('http://localhost:3100/estab/getEstabs');
     const results = await response.json();
     for(let i = 0; i < results.length; i++) {
         const data = {
@@ -100,5 +100,4 @@ import {initializeFirebase,signinGoogle,signIn} from './firebase.js';
 initializeFirebase();
 let firebaseAuth = getAuth();
 
-let user = firebaseAuth.currentUser;
-console.log(user);
+

@@ -24,11 +24,17 @@ const getUser = require('./user/getUser.js');
 const hashing = require('./middleware/bcrypt/hashing.js');
 //firebase
 const firebase = require('./firebase/auth.js');
-app.use(express.static(path.join('C:/VScode projects/IndaiaSpots/IndaiaSpots', 'public')));
+//JWT
+const jwt = require('jsonwebtoken');
+const jwtSecret = require('../jwtSecret.json');
+const cookieParser = require('cookie-parser');
+const verifyJWt = require('./middleware/jwt/verifyJwt.js');
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
+app.use(cookieParser());
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -42,7 +48,7 @@ const domainUrl = 'http://localhost:3100';
 function pageRoutes(routesArray) {
     for (let i = 0; i < routesArray.length; i++) {
         app.get(`/${routesArray[i].routeName}`, (req, res) => {
-            res.sendFile(path.join('C:/VScode projects/IndaiaSpots/IndaiaSpots', 'public', routesArray[i].fileName));
+            res.sendFile(path.join(__dirname, '..', 'public', routesArray[i].fileName));
         });
     }
 }
@@ -57,10 +63,20 @@ let routes = {
 pageRoutes(routes['pages']);
 app.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        res.redirect('/login');
+        const token = req.cookies.authorization1;
+        const decoded = jwt.verify(token, jwtSecret.key);
+        mySqlConnection.query('select * from user where id_user=?', [decoded.userId], (err, results) => {
+            if (results.length > 0) {
+                res.redirect('/home');
+            }
+            else if (results.length == 0) {
+                //res.redirect('/login');
+            }
+        });
     });
 });
-app.post('/userSignin', function (req, res) {
+//User routes
+app.post('/user/signin', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const userData = {
             username: "",
@@ -84,7 +100,7 @@ app.post('/userSignin', function (req, res) {
         });
     });
 });
-app.post('/checkUserExist', function (req, res) {
+app.post('/user/checkUserExist', function (req, res) {
     const userData = {
         username: req.body.username,
         email: req.body.email,
@@ -98,7 +114,7 @@ app.post('/checkUserExist', function (req, res) {
         }
     });
 });
-app.post('/userSignup', function (req, res) {
+app.post('/user/signup', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.body.password.length < 8) {
             res.status(400);
@@ -131,22 +147,57 @@ app.post('/userSignup', function (req, res) {
         });
     });
 });
-app.get('/getEstabs', function (req, res) {
-    getEstab.getAllEstabs(mySqlConnection).then(results => {
-        res.send(results);
+app.post('/user/googleSignIn', function (req, res) {
+    const userData = {
+        username: req.body.username,
+        email: req.body.email,
+        password: ""
+    };
+    const googleUserInsertQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
+    const getUserIdQuery = 'select * from user where email=?';
+    const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function () {
+        if (isValidGoogleToken.error_description == "Invalid Value") {
+            throw Error('token invalid');
+        }
+        else if (req.body.isNewUser) {
+            mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
+        }
+        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
+        mySqlConnection.query(getUserIdQuery, [userData.email], (err, results) => {
+            const token = jwt.sign({ userId: results[0].id_user }, jwtSecret.key, { 'expiresIn': '1h' });
+            res.cookie('authorization1', token, { secure: true, httpOnly: true }).send({ n: 'n' });
+        });
+        //res.redirect(`${domainUrl}/home`);
     });
 });
-app.get('/getEstab/:id', function (req, res) {
-    getEstab.getEstab(mySqlConnection, req.params.id, res).then(results => {
-        if (results.length == 0) {
-            res.status(404).send('Not found');
-        }
-        else {
+//Establishments routes
+app.get('/estab/getEstabs', function (req, res) {
+    const decoded = verifyJWt.verify(req, jwt, jwtSecret);
+    if (decoded) {
+        getEstab.getAllEstabs(mySqlConnection).then(results => {
             res.send(results);
-        }
-    });
+        });
+    }
+    else {
+        res.status(400);
+    }
 });
-app.post('/addEstab', function (req, res) {
+app.get('/estab/getEstab/:id', function (req, res) {
+    if (req.cookies.authorization1) {
+        const decoded = jwt.verify(req.cookies.authorization1, jwtSecret.key);
+        if (decoded) {
+            getEstab.getEstab(mySqlConnection, req.params.id, res).then(results => {
+                if (results.length == 0) {
+                    res.status(404).send('Not found');
+                }
+                else {
+                    res.send(results);
+                }
+            });
+        }
+    }
+});
+app.post('/estab/addEstab', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const data = {
             estabName: req.body.name,
@@ -156,27 +207,13 @@ app.post('/addEstab', function (req, res) {
         addEstab.addEstab(mySqlConnection, data);
     });
 });
-app.post('/searchEstab', function (req, res) {
+app.post('/estab/searchEstab', function (req, res) {
     const keyword = req.body.keyword;
     getEstab.searchEstab(mySqlConnection, keyword, res).then(results => {
         res.send(results);
     });
 });
-app.post('/googleSignIn', function (req, res) {
-    const userData = {
-        username: req.body.username,
-        email: req.body.email,
-        password: ""
-    };
-    const googleUserInsertQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
-    const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function () {
-        if (isValidGoogleToken.error_description == "Invalid Value") {
-            throw Error('token invalid');
-        }
-        else if (req.body.isNewUser) {
-            mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
-        }
-        res.redirect(`${domainUrl}/home`);
-    });
+app.post('/refreshToken', function (req, res) {
+    const refreshToken = jwt.sign({});
 });
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
