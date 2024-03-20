@@ -28,7 +28,7 @@ const firebase = require('./firebase/auth.js');
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('../jwtSecret.json');
 const cookieParser = require('cookie-parser');
-const verifyJWt = require('./middleware/jwt/verifyJwt.js');
+const jwtValidation = require('./middleware/jwt/jwtValidation.js');
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -63,16 +63,12 @@ let routes = {
 pageRoutes(routes['pages']);
 app.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const token = req.cookies.authorization1;
-        const decoded = jwt.verify(token, jwtSecret.key);
-        mySqlConnection.query('select * from user where id_user=?', [decoded.userId], (err, results) => {
-            if (results.length > 0) {
-                res.redirect('/home');
-            }
-            else if (results.length == 0) {
-                //res.redirect('/login');
-            }
-        });
+        if (jwtValidation.isTokenValid(req, jwt, jwtSecret)) {
+            res.send({ foi: 'foi' });
+        }
+        else {
+            jwtValidation.refreshToken(req, res, jwt, jwtSecret);
+        }
     });
 });
 //User routes
@@ -159,20 +155,20 @@ app.post('/user/googleSignIn', function (req, res) {
         if (isValidGoogleToken.error_description == "Invalid Value") {
             throw Error('token invalid');
         }
-        else if (req.body.isNewUser) {
-            mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
-        }
+        /*else if(req.body.isNewUser) {
+            mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
+        }*/
         mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
         mySqlConnection.query(getUserIdQuery, [userData.email], (err, results) => {
-            const token = jwt.sign({ userId: results[0].id_user }, jwtSecret.key, { 'expiresIn': '1h' });
-            res.cookie('authorization1', token, { secure: true, httpOnly: true }).send({ n: 'n' });
+            jwtValidation.createTokens(jwt, jwtSecret, res, results);
         });
-        //res.redirect(`${domainUrl}/home`);
     });
+});
+app.post('/refresh', function (req, res) {
 });
 //Establishments routes
 app.get('/estab/getEstabs', function (req, res) {
-    const decoded = verifyJWt.verify(req, jwt, jwtSecret);
+    const decoded = jwtValidation.isTokenValid(req, jwt, jwtSecret);
     if (decoded) {
         getEstab.getAllEstabs(mySqlConnection).then(results => {
             res.send(results);
@@ -183,18 +179,16 @@ app.get('/estab/getEstabs', function (req, res) {
     }
 });
 app.get('/estab/getEstab/:id', function (req, res) {
-    if (req.cookies.authorization1) {
-        const decoded = jwt.verify(req.cookies.authorization1, jwtSecret.key);
-        if (decoded) {
-            getEstab.getEstab(mySqlConnection, req.params.id, res).then(results => {
-                if (results.length == 0) {
-                    res.status(404).send('Not found');
-                }
-                else {
-                    res.send(results);
-                }
-            });
-        }
+    const decoded = jwtValidation.isTokenValid(req, jwt, jwtSecret);
+    if (decoded) {
+        getEstab.getEstab(mySqlConnection, req.params.id, res).then(results => {
+            if (results.length == 0) {
+                res.status(404).send('Not found');
+            }
+            else {
+                res.send(results);
+            }
+        });
     }
 });
 app.post('/estab/addEstab', function (req, res) {

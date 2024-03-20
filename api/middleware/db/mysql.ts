@@ -1,14 +1,9 @@
 export {};
 const mysql = require('mysql2');
+const config = require('./mysqlConfig.json');
 
 export function newConnection() {
-    let con : any = mysql.createConnection({
-        host : "localhost",
-        user : "root",
-        password : "MyJoaol",
-        database : "indaiaspots",
-        multipleStatements : true
-    })
+    let con : any = mysql.createConnection(config);
     con.connect(function(err : String) {
         console.log("Connection to database Successful");
     });

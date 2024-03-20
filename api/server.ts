@@ -1,6 +1,7 @@
 //Express
 const express = require('express');
 import { NextFunction, Request, Response } from "express";
+import { refreshToken } from "firebase-admin/app";
 const path = require('path');
 const port = 3100;
 const app = express();
@@ -21,7 +22,7 @@ const firebase = require('./firebase/auth.js');
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('../jwtSecret.json');
 const cookieParser = require('cookie-parser');
-const verifyJWt = require('./middleware/jwt/verifyJwt.js');
+const jwtValidation = require('./middleware/jwt/jwtValidation.js');
 
 
 app.use(express.static(path.join(__dirname,'..', 'public')));
@@ -74,16 +75,12 @@ type estabData = {
 }
 
 app.get('/', async function(req : Request,res : Response) {
-    const token = req.cookies.authorization1;
-    const decoded = jwt.verify(token, jwtSecret.key);
-    mySqlConnection.query('select * from user where id_user=?',[decoded.userId], (err,results) => {
-        if(results.length > 0) {
-            res.redirect('/home');
-        }
-        else if(results.length == 0) {
-            //res.redirect('/login');
-        }
-    })
+    if(jwtValidation.isTokenValid(req,jwt,jwtSecret)) {
+        res.redirect('/home');
+    }
+    else {
+        jwtValidation.refreshToken(req,res,jwt,jwtSecret);
+    }
 })
 
 //User routes
@@ -171,20 +168,23 @@ app.post('/user/googleSignIn', function(req : Request,res :Response) {
         if(isValidGoogleToken.error_description == "Invalid Value") {
             throw Error('token invalid');
         }
-        else if(req.body.isNewUser) {
+        /*else if(req.body.isNewUser) {
             mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
-        }
+        }*/
         mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
         mySqlConnection.query(getUserIdQuery,[userData.email], (err : string,results : any) => {
-            const token = jwt.sign({userId : results[0].id_user},jwtSecret.key, {'expiresIn' : '1h'});
-            res.cookie('authorization1',token, {secure : true, httpOnly : true}).send({n : 'n'});
+            jwtValidation.createTokens(jwt,jwtSecret,res,results);
         });
-    })
+    });
+})
+
+app.post('/refresh', function(req : Request,res :Response) {
+
 })
 
 //Establishments routes
 app.get('/estab/getEstabs', function(req : Request,res : Response) {     
-    const decoded = verifyJWt.verify(req,jwt,jwtSecret);
+    const decoded = jwtValidation.isTokenValid(req,jwt,jwtSecret);
     if(decoded) {
         getEstab.getAllEstabs(mySqlConnection).then(results => {
             res.send(results);
@@ -195,7 +195,7 @@ app.get('/estab/getEstabs', function(req : Request,res : Response) {
 })
 
 app.get('/estab/getEstab/:id', function(req : Request,res : Response) {     
-    const decoded = verifyJWt.verify(req,jwt,jwtSecret);
+    const decoded = jwtValidation.isTokenValid(req,jwt,jwtSecret);
     if(decoded) {
         getEstab.getEstab(mySqlConnection,req.params.id,res).then(results => {
             if(results.length == 0) {
