@@ -12,7 +12,7 @@ export function isTokenValid(request,jwt,jwtSecret) {
 
 export function createTokens(jwt,jwtSecret,response,results) {
     const token = jwt.sign({userId : results[0].id_user},jwtSecret.key, {'expiresIn' : '1h'});
-    const refreshToken = jwt.sign({userId : results[0].id_user},jwtSecret.key, {'expiresIn' : '1d'});
+    const refreshToken = jwt.sign({userId : results[0].id_user},jwtSecret.key, {'expiresIn' : '30d'});
     response.cookie('authorization1',[token], {secure : true, httpOnly : true}).cookie('refreshToken',[refreshToken], {secure : true, httpOnly : true});
     response.send({process : 'ok'});
 }

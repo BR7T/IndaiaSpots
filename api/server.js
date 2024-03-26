@@ -64,7 +64,7 @@ pageRoutes(routes['pages']);
 app.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (jwtValidation.isTokenValid(req, jwt, jwtSecret)) {
-            res.send({ foi: 'foi' });
+            res.redirect('/home');
         }
         else {
             jwtValidation.refreshToken(req, res, jwt, jwtSecret);
@@ -149,15 +149,14 @@ app.post('/user/googleSignIn', function (req, res) {
         email: req.body.email,
         password: ""
     };
-    const googleUserInsertQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
-    const getUserIdQuery = 'select * from user where email=?';
+    const googleUserInsertQuery = 'insert into usuario(nome,email,tipo_autenticacao) values(?,?,"google")';
+    const getUserIdQuery = 'select * from usuario where email=?';
     const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function () {
         if (isValidGoogleToken.error_description == "Invalid Value") {
             throw Error('token invalid');
         }
-        /*else if(req.body.isNewUser) {
-            mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
-        }*/
+        else if (req.body.isNewUser) {
+        }
         mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
         mySqlConnection.query(getUserIdQuery, [userData.email], (err, results) => {
             jwtValidation.createTokens(jwt, jwtSecret, res, results);
@@ -206,8 +205,5 @@ app.post('/estab/searchEstab', function (req, res) {
     getEstab.searchEstab(mySqlConnection, keyword, res).then(results => {
         res.send(results);
     });
-});
-app.post('/refreshToken', function (req, res) {
-    const refreshToken = jwt.sign({});
 });
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

@@ -24,10 +24,9 @@ export function getAllEstabs(mysqlCon) : Promise<Array<JSON>> {
 }
 
 export function searchEstab(mysqlCon,keyword) : Promise<Array<JSON>> {
-    const searchQuery : string = "select * from establishments where name like CONCAT('%',?,'%') and approved=?";
-    const isApproved = true;
+    const searchQuery : string = "select * from establishments where name like CONCAT('%',?,'%')";
     return new Promise((resolve,reject) => {
-        mysqlCon.query(searchQuery,[keyword,isApproved], (err : string,results : Array<JSON>) => {
+        mysqlCon.query(searchQuery,[keyword], (err : string,results : Array<JSON>) => {
             if(err) reject(err);
             else {
                 resolve(results);

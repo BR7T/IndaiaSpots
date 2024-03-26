@@ -1,7 +1,6 @@
 //Express
 const express = require('express');
 import { NextFunction, Request, Response } from "express";
-import { refreshToken } from "firebase-admin/app";
 const path = require('path');
 const port = 3100;
 const app = express();
@@ -136,7 +135,7 @@ app.post('/user/signup', async function(req : Request, res : Response) {
         password : hashedPassword
     }
 
-    const signupCheckQuery =  'select * from user where userName=? or email=?;select * from user where email=?';
+    const signupCheckQuery =  'select * from user where userName=?;select * from user where email=?';
     mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err : string,results : Array<Array<JSON>>) => {
         if(err) {console.log(err)}
         else if(results[0].length > 0) {
@@ -162,24 +161,19 @@ app.post('/user/googleSignIn', function(req : Request,res :Response) {
         password : ""
     }
 
-    const googleUserInsertQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
-    const getUserIdQuery = 'select * from user where email=?';   
+    const googleUserInsertQuery = 'insert into usuario(nome,email,tipo_autenticacao) values(?,?,"google")';
+    const getUserIdQuery = 'select * from usuario where email=?';   
     const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function() {
         if(isValidGoogleToken.error_description == "Invalid Value") {
             throw Error('token invalid');
         }
-        /*else if(req.body.isNewUser) {
-            mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
-        }*/
+        else if(req.body.isNewUser) {
+        }
         mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
         mySqlConnection.query(getUserIdQuery,[userData.email], (err : string,results : any) => {
             jwtValidation.createTokens(jwt,jwtSecret,res,results);
         });
     });
-})
-
-app.post('/refresh', function(req : Request,res :Response) {
-
 })
 
 //Establishments routes
@@ -222,10 +216,6 @@ app.post('/estab/searchEstab', function(req :Request ,res : Response) {
     getEstab.searchEstab(mySqlConnection,keyword,res).then(results => {
         res.send(results);
     })
-})
-
-app.post('/refreshToken', function(req : Request, res : Response) {
-    const refreshToken = jwt.sign({})
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
