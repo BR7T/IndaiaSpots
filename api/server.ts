@@ -164,15 +164,16 @@ app.post('/user/googleSignIn', function(req : Request,res :Response) {
     }
 
     const googleUserInsertQuery = 'insert into usuario(nome,email,tipo_autenticacao) values(?,?,"google")';
-    const getUserQuery = 'select * from usuario where email=?';   
+    const getUserIdQuery = 'select * from usuario where email=?';   
+
     const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function() {
         if(isValidGoogleToken.error_description == "Invalid Value") {
             throw Error('token invalid');
         }
         else if(req.body.isNewUser) {
-            mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
         }
-        mySqlConnection.query(getUserQuery,[userData.email], (err : string,results : any) => {
+        mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
+        mySqlConnection.query(getUserIdQuery,[userData.email], (err : string,results : any) => {
             jwtValidation.createTokens(jwt,jwtSecret,res,results);
         })
     });
