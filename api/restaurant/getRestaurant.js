@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchEstab = exports.getAllEstabs = exports.getEstab = void 0;
-function getEstab(mysqlCon, estabId) {
-    const getEstabQuery = 'select * from establishments where id_establishments = ?';
+exports.searchEstab = exports.getAllRestaurants = exports.getRestaurant = void 0;
+function getRestaurant(mysqlCon, restaurantId) {
+    const getRestaurantQuery = 'select * from restaurante where id_restaurante = ?';
     return new Promise((resolve, reject) => {
-        mysqlCon.query(getEstabQuery, [estabId], (err, results) => {
+        mysqlCon.query(getRestaurantQuery, [restaurantId], (err, results) => {
             if (err)
                 reject(err);
             else {
@@ -13,12 +13,11 @@ function getEstab(mysqlCon, estabId) {
         });
     });
 }
-exports.getEstab = getEstab;
-function getAllEstabs(mysqlCon) {
-    const getEstabQuery = 'select * from establishments where approved=?';
-    const isApproved = true;
+exports.getRestaurant = getRestaurant;
+function getAllRestaurants(mysqlCon) {
+    const getAllRestaurantQuery = 'select * from restaurante';
     return new Promise((resolve, reject) => {
-        mysqlCon.query(getEstabQuery, [isApproved], (err, results) => {
+        mysqlCon.query(getAllRestaurantQuery, (err, results) => {
             if (err)
                 reject(err);
             else {
@@ -27,9 +26,9 @@ function getAllEstabs(mysqlCon) {
         });
     });
 }
-exports.getAllEstabs = getAllEstabs;
+exports.getAllRestaurants = getAllRestaurants;
 function searchEstab(mysqlCon, keyword) {
-    const searchQuery = "select * from establishments where name like CONCAT('%',?,'%') and approved=?";
+    const searchQuery = "select * from restaurantes where nome like CONCAT('%',?,'%') and approved=?";
     const isApproved = true;
     return new Promise((resolve, reject) => {
         mysqlCon.query(searchQuery, [keyword, isApproved], (err, results) => {

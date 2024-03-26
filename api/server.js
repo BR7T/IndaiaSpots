@@ -16,8 +16,8 @@ const port = 3100;
 const app = express();
 //mySQL
 const mysqlCon = require('./middleware/db/mysql.js');
-const getEstab = require('./establishment/getEstab.js');
-const addEstab = require('./establishment/addEstab.js');
+const getRestaurant = require('./restaurant/getRestaurant.js');
+const addRestaurant = require('./restaurant/addRestaurant.js');
 const addUser = require('./user/addUser.js');
 const getUser = require('./user/getUser.js');
 //bcrypt
@@ -64,7 +64,7 @@ pageRoutes(routes['pages']);
 app.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (jwtValidation.isTokenValid(req, jwt, jwtSecret)) {
-            res.send({ foi: 'foi' });
+            res.redirect('/home');
         }
         else {
             jwtValidation.refreshToken(req, res, jwt, jwtSecret);
@@ -80,7 +80,7 @@ app.post('/user/signin', function (req, res) {
             password: req.body.password
         };
         const homeUrl = `${domainUrl}/home`;
-        const checkEmailQuery = 'select * from user where email=?';
+        const checkEmailQuery = 'select * from usuario where email=?';
         mySqlConnection.query(checkEmailQuery, [userData.email], (err, results) => {
             if (err)
                 throw err;
@@ -122,7 +122,7 @@ app.post('/user/signup', function (req, res) {
             email: req.body.email,
             password: hashedPassword
         };
-        const signupCheckQuery = 'select * from user where userName=? or email=?;select * from user where email=?';
+        const signupCheckQuery = 'select * from usuario where nome=?;select * from usuario where email=?';
         mySqlConnection.query(signupCheckQuery, [userData.username, userData.email], (err, results) => {
             if (err) {
                 console.log(err);
@@ -149,39 +149,30 @@ app.post('/user/googleSignIn', function (req, res) {
         email: req.body.email,
         password: ""
     };
-    const googleUserInsertQuery = 'insert into user(username,email,authentication_type) values(?,?,"google")';
-    const getUserIdQuery = 'select * from user where email=?';
+    const googleUserInsertQuery = 'insert into usuario(nome,email,tipo_autenticacao) values(?,?,"google")';
+    const getUserQuery = 'select * from usuario where email=?';
     const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function () {
         if (isValidGoogleToken.error_description == "Invalid Value") {
             throw Error('token invalid');
         }
-        /*else if(req.body.isNewUser) {
-            mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
-        }*/
-        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
-        mySqlConnection.query(getUserIdQuery, [userData.email], (err, results) => {
+        else if (req.body.isNewUser) {
+            mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err, results) => { });
+        }
+        mySqlConnection.query(getUserQuery, [userData.email], (err, results) => {
             jwtValidation.createTokens(jwt, jwtSecret, res, results);
         });
     });
 });
-app.post('/refresh', function (req, res) {
-});
 //Establishments routes
-app.get('/estab/getEstabs', function (req, res) {
-    const decoded = jwtValidation.isTokenValid(req, jwt, jwtSecret);
-    if (decoded) {
-        getEstab.getAllEstabs(mySqlConnection).then(results => {
-            res.send(results);
-        });
-    }
-    else {
-        res.status(400);
-    }
+app.get('/restaurant/getRestaurants', function (req, res) {
+    getRestaurant.getAllRestaurants(mySqlConnection).then(results => {
+        res.send(results);
+    });
 });
-app.get('/estab/getEstab/:id', function (req, res) {
+app.get('/restaurant/getRestaurant/:id', function (req, res) {
     const decoded = jwtValidation.isTokenValid(req, jwt, jwtSecret);
     if (decoded) {
-        getEstab.getEstab(mySqlConnection, req.params.id, res).then(results => {
+        getRestaurant.getRestaurant(mySqlConnection, req.params.id, res).then(results => {
             if (results.length == 0) {
                 res.status(404).send('Not found');
             }
@@ -191,23 +182,36 @@ app.get('/estab/getEstab/:id', function (req, res) {
         });
     }
 });
-app.post('/estab/addEstab', function (req, res) {
+app.post('/estab/addRestaurant', function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const decoded = jwtValidation.isTokenValid(req, jwt, jwtSecret);
+        if (decoded) {
+            /*const data : RestaurantData =  {
+                
+            }
+            addRestaurant.addRestaurant(mySqlConnection,data);*/
+        }
+        else {
+            res.status(400);
+        }
+    });
+});
+app.post('/estab/addRestaurant2', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const data = {
-            estabName: req.body.name,
-            imageUrl: req.body.imageUrl,
-            description: req.body.description
+            nome: req.body.nome,
+            contato: req.body.contato,
+            horario_atendimento: req.body.horario_atendimento,
+            dia_atendimento: req.body.dia_atendimento,
+            tipo_cozinha: req.body.tipo_cozinha
         };
-        addEstab.addEstab(mySqlConnection, data);
+        addRestaurant.addRestaurant(mySqlConnection, data);
     });
 });
-app.post('/estab/searchEstab', function (req, res) {
+app.post('/Restaurant/searchRestaurant', function (req, res) {
     const keyword = req.body.keyword;
-    getEstab.searchEstab(mySqlConnection, keyword, res).then(results => {
+    getRestaurant.searchRestaurant(mySqlConnection, keyword, res).then(results => {
         res.send(results);
     });
-});
-app.post('/refreshToken', function (req, res) {
-    const refreshToken = jwt.sign({});
 });
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
