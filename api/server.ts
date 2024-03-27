@@ -5,23 +5,23 @@ const path = require('path');
 const port = 3100;
 const app = express();
 //mySQL
-const mysqlCon = require('./middleware/db/mysql.js');
-const getRestaurant = require('./restaurant/getRestaurant.js');
-const addRestaurant = require('./restaurant/addRestaurant.js');
-const addUser = require('./user/addUser.js');
-const getUser = require('./user/getUser.js');
+const mysqlCon = require('./middleware/db/mysql');
+const getRestaurant = require('./restaurant/getRestaurant');
+const addRestaurant = require('./restaurant/addRestaurant');
+const addUser = require('./user/addUser');
+const getUser = require('./user/getUser');
 
 //bcrypt
-const hashing = require('./middleware/bcrypt/hashing.js');
+const hashing = require('./middleware/bcrypt/hashing');
 
 //firebase
-const firebase = require('./firebase/auth.js');
+const firebase = require('./firebase/auth');
 
 //JWT
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('../jwtSecret.json');
 const cookieParser = require('cookie-parser');
-const jwtValidation = require('./middleware/jwt/jwtValidation.js');
+const jwtValidation = require('./middleware/jwt/jwtValidation');
 
 
 app.use(express.static(path.join(__dirname,'..', 'public')));
