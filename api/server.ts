@@ -21,14 +21,13 @@ const firebase = require('./firebase/auth');
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('../jwtSecret.json');
 const cookieParser = require('cookie-parser');
-const jwtValidation = require('./middleware/jwt/jwtValidation');
-
+const jwtImplementation = require('./middleware/jwt/jwtImplementation');
+const cors = require('cors');
 
 app.use(express.static(path.join(__dirname,'..', 'public')));
+app.use(cors())
 app.use(express.json());       
-app.use(express.urlencoded({     
-  extended: true
-}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(function (req : Request, res : any, next : NextFunction) {
@@ -76,11 +75,11 @@ type RestaurantData = {
 }
 
 app.get('/', async function(req : Request,res : Response) {
-    if(jwtValidation.isTokenValid(req,jwt,jwtSecret)) {
+    if(jwtImplementation.isTokenValid(req,jwt,jwtSecret)) {
         res.redirect('/home');
     }
     else {
-        jwtValidation.refreshToken(req,res,jwt,jwtSecret);
+        jwtImplementation.refreshToken(req,res,jwt,jwtSecret);
     }
 })
 
@@ -97,8 +96,8 @@ app.post('/user/signin', async function(req : Request,res : Response) {
     mySqlConnection.query(checkEmailQuery,[userData.email], (err : string,results : any) => {
         if(err) throw err;
         if(results.length > 0) {
-            let isEqual = hashing.compare(req.body.password, results[0].password);
-            if(isEqual) {
+            let isPasswordEqual = hashing.compare(req.body.password, results[0].password);
+            if(isPasswordEqual) {
                 res.send({credentials : true, redirect : homeUrl});
             }
             else {
@@ -147,7 +146,7 @@ app.post('/user/signup', async function(req : Request, res : Response) {
             message = 'email já está em uso';
         }
         if(message) {
-            res.send({errorMessage : message, credentials : false});
+            res.send({message : message, credentials : false});
         }
         else if(message == null) {
             addUser.addNewUser(mySqlConnection,userData);
@@ -168,13 +167,13 @@ app.post('/user/googleSignIn', function(req : Request,res :Response) {
 
     const isValidGoogleToken = firebase.checkGoogleToken(req.body.token).then(function() {
         if(isValidGoogleToken.error_description == "Invalid Value") {
-            throw Error('token invalid');
+            throw Error(" Google Token invalid");
         }
         else if(req.body.isNewUser) {
+            mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
         }
-        mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
         mySqlConnection.query(getUserIdQuery,[userData.email], (err : string,results : any) => {
-            jwtValidation.createTokens(jwt,jwtSecret,res,results);
+            jwtImplementation.createTokens(jwt,jwtSecret,res,results);
         })
     });
 })
@@ -187,8 +186,8 @@ app.get('/restaurant/getRestaurants', function(req : Request,res : Response) {
 })
 
 app.get('/restaurant/getRestaurant/:id', function(req : Request,res : Response) {     
-    const decoded = jwtValidation.isTokenValid(req,jwt,jwtSecret);
-    if(decoded) {
+    const cookie = jwtImplementation.isTokenValid(req,jwt,jwtSecret);
+    if(cookie) {
         getRestaurant.getRestaurant(mySqlConnection,req.params.id,res).then(results => {
             if(results.length == 0) {
                 res.status(404).send('Not found')
@@ -201,7 +200,7 @@ app.get('/restaurant/getRestaurant/:id', function(req : Request,res : Response) 
 })
 
 app.post('/estab/addRestaurant', async function(req : Request,res : Response) {
-    const decoded = jwtValidation.isTokenValid(req,jwt,jwtSecret);
+    const decoded = jwtImplementation.isTokenValid(req,jwt,jwtSecret);
     if(decoded) {
         /*const data : RestaurantData =  {
             
@@ -212,17 +211,6 @@ app.post('/estab/addRestaurant', async function(req : Request,res : Response) {
         res.status(400);
     }
 
-})
-
-app.post('/estab/addRestaurant2', async function (req : Request,res : Response) {
-    const data : RestaurantData = {
-        nome : req.body.nome,
-        contato : req.body.contato,
-        horario_atendimento : req.body.horario_atendimento,
-        dia_atendimento : req.body.dia_atendimento,
-        tipo_cozinha : req.body.tipo_cozinha
-    }
-    addRestaurant.addRestaurant(mySqlConnection,data);
 })
 
 app.post('/Restaurant/searchRestaurant', function(req :Request ,res : Response) {

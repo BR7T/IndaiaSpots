@@ -18,7 +18,7 @@ export function createTokens(jwt,jwtSecret,response,results) {
     const refreshToken = jwt.sign({userId : results[0].id_usuario},jwtSecret.key, {'expiresIn' : '30d'});
 
     response.cookie('authorization1',[token], {secure : true, httpOnly : true}).cookie('refreshToken',[refreshToken], {secure : true, httpOnly : true});
-    response.send({process : 'ok'});
+    response.send({Accepted : true});
 }
 
 export function refreshToken(req,res,jwt,jwtSecret) {
