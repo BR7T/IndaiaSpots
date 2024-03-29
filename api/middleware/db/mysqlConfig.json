@@ -1,7 +1,7 @@
 {
     "host" : "localhost",
     "user" : "root",
-    "password" : "MyJoaol",
+    "password" : "1234",
     "database" : "indaiaspots",
     "multipleStatements" : true
 }
