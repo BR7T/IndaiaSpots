@@ -16,8 +16,7 @@ export function isTokenValid(request,jwt,jwtSecret) {
 export function createTokens(jwt,jwtSecret,response,results) {
     const token = jwt.sign({userId : results[0].ID_Usuario},jwtSecret.key, {'expiresIn' : '1h'});
     const refreshToken = jwt.sign({userId : results[0].ID_Usuario},jwtSecret.key, {'expiresIn' : '30d'});
-
-    response.cookie('authorization',[token], {secure : true, httpOnly : true, sameSite : 'none', domain : 'localhost', path: "/"}).cookie('refreshToken',[refreshToken], {secure : false, httpOnly : true, sameSite : 'none', domain : "localhost", path: "/"});
+    response.cookie('authorization',[token], {secure : true, httpOnly : true}).cookie('refreshToken',[refreshToken], {secure : true, httpOnly : true});
     response.send({Accepted : true});
 }
 
