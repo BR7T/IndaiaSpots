@@ -1,4 +1,7 @@
-export function isTokenValid(request,jwt,jwtSecret) {
+const jwt = require('jsonwebtoken');
+const jwtSecret = require('../../../jwtSecret.json');
+
+export function isTokenValid(request) {
     if(request.cookies.authorization) {
         const decoded = jwt.verify(request.cookies.authorization1.toString(), jwtSecret.key);
         if(decoded) {
@@ -13,14 +16,14 @@ export function isTokenValid(request,jwt,jwtSecret) {
     }
 }
 
-export function createTokens(jwt,jwtSecret,response,results) {
+export function createTokens(response,results) {
     const token = jwt.sign({userId : results[0].ID_Usuario},jwtSecret.key, {'expiresIn' : '1h'});
     const refreshToken = jwt.sign({userId : results[0].ID_Usuario},jwtSecret.key, {'expiresIn' : '30d'});
     response.cookie('authorization',[token], {secure : true, httpOnly : true}).cookie('refreshToken',[refreshToken], {secure : true, httpOnly : true});
     response.send({Accepted : true});
 }
 
-export function refreshToken(req,res,jwt,jwtSecret) {
+export function refreshToken(req,res) {
     if(!req.cookies.refreshToken) {
         res.redirect('/login');
     }

@@ -5,7 +5,7 @@ export async function hashPassword(password : string ,saltRounds : number) {
     return hash;
 }
 
-export async function compare(string1 : string, string2 : string) {
+export async function compare(string1 : string, string2 : string) : Promise<any> {
     bcrypt.compare(string1, string2, function(err : string, resp : string) {
         if (err){
             throw Error('comparison failed');

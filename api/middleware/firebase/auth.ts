@@ -4,9 +4,9 @@ admin.initializeApp({
     credential : admin.credential.cert(firebaseCredentials)
 })
 
-export async function checkGoogleToken(token : string) {
-    await fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`, {   
-        method : 'GET',
+export async function checkGoogleToken(token : string) : Promise<any> {
+    return await fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`, {
+        method: 'GET',
         mode: 'cors',
         cache: 'default',
         headers: {
@@ -14,7 +14,10 @@ export async function checkGoogleToken(token : string) {
             'Content-Type': 'application/json',
         },
     }).then(response => response.json()).then(response => {
-        return response;
-    })
+        if(response.error_description == "Invalid Value") return false
+        else {
+            return true
+        }
+    });
 }
 
