@@ -1,7 +1,6 @@
 //Express
 const express = require('express');
 import { NextFunction, Request, Response } from "express";
-const path = require('path');
 const port = 3100;
 const app = express();
 //mySQL
@@ -15,7 +14,7 @@ const getUser = require('./user/getUser');
 const hashing = require('./middleware/bcrypt/hashing');
 
 //firebase
-const firebase = require('./firebase/auth');
+const firebase = require('./middleware/firebase/auth');
 
 //JWT
 const jwt = require('jsonwebtoken');
@@ -23,7 +22,10 @@ const jwtSecret = require('../jwtSecret.json');
 const cookieParser = require('cookie-parser');
 const jwtImplementation = require('./middleware/jwt/jwtImplementation');
 
-app.use(express.static(path.join(__dirname,'..', 'public')));
+//Types
+import { userData } from './types/userData';
+import { RestaurantData } from "./types/restaurantData";
+
 app.use(express.json());       
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -39,6 +41,7 @@ app.use(function (req : Request, res : any, next : NextFunction) {
 const mySqlConnection = mysqlCon.newConnection();
 const domainUrl = 'http://localhost:3100';
 
+<<<<<<< HEAD
 type userData  = {
     username : string,
     email : string,
@@ -53,6 +56,8 @@ type RestaurantData = {
     tipo_cozinha : string
 }
 
+=======
+>>>>>>> 0611204f992e515da0de7098f8d4bea5ccf6333a
 app.get('/', async function(req : Request,res : Response) {
     if(jwtImplementation.isTokenValid(req,jwt,jwtSecret)) {
         res.redirect('/home');
@@ -94,7 +99,7 @@ app.post('/user/signup', async function(req : Request, res : Response) {
     let hashedPassword : string = await hashing.hashPassword(req.body.password,12);
     
     const userData : userData = {
-        username : req.body.username,
+        username : req.body.name,
         email : req.body.email,
         password : hashedPassword,
     }
