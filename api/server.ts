@@ -42,7 +42,7 @@ const domainUrl = 'http://localhost:3100';
 type userData  = {
     username : string,
     email : string,
-    password : string
+    password : string,
 }
 
 type RestaurantData = {
@@ -96,7 +96,7 @@ app.post('/user/signup', async function(req : Request, res : Response) {
     const userData : userData = {
         username : req.body.username,
         email : req.body.email,
-        password : hashedPassword
+        password : hashedPassword,
     }
 
     const signupCheckQuery =  'select * from usuario where nome=?;select * from usuario where email=?';
@@ -133,9 +133,9 @@ app.post('/user/googleSignIn', function(req : Request,res :Response) {
             throw Error(" Google Token invalid");
         }
         else if(req.body.isNewUser) {
-            mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
         }
         else {
+            mySqlConnection.query(googleUserInsertQuery,[userData.username,userData.email], (err : string,results : any) => {});
             mySqlConnection.query(getUserIdQuery,[userData.email], (err : string,results : any) => {
                 jwtImplementation.createTokens(jwt,jwtSecret,res,results);
             })
@@ -190,3 +190,30 @@ app.post('/restaurant/searchRestaurant', function(req :Request ,res : Response) 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
+app.put('/admin/set-admin/:userId', async function(req, res) {
+    const userId = req.params.userId;
+    
+    if (!req.user || req.user.isAdmin !== 1) {
+        return res.status(403).send('Acesso negado');
+    }
+
+    try {
+        const updateQuery = 'UPDATE users SET isAdmin = 1 WHERE id = ?';
+        await mySqlConnection.execute(updateQuery, [userId]);
+
+        res.send('Usuário definido como administrador com sucesso');
+    } catch (error) {
+        console.error('Erro ao definir usuário como administrador:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
+});
+
+const isAdmin = require('./middleware/isAdmin/isAdminVerif');
+// Rota para definir um usuário como administrador
+app.put('/admin/set-admin/:userId', isAdmin, async function(req, res) {
+    // Lógica para definir o usuário como administrador
+});
+
+app.listen(3000, () => {
+    console.log('Servidor está rodando na porta 3000');
+});
