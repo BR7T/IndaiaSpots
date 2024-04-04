@@ -1,7 +1,7 @@
 import express, {Router, Request, Response} from 'express';
 import { RestaurantData } from '../types/restaurantData';
 import {compare,hashPassword} from '../middleware/bcrypt/hashing';
-import mySqlConnection from '../middleware/db/mysql';
+import {mySqlConnection} from '../middleware/db/mysql';
 import {createTokens,isTokenValid} from '../middleware/jwt/jwtImplementation';
 import { getRestaurant, getAllRestaurants, searchRestaurant } from '../restaurant/getRestaurant';
 import { addRestaurant } from '../restaurant/addRestaurant';
@@ -52,4 +52,4 @@ restaurantRouter.post('/searchRestaurant', function(req :Request ,res : Response
     })
 })
 
-export default restaurantRouter;
+export {restaurantRouter};

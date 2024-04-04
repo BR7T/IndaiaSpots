@@ -1,13 +1,14 @@
 import express, {Router, Request, Response} from 'express';
 import { userData } from '../types/userData';
 import {compare,hashPassword} from '../middleware/bcrypt/hashing';
-import mySqlConnection from '../middleware/db/mysql';
+import {mySqlConnection} from '../middleware/db/mysql';
 import {createTokens} from '../middleware/jwt/jwtImplementation';
 import { addNewUser } from '../user/addUser';
+import { QueryError } from 'mysql2';
 
-const router : Router = express.Router();
+const userRouter : Router = express.Router();
 
-router.post('/signin', async function(req : Request,res : Response) {
+userRouter.post('/signin', async function(req : Request,res : Response) {
     const userData : userData = {
         username : "",
         email : req.body.email,
@@ -15,7 +16,7 @@ router.post('/signin', async function(req : Request,res : Response) {
     }
  
     const checkEmailQuery =  'select * from usuario where email=?';
-    mySqlConnection.query(checkEmailQuery,[userData.email], async (err : string,results : any) => {
+    mySqlConnection.query(checkEmailQuery,[userData.email], async (err : QueryError | null, results : any) => {
         if(err) throw err;
         if(results.length > 0) {
             let isPasswordEqual = compare(req.body.password, results[0].password);
@@ -29,7 +30,7 @@ router.post('/signin', async function(req : Request,res : Response) {
     });
 })
 
-router.post('/signup', async function(req : Request, res : Response) {
+userRouter.post('/signup', async function(req : Request, res : Response) {
     if(req.body.password.length < 8 ) {
         res.status(400);
     }
@@ -44,7 +45,7 @@ router.post('/signup', async function(req : Request, res : Response) {
     }
 
     const signupCheckQuery =  'select * from usuario where nome=?;select * from usuario where email=?';
-    mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err : string,results : Array<Array<JSON>>) => {
+    mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err : QueryError | null, results : any | ErrorCallback) => {
         if(err) {console.log(err)}
         else if(results[0].length > 0) {
             message  = "Nome de usuário já está em uso";
@@ -62,7 +63,7 @@ router.post('/signup', async function(req : Request, res : Response) {
     });
 });
 
-router.post('/googleSignIn', async function(req : Request,res :Response) {
+userRouter.post('/googleSignIn', async function(req : Request,res :Response) {
     const userData : userData = {
         username : req.body.username,
         email : req.body.email,
@@ -72,13 +73,13 @@ router.post('/googleSignIn', async function(req : Request,res :Response) {
     const googleUserInsertQuery = 'insert into usuario(nome,email,tipo_autenticacao) values(?,?,"google")';
     const getUserIdQuery = 'select * from usuario where email=?';   
     if (req.body.isNewUser) {
-        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err: string, results: any) => { });
+        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err: QueryError | null, results: any) => { });
     }
     else {
-        mySqlConnection.query(getUserIdQuery, [userData.email], (err: string, results: any) => {
+        mySqlConnection.query(getUserIdQuery, [userData.email], (err: QueryError | null, results: any) => {
             createTokens(res, results);
         });
     }
 })
 
-export default router;
+export {userRouter};

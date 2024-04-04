@@ -1,14 +1,21 @@
-export {};
-const mysql = require('mysql2');
-const config = require('./mysqlConfig.json');
+import * as mysql from 'mysql2';
+import { Connection } from 'mysql2/typings/mysql/lib/Connection';
 
-let con = mysql.createConnection(config);
-con.connect(function(err : String) {
+const config = {
+    host : "localhost",
+    user : "root",
+    database : "indaiaspots",
+    password : "MyJoaol",
+    multipleStatements : true
+}
+
+let con  : Connection = mysql.createConnection(config);
+con.connect(function(err : any) {
     console.log("Connection to database Successful");
 });
 
-let mySqlConnection = con; 
-export default mySqlConnection;
+const mySqlConnection = con; 
+export {mySqlConnection};
 
 
     
