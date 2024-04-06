@@ -14,6 +14,8 @@ import helmet from 'helmet';
 //Routers
 import {userRouter} from "./Routes/userRoutes";
 import {restaurantRouter} from "./Routes/restaurantRoutes"; 
+import { ratingRouter } from './Routes/ratingRoutes';
+import { addressRouter } from './Routes/adressRoutes';
 
 app.use(express.json());  
 app.use(helmet());     
@@ -29,10 +31,21 @@ app.use(function (req : Request, res : any, next : NextFunction) {
 
 app.use('/user', userRouter);
 app.use('/restaurant', restaurantRouter);
+app.use('/rating', ratingRouter);
+app.use('/address', addressRouter);
 
 app.get('/', async function(req : Request,res : Response) {
     if(isTokenValid(req)) {
         res.redirect('/home');
+    }
+    else {
+        refreshToken(req,res);
+    }
+})
+
+app.get('/token', async function(req : Request,res : Response) {
+    if(isTokenValid(req)) {
+       
     }
     else {
         refreshToken(req,res);
