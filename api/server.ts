@@ -16,6 +16,7 @@ import {userRouter} from "./Routes/userRoutes";
 import {restaurantRouter} from "./Routes/restaurantRoutes"; 
 import { ratingRouter } from './Routes/ratingRoutes';
 import { addressRouter } from './Routes/adressRoutes';
+import { adminRouter } from './Routes/addAdmin';
 
 app.use(express.json());  
 app.use(helmet());     
@@ -33,6 +34,7 @@ app.use('/user', userRouter);
 app.use('/restaurant', restaurantRouter);
 app.use('/rating', ratingRouter);
 app.use('/address', addressRouter);
+app.use('/admin', adminRouter);
 
 app.listen(3000, () => {
     console.log('Servidor está rodando na porta 3000');

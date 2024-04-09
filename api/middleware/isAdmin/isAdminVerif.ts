@@ -1,6 +1,8 @@
-const isAdmin = (req, res, next) => {
+import { Request, Response } from "express";
+
+const isAdmin = (req: Request, res: Response, next) => {
     console.log('Verificando permissões de administração...');
-    if (req.user && req.user.isAdmin === 1) {
+    if (userId && req.user.Administrador === 1) {
         console.log('Usuário é administrador, permitindo acesso.');
         next();
     } else {
