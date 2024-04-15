@@ -5,7 +5,7 @@ const config = {
     host : "localhost",
     user : "root",
     database : "indaiaspots",
-    password : "MyJoaol",
+    password : "1234",
     multipleStatements : true
 }
 
