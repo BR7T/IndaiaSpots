@@ -30,19 +30,20 @@ restaurantRouter.get('/getRestaurant/:id', function(req : Request,res : Response
 
 restaurantRouter.post('/addRestaurant', async function(req : Request,res : Response) {
     const cookieJwt = isTokenValid(req);
-    if(cookieJwt) {
+    console.log(req.body);
         const data : RestaurantData =  {
             nome : req.body.nome,
             contato : req.body.contato,
-            horario_atendimento : req.body.horario,
-            dia_atendimento : req.body.diaAtendimento,
-            tipo_cozinha : req.body.tipoCozinha
+            horario_atendimento : req.body.horario_atendimento,
+            dia_atendimento : req.body.dia_atendimento,
+            tipo_cozinha : req.body.tipo_cozinha,
+            CNPJ : req.body.CNPJ,
         }
-        addRestaurant(mySqlConnection,data);
-    }
-    else {
-        res.status(400);
-    }
+        console.table(data)
+        addRestaurant(mySqlConnection,data).
+        then(function() {
+            res.send({process : true}); 
+        })
 })
 
 restaurantRouter.post('/searchRestaurant', function(req :Request ,res : Response) {

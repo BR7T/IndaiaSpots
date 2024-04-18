@@ -9,6 +9,7 @@ import { QueryError } from 'mysql2';
 const userRouter : Router = express.Router();
 
 userRouter.post('/signin', async function(req : Request,res : Response) {
+    
     const userData : userData = {
         username : "",
         email : req.body.email,
@@ -19,9 +20,9 @@ userRouter.post('/signin', async function(req : Request,res : Response) {
     mySqlConnection.query(checkEmailQuery,[userData.email], async (err : QueryError | null, results : any) => {
         if(err) throw err;
         if(results.length > 0) {
-            let isPasswordEqual = compare(req.body.password, results[0].password);
+            let isPasswordEqual = compare(req.body.password, results[0].Senha);
             if(await isPasswordEqual) {
-                res.send({process : true});
+                res.send({process : true });
             }
             else {
                 res.send({process : false});
@@ -58,7 +59,7 @@ userRouter.post('/signup', async function(req : Request, res : Response) {
         }
         else if(message == null) {
             addNewUser(mySqlConnection,userData);
-            res.send({process : true, message : "Cadastro Concluído"});
+            res.status(200).send({process : true, message : "Cadastro Concluído"});
         }
     });
 });
@@ -73,9 +74,10 @@ userRouter.post('/googleSignIn', async function(req : Request,res :Response) {
     const googleUserInsertQuery = 'insert into usuario(nome,email,tipo_autenticacao) values(?,?,"google")';
     const getUserIdQuery = 'select * from usuario where email=?';   
     if (req.body.isNewUser) {
-        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err: QueryError | null, results: any) => { });
+        
     }
     else {
+        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err: QueryError | null, results: any) => { });
         mySqlConnection.query(getUserIdQuery, [userData.email], (err: QueryError | null, results: any) => {
             createTokens(res, results);
         });

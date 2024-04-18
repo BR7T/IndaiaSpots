@@ -3,5 +3,6 @@ export type RestaurantData = {
     contato : string,
     horario_atendimento : string,
     dia_atendimento : string,
-    tipo_cozinha : string
+    tipo_cozinha : string,
+    CNPJ : number,
 }
