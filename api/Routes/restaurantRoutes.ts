@@ -38,6 +38,20 @@ restaurantRouter.post('/addRestaurant', async function(req : Request,res : Respo
     else {
         res.status(400);
     }
+    console.log(req.body);
+        const data : RestaurantData =  {
+            nome : req.body.nome,
+            contato : req.body.contato,
+            horario_atendimento : req.body.horario_atendimento,
+            dia_atendimento : req.body.dia_atendimento,
+            tipo_cozinha : req.body.tipo_cozinha,
+            CNPJ : req.body.CNPJ,
+        }
+        console.table(data)
+        addRestaurant(mySqlConnection,data).
+        then(function() {
+            res.send({process : true}); 
+        })
 })
 
 restaurantRouter.post('/searchRestaurant', function(req :Request ,res : Response) {

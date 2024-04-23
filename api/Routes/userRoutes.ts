@@ -11,14 +11,14 @@ const userRouter : Router = express.Router();
 
 userRouter.post('/signin', async function(req : Request,res : Response) {
     const userData = populateUserDataObject(req);
- 
+    
     const checkEmailQuery =  'select * from usuario where email=?';
     mySqlConnection.query(checkEmailQuery,[userData.email], async (err : QueryError | null, results : any) => {
         if(err) throw err;
         if(results.length > 0) {
-            let isPasswordEqual = compare(userData.password, results[0].Senha);
+            let isPasswordEqual = compare(req.body.password, results[0].Senha);
             if(await isPasswordEqual) {
-                res.send({process : true});
+                res.send({process : true });
             }
             else {
                 res.send({process : false});
@@ -71,6 +71,7 @@ userRouter.post('/googleSignIn', async function(req : Request,res :Response) {
         });
     }
     else {
+        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err: QueryError | null, results: any) => { });
         mySqlConnection.query(getUserIdQuery, [userData.email], (err: QueryError | null, results: any) => {
             createTokens(res, results);
         });

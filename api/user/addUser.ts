@@ -6,7 +6,7 @@ export function addNewUser(mysqlCon, userData, permissionLevel) : void {
     mysqlCon.query(addUserQuery,[userData.username,userData.email,userData.password,authType,permissionLevel], (err : string,results : any) => {
         if(err) {
             throw Error('query to insert new user failed');
-        }
+        } 
     });
 }
 
