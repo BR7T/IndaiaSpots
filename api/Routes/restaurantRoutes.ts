@@ -9,7 +9,7 @@ import { populateRestaurantDataObject } from '../restaurant/addRestaurant';
 import multer from 'multer';
 import { uploadToS3 } from '../middleware/aws/aws';
 const upload = multer({ storage: multer.memoryStorage() });
-
+import dotenv from 'dotenv';
 
 const restaurantRouter : Router = express.Router();
 

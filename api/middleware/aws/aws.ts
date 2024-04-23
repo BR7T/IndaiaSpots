@@ -1,6 +1,7 @@
 import AWS, { S3 } from 'aws-sdk';
 
-require('dotenv').config();
+import * as dotenv from "dotenv";
+dotenv.config();
 const s3 = new AWS.S3();
 
 AWS.config.update({
@@ -20,10 +21,11 @@ export function uploadToS3(file, res) {
 
     s3.upload(params, function(err, data) {
         if(err) {
-            res.send(500).send(err);
+            console.log(err);
         }
         else {
             res.send(`Arquivo enviado com sucesso: ${data.Location}`);
+            console.log(`Arquivo enviado com sucesso :${data.Location}`)
         }
     })
 }
