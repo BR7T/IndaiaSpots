@@ -5,6 +5,7 @@ import {mySqlConnection} from '../middleware/db/mysql';
 import {createTokens,isTokenValid} from '../middleware/jwt/jwtImplementation';
 import { getRestaurant, getAllRestaurants, searchRestaurant } from '../restaurant/getRestaurant';
 import { addRestaurant } from '../restaurant/addRestaurant';
+import { populateRestaurantDataObject } from '../restaurant/addRestaurant';
 
 const restaurantRouter : Router = express.Router();
 
@@ -31,13 +32,7 @@ restaurantRouter.get('/getRestaurant/:id', function(req : Request,res : Response
 restaurantRouter.post('/addRestaurant', async function(req : Request,res : Response) {
     const cookieJwt = isTokenValid(req);
     if(cookieJwt) {
-        const data : RestaurantData =  {
-            nome : req.body.nome,
-            contato : req.body.contato,
-            horario_atendimento : req.body.horario,
-            dia_atendimento : req.body.diaAtendimento,
-            tipo_cozinha : req.body.tipoCozinha
-        }
+        const data = populateRestaurantDataObject(req);
         addRestaurant(mySqlConnection,data);
     }
     else {

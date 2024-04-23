@@ -5,21 +5,18 @@ import {mySqlConnection} from '../middleware/db/mysql';
 import {createTokens} from '../middleware/jwt/jwtImplementation';
 import { addNewUser } from '../user/addUser';
 import { QueryError } from 'mysql2';
+import { populateUserDataObject } from '../user/addUser';
 
 const userRouter : Router = express.Router();
 
 userRouter.post('/signin', async function(req : Request,res : Response) {
-    const userData : userData = {
-        username : "",
-        email : req.body.email,
-        password : req.body.password
-    }
+    const userData = populateUserDataObject(req);
  
     const checkEmailQuery =  'select * from usuario where email=?';
     mySqlConnection.query(checkEmailQuery,[userData.email], async (err : QueryError | null, results : any) => {
         if(err) throw err;
         if(results.length > 0) {
-            let isPasswordEqual = compare(req.body.password, results[0].password);
+            let isPasswordEqual = compare(userData.password, results[0].Senha);
             if(await isPasswordEqual) {
                 res.send({process : true});
             }
@@ -57,23 +54,21 @@ userRouter.post('/signup', async function(req : Request, res : Response) {
             res.send({message : message, process : false});
         }
         else if(message == null) {
-            addNewUser(mySqlConnection,userData);
+            addNewUser(mySqlConnection,userData,"Comum");
             res.send({process : true, message : "Cadastro Concluído"});
         }
     });
 });
 
 userRouter.post('/googleSignIn', async function(req : Request,res :Response) {
-    const userData : userData = {
-        username : req.body.username,
-        email : req.body.email,
-        password : ""
-    }
+    const userData = populateUserDataObject(req);
 
-    const googleUserInsertQuery = 'insert into usuario(nome,email,tipo_autenticacao) values(?,?,"google")';
-    const getUserIdQuery = 'select * from usuario where email=?';   
+    const googleUserInsertQuery = 'insert into Usuario(Nome,Email,tipo_autenticacao) values(?,?,"google")';
+    const getUserIdQuery = 'select * from Usuario where Email=?';   
     if (req.body.isNewUser) {
-        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err: QueryError | null, results: any) => { });
+        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err: QueryError | null, results: any) => {
+            createTokens(res, results);
+        });
     }
     else {
         mySqlConnection.query(getUserIdQuery, [userData.email], (err: QueryError | null, results: any) => {

@@ -34,18 +34,9 @@ app.use('/restaurant', restaurantRouter);
 app.use('/rating', ratingRouter);
 app.use('/address', addressRouter);
 
-app.get('/', async function(req : Request,res : Response) {
-    if(isTokenValid(req)) {
-        res.redirect('/home');
-    }
-    else {
-        refreshToken(req,res);
-    }
-})
-
 app.get('/token', async function(req : Request,res : Response) {
     if(isTokenValid(req)) {
-       
+        res.redirect('/home');
     }
     else {
         refreshToken(req,res);
