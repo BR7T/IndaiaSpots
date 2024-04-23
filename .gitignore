@@ -2,4 +2,5 @@
 /jwtSecret.json
 /PrivateKey.key
 **/node_modules
+/aws_credentials.env
 
