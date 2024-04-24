@@ -7,9 +7,6 @@ import { uploadToS3 } from '../middleware/aws/aws';
 
 const restaurantRouter : Router = express.Router();
 
-import multer from 'multer';
-//const upload = multer({ storage: multer.memoryStorage() });
-
 restaurantRouter.get('/getRestaurants', function(req : Request,res : Response) {     
     getAllRestaurants(mySqlConnection).then(results => {
         res.send(results);

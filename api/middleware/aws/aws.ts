@@ -1,4 +1,4 @@
-import AWS, { S3 } from 'aws-sdk';
+import AWS from 'aws-sdk';
 
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -13,9 +13,13 @@ AWS.config.update({
 export function uploadToS3(filename,res) {
     const params = {
         Bucket: 'imagesindaiastpots',
-        Key: `uploads/${filename}`,
+        Key: filename,
         ACL: 'public-read',
-        Expires : 60
+        Expires : 60,
+        ContentType: 'image/jpeg',
+        Conditions: [
+            ['content-length-range', 0, 3,145,728] 
+        ]
     };
 
     s3.getSignedUrl('putObject', params, (err, url) => {
