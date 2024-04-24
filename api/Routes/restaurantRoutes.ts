@@ -1,17 +1,14 @@
 import express, {Router, Request, Response} from 'express';
-import { RestaurantData } from '../types/restaurantData';
-import {compare,hashPassword} from '../middleware/bcrypt/hashing';
 import {mySqlConnection} from '../middleware/db/mysql';
-import {createTokens,isTokenValid} from '../middleware/jwt/jwtImplementation';
+import {isTokenValid} from '../middleware/jwt/jwtImplementation';
 import { getRestaurant, getAllRestaurants, searchRestaurant } from '../restaurant/getRestaurant';
-import { addRestaurant } from '../restaurant/addRestaurant';
-import { populateRestaurantDataObject } from '../restaurant/addRestaurant';
-import multer from 'multer';
+import { addRestaurant, populateRestaurantDataObject } from '../restaurant/addRestaurant';
 import { uploadToS3 } from '../middleware/aws/aws';
-const upload = multer({ storage: multer.memoryStorage() });
-import dotenv from 'dotenv';
 
 const restaurantRouter : Router = express.Router();
+
+import multer from 'multer';
+//const upload = multer({ storage: multer.memoryStorage() });
 
 restaurantRouter.get('/getRestaurants', function(req : Request,res : Response) {     
     getAllRestaurants(mySqlConnection).then(results => {
@@ -33,31 +30,14 @@ restaurantRouter.get('/getRestaurant/:id', function(req : Request,res : Response
     }
 })
 
-restaurantRouter.post('/addRestaurant', upload.single('image'), async function(req : any,res : Response) {
-    /*const cookieJwt = isTokenValid(req);
-    if(cookieJwt) {
-        const data = populateRestaurantDataObject(req);
-        addRestaurant(mySqlConnection,data);
-    }
-    else {
-        res.status(400);
-    }
-    console.log(req.body);
-        const data : RestaurantData =  {
-            nome : req.body.nome,
-            contato : req.body.contato,
-            horario_atendimento : req.body.horario_atendimento,
-            dia_atendimento : req.body.dia_atendimento,
-            tipo_cozinha : req.body.tipo_cozinha,
-            CNPJ : req.body.CNPJ,
-        }
-        console.table(data)
-        addRestaurant(mySqlConnection,data).
-        then(function() {
-            res.send({process : true}); 
-        })*/
-    const file = req.file;
-    uploadToS3(file,res);
+restaurantRouter.get('/addRestaurant', async function(req : any,res : Response) {
+    const filename = req.query.filename
+    uploadToS3(filename,res);
+    /*const data = populateRestaurantDataObject(req);
+    addRestaurant(mySqlConnection,data).then(function() {
+        const file = req.file;
+        //res.send({process : true}); 
+    })*/
 })
 
 restaurantRouter.post('/searchRestaurant', function(req :Request ,res : Response) {

@@ -10,22 +10,18 @@ AWS.config.update({
     region: process.env.AWS_REGION
 });
 
-export function uploadToS3(file, res) {
+export function uploadToS3(filename,res) {
     const params = {
         Bucket: 'imagesindaiastpots',
-        Key: `uploads/${file.originalname}`, 
-        Body: file.buffer,
-        ContentType: file.mimetype, 
-        ACL: 'public-read' 
+        Key: `uploads/${filename}`,
+        ACL: 'public-read',
+        Expires : 60
     };
 
-    s3.upload(params, function(err, data) {
-        if(err) {
-            console.log(err);
+    s3.getSignedUrl('putObject', params, (err, url) => {
+        if (err) {
+          console.log(err);
         }
-        else {
-            res.send(`Arquivo enviado com sucesso: ${data.Location}`);
-            console.log(`Arquivo enviado com sucesso :${data.Location}`)
-        }
-    })
+        res.json({ signedUrl: url });
+    });
 }

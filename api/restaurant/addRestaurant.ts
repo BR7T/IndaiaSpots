@@ -14,12 +14,12 @@ export function addRestaurant(mysqlCon,restaurantData) : Promise<void> {
             restaurantData.tipo_cozinha,
             restaurantData.CNPJ,
         ],
-            (err,results) => {
-                if(err){
-                    reject(err)
-                }else{
-                    resolve(results)
-                }
+        (err,results) => {
+            if(err){
+                reject(err)
+            }else{
+                resolve(results)
+            }
         })
     })
 }
