@@ -3,7 +3,7 @@ import {mySqlConnection} from '../middleware/db/mysql';
 import {isTokenValid} from '../middleware/jwt/jwtImplementation';
 import { getRestaurant, getAllRestaurants, searchRestaurant } from '../restaurant/getRestaurant';
 import { addRestaurant, populateRestaurantDataObject } from '../restaurant/addRestaurant';
-import { uploadToS3 } from '../middleware/aws/aws';
+import { generateSignedUrl, getBucket} from '../middleware/aws/aws';
 
 const restaurantRouter : Router = express.Router();
 
@@ -25,11 +25,13 @@ restaurantRouter.get('/getRestaurant/:id', function(req : Request,res : Response
             }
         })
     }
+
+
 })
 
-restaurantRouter.get('/addRestaurant', async function(req : any,res : Response) {
-    const filename = req.query.filename
-    uploadToS3(filename,res);
+restaurantRouter.post('/addRestaurant', async function(req : any,res : Response) {
+    const filename = req.query.filename;
+    generateSignedUrl(filename, 60, res);
     /*const data = populateRestaurantDataObject(req);
     addRestaurant(mySqlConnection,data).then(function() {
         const file = req.file;
@@ -45,3 +47,5 @@ restaurantRouter.post('/searchRestaurant', function(req :Request ,res : Response
 })
 
 export {restaurantRouter};
+
+
