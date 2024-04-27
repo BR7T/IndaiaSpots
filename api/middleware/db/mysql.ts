@@ -2,10 +2,10 @@ import * as mysql from 'mysql2';
 import { Connection } from 'mysql2/typings/mysql/lib/Connection';
 
 const config = {
-    host : "localhost",
-    user : "root",
+    host : "",
+    user : "",
     database : "indaiaspots",
-    password : "1234",
+    password : "",
     multipleStatements : true
 }
 

@@ -1,11 +1,8 @@
-import { upload } from "../middleware/multer/ImageUpload";
 import { RestaurantData } from "../types/restaurantData";
 
 export function addRestaurant(mysqlCon,restaurantData) : Promise<void> {
-    console.log("Restaurant Data : " + restaurantData)
     const insertQuery = 'insert into restaurante(nome,contato,horario_atendimento,dia_atendimento,tipo_cozinha,CNPJ) values(?,?,?,?,?,?)';
     return new Promise((resolve,reject) => {
-        upload(restaurantData.image);
         mysqlCon.query(insertQuery,[
             restaurantData.nome,
             restaurantData.contato,
@@ -13,11 +10,23 @@ export function addRestaurant(mysqlCon,restaurantData) : Promise<void> {
             restaurantData.dia_atendimento,
             restaurantData.tipo_cozinha,
             restaurantData.CNPJ,
-        ],
-        (err,results) => {
+        ], (err,results) => {
             if(err){
                 reject(err)
-            }else{
+            } else{
+                resolve(results)
+            }
+        })
+    })
+}
+
+export function addImage(mySqlConnection, filename) {
+    const url = `https://d1rz3fbu8zmjz5.cloudfront.net/${filename}`;
+    const insertQuery = 'insert into imagem(url) values (?)';
+    return new Promise((resolve, reject) => {
+        mySqlConnection.query(insertQuery,[url], (err, results) => {
+            if(err) reject(err);
+            else {
                 resolve(results)
             }
         })
