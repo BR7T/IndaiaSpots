@@ -18,19 +18,17 @@ restaurantRouter.get('/getRestaurant/:id', function(req : Request,res : Response
     if(cookie) {
         getRestaurant(mySqlConnection,req.params.id).then(results => {
             if(results.length == 0) {
-                res.status(404).send('Not found')
+                res.status(404).send({ error :'Not found'});
             }
             else {
                 res.send(results);
             }
         })
     }
-
-
 })
 
-
 restaurantRouter.get('/addRestaurant', async function(req : any,res : Response) {
+    if(!req.query.filename) res.status(400);
     const filename = req.query.filename;
     generateSignedUrl(filename, 60, res);
     /*const data = populateRestaurantDataObject(req);

@@ -25,12 +25,12 @@ export function createTokens(response,results) {
 
 export function refreshToken(req,res) {
     if(!req.cookies.refreshToken) {
-        res.redirect('/login');
+        res.status(401);
     }
     else {
         const decoded = jwt.verify(req.cookies.refreshToken.toString(),jwtSecret.key);
         const token = jwt.sign({userId : decoded.userId},jwtSecret.key, {'expiresIn' : '1h'});
-        res.cookie('authorization',[token], {secure : true, httpOnly : true, sameSite : 'None'});
-        res.redirect('/home');
+        res.cookie('authorization',[token], {secure : true, httpOnly : true});
+        res.status(200);
     }
 }

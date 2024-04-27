@@ -3,7 +3,7 @@ import { userData } from '../types/userData';
 import {compare,hashPassword} from '../middleware/bcrypt/hashing';
 import {mySqlConnection} from '../middleware/db/mysql';
 import {createTokens} from '../middleware/jwt/jwtImplementation';
-import { addNewUser } from '../user/addUser';
+import { addNewUser, checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
 import { QueryError } from 'mysql2';
 import { populateUserDataObject } from '../user/addUser';
 
@@ -21,42 +21,35 @@ userRouter.post('/signin', async function(req : Request,res : Response) {
                 res.send({process : true });
             }
             else {
-                res.send({process : false});
+                res.send({error : "email or password invalid"});
             }
         }
     });
 })
 
+
 userRouter.post('/signup', async function(req : Request, res : Response) {
     if(req.body.password.length < 8 ) {
-        res.status(400);
+        res.status(400).send({error : "password must have 8 or more characters"});
     }
-    
-    let message : string | null = null;
+
     let hashedPassword : string = await hashPassword(req.body.password,12);
-    
     const userData : userData = {
         username : req.body.name,
         email : req.body.email,
         password : hashedPassword
     }
 
-    const signupCheckQuery =  'select * from usuario where nome=?;select * from usuario where email=?';
-    mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], (err : QueryError | null, results : any | ErrorCallback) => {
+    const signupCheckQuery =  'select * from usuario where Nome=? or Email=?';
+    mySqlConnection.query(signupCheckQuery,[userData.username,userData.email], async (err : QueryError | null, results : any | ErrorCallback) => {
         if(err) {console.log(err)}
-        else if(results[0].length > 0) {
-            message  = "Nome de usuário já está em uso";
-        }
-        else if(results[1].length > 0) {
-            message = 'email já está em uso';
-        }
-        if(message) {
-            res.send({message : message, process : false});
-        }
-        else if(message == null) {
+        const isAlreadyInUse = checkIfUsernameOrEmailAlreadyTaken(userData,results[0]);
+        if(isAlreadyInUse == null) {
             addNewUser(mySqlConnection,userData,"Comum");
             res.send({process : true, message : "Cadastro Concluído"});
-        }
+        } 
+        else if(isAlreadyInUse == 'username') res.send({error : 'usuario já está em uso'});
+        else if(isAlreadyInUse == 'email') res.send({error : 'email já está em uso'});
     });
 });
 
@@ -65,13 +58,12 @@ userRouter.post('/googleSignIn', async function(req : Request,res :Response) {
 
     const googleUserInsertQuery = 'insert into Usuario(Nome,Email,tipo_autenticacao) values(?,?,"google")';
     const getUserIdQuery = 'select * from Usuario where Email=?';   
-    if (req.body.isNewUser) {
+    if(req.body.isNewUser) {
         mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err: QueryError | null, results: any) => {
             createTokens(res, results);
         });
     }
     else {
-        mySqlConnection.query(googleUserInsertQuery, [userData.username, userData.email], (err: QueryError | null, results: any) => { });
         mySqlConnection.query(getUserIdQuery, [userData.email], (err: QueryError | null, results: any) => {
             createTokens(res, results);
         });

@@ -10,7 +10,7 @@ export async function compare(string1 : string, string2 : string) : Promise<any>
         if (err){
             throw Error('comparison failed');
         }
-        if(resp) {
+        else if(resp) {
             return true;
         }
         else {

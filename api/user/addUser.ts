@@ -18,3 +18,9 @@ export function populateUserDataObject(data) {
     }
     return userData;
 }
+
+export function checkIfUsernameOrEmailAlreadyTaken(userData,array) {
+    if(array.nome == userData.username) return "username";
+    if(array.email == userData.email) return "email";
+    return null;
+}

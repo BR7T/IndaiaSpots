@@ -44,3 +44,4 @@ export function populateRestaurantDataObject(data) {
     }
     return restaurantData;
 }
+
