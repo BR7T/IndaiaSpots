@@ -1,10 +1,24 @@
-export function getUser(mysqlCon, userId : number) {
-    const getUserQuery = 'select * from user where id_user = ?';
+import { QueryError } from "mysql2";
+
+export function getUserById(mysqlCon, userId : number) {
+    const getUserQuery = 'select * from usuario where ID_Usuario = ?';
     return new Promise((resolve, reject) => {
         mysqlCon.query(getUserQuery,[userId], (err : string,results : Array<JSON>) => {
             if(err) reject(err)
             else {
                 return results;
+            }
+        })
+    })
+}
+
+export async function getUserByEmail(mysqlCon, email : string) {
+    const getUserQuery = 'select * from usuario where email = ?';
+    return new Promise((resolve, reject) => {
+        mysqlCon.query(getUserQuery,[email], (err : string,results : Array<JSON>) => {
+            if(err) reject(err)
+            else {
+                resolve(results);
             }
         })
     })
@@ -39,4 +53,19 @@ export function checkIfUserExists(mysqlCon,userData) : Promise<boolean> {
         })
     })
 }
+
+export async function checkIfUserExistsByEmail(mysqlCon,userData) : Promise<any> {
+    const checkEmailQuery =  'select * from usuario where email=?';
+    mysqlCon.query(checkEmailQuery,[userData.email], async (err : QueryError | null, results : any) => {
+        if(err) throw err;
+        if(results.length > 0) {
+            return results;
+        }
+        else {
+            return false;
+        }
+    });
+}
+
+
 
