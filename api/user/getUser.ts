@@ -6,13 +6,13 @@ export function getUserById(mysqlCon, userId : number) {
         mysqlCon.query(getUserQuery,[userId], (err : string,results : Array<JSON>) => {
             if(err) reject(err)
             else {
-                return results;
+                resolve(results);
             }
         })
     })
 }
 
-export async function getUserByEmail(mysqlCon, email : string) {
+export async function getUserByEmail(mysqlCon, email : string) : Promise<Array<any>> {
     const getUserQuery = 'select * from usuario where email = ?';
     return new Promise((resolve, reject) => {
         mysqlCon.query(getUserQuery,[email], (err : string,results : Array<JSON>) => {
@@ -54,17 +54,17 @@ export function checkIfUserExists(mysqlCon,userData) : Promise<boolean> {
     })
 }
 
-export async function checkIfUserExistsByEmail(mysqlCon,userData) : Promise<any> {
+export async function checkIfUserExistsByEmail(mysqlCon,userData) : Promise<boolean> {
     const checkEmailQuery =  'select * from usuario where email=?';
-    mysqlCon.query(checkEmailQuery,[userData.email], async (err : QueryError | null, results : any) => {
-        if(err) throw err;
-        if(results.length > 0) {
-            return results;
-        }
-        else {
-            return false;
-        }
-    });
+    return new Promise((resolve,reject) => {
+        mysqlCon.query(checkEmailQuery,[userData.email], async (err : QueryError | null, results : any) => {
+            if(err) reject(err);
+            if(results.length > 0) {
+                resolve(true);
+            }
+            resolve(false);
+        });
+    })
 }
 
 

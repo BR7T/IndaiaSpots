@@ -1,5 +1,4 @@
 import { QueryError } from "mysql2";
-import { createTokens } from "../middleware/jwt/jwtImplementation";
 import { userData } from "../types/userData";
 
 export async function addNewUser(mysqlCon, userData, permissionLevel, res) : Promise<any> {
