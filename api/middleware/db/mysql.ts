@@ -1,25 +1,21 @@
-import * as mysql from 'mysql2';
-import { Connection } from 'mysql2/typings/mysql/lib/Connection';
+import * as mysql from "mysql2";
+import { Connection } from "mysql2/typings/mysql/lib/Connection";
 
 import * as dotenv from "dotenv";
 dotenv.config();
 
 const config = {
-    host : process.env.MY_SQL_HOSTNAME_LOCAL,
-    user : process.env.MY_SQL_USER_LOCAL,
-    database : process.env.MY_SQL_DATABASE_LOCAL,
-    password : process.env.MY_SQL_PASSWORD_LOCAL,
-    multipleStatements : true
-}
+  host: process.env.MY_SQL_HOSTNAME_LOCAL,
+  user: process.env.MY_SQL_USER_LOCAL,
+  database: process.env.MY_SQL_DATABASE_LOCAL,
+  password: process.env.MY_SQL_PASSWORD_LOCAL,
+  multipleStatements: true,
+};
 
-let con  : Connection = mysql.createConnection(config);
-con.connect(function(err : any) {
-    console.log("Connection to database Successful");
+let con: Connection = mysql.createConnection(config);
+con.connect(function (err: any) {
+  console.log("Connection to database Successful");
 });
 
-const mySqlConnection = con; 
-export {mySqlConnection};
-
-
-    
-
+const mySqlConnection = con;
+export { mySqlConnection };

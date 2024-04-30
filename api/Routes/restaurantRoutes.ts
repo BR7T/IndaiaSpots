@@ -79,8 +79,8 @@ restaurantRouter.put(
       res.status(200).send({ message: "Restaurante atualizado com sucesso" });
     } catch (error) {
       res.status(500).send({ error: "Erro interno do servidor" });
-    }
-  }
+    } 
+  } 
 );
 
 restaurantRouter.delete(
