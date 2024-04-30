@@ -16,6 +16,7 @@ import { userRouter } from "./Routes/userRoutes";
 import { restaurantRouter } from "./Routes/restaurantRoutes";
 import { ratingRouter } from "./Routes/ratingRoutes";
 import { addressRouter } from "./Routes/adressRoutes";
+import { promoteRouter } from "./Routes/promoteRoutes";
 
 app.use(express.json());
 app.use(helmet());
@@ -39,6 +40,7 @@ app.use("/user", userRouter);
 app.use("/restaurant", restaurantRouter);
 app.use("/rating", ratingRouter);
 app.use("/address", addressRouter);
+app.use("/promocoes", promoteRouter);
 
 app.get("/token", async function (req: Request, res: Response) {
   if (isTokenValid(req)) {
