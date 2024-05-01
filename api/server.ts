@@ -6,23 +6,21 @@ const app = express();
 
 //JWT
 import cookieParser from 'cookie-parser';
-import {isTokenValid,refreshToken} from './middleware/jwt/jwtImplementation';
 
 //Helmet
 import helmet from 'helmet';
 
 //Routers
-import {userRouter} from "./Routes/userRoutes";
-import {restaurantRouter} from "./Routes/restaurantRoutes"; 
+import { userRouter } from "./Routes/userRoutes";
+import { restaurantRouter } from "./Routes/restaurantRoutes";
 import { ratingRouter } from './Routes/ratingRoutes';
 import { addressRouter } from './Routes/adressRoutes';
-import { Next } from 'mysql2/typings/mysql/lib/parsers/typeCast';
 
-app.use(express.json());  
-app.use(helmet());     
+app.use(express.json());
+app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(function (req : Request, res : any, next : NextFunction) {
+app.use(function (req: Request, res: any, next: NextFunction) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
@@ -34,15 +32,6 @@ app.use('/user', userRouter);
 app.use('/restaurant', restaurantRouter);
 app.use('/rating', ratingRouter);
 app.use('/address', addressRouter);
-
-app.get('/token', async function(req : Request,res : Response, next : Next) {
-    if(isTokenValid(req)) {
-        res.redirect('/home');
-    }
-    else {
-        refreshToken(req,res, next);
-    }
-})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
