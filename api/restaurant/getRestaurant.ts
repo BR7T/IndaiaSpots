@@ -1,4 +1,5 @@
 export function getRestaurant(mysqlCon, restaurantId): Promise<JSON[]> {
+    console.log('teste whyrs')
   const getRestaurantQuery =
     "select * from restaurante where id_restaurante = ?";
   return new Promise((resolve, reject) => {

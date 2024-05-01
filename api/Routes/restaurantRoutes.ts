@@ -21,6 +21,7 @@ const restaurantRouter: Router = express.Router();
 
 restaurantRouter.get("/getRestaurants", function (req: Request, res: Response) {
   getAllRestaurants(mySqlConnection).then((results) => {
+    console.log(results)
     res.send(results);
   });
 });
