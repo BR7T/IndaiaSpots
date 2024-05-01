@@ -4,6 +4,7 @@ import {isTokenValid} from '../middleware/jwt/jwtImplementation';
 import { getRestaurant, getAllRestaurants, searchRestaurant } from '../restaurant/getRestaurant';
 import { addImage, addRestaurant, populateRestaurantDataObject } from '../restaurant/addRestaurant';
 import { generateSignedUrl} from '../middleware/aws/aws';
+import { Next } from 'mysql2/typings/mysql/lib/parsers/typeCast';
 
 const restaurantRouter : Router = express.Router();
 
@@ -27,10 +28,14 @@ restaurantRouter.get('/getRestaurant/:id', function(req : Request,res : Response
     }
 })
 
-restaurantRouter.get('/addRestaurant', async function(req : any,res : Response) {
+restaurantRouter.get('/addRestaurant', async function(req : any,res : Response, next : Next) {
     if(!req.query.filename) res.status(400);
     const filename = req.query.filename;
-    generateSignedUrl(filename, 60, res);
+    req.file = {
+        filename : filename,
+        expirationTime : 60
+    }
+    generateSignedUrl(req.file, res, next);
     /*const data = populateRestaurantDataObject(req);
     addRestaurant(mySqlConnection,data).then(function() {
         const file = req.file;

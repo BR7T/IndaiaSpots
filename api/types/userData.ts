@@ -1,5 +1,3 @@
-import { EnumType } from "typescript"
-
 export type userData  = {
     username : string,
     email : string,

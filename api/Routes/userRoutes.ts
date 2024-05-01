@@ -3,13 +3,16 @@ import { userData } from '../types/userData';
 import {comparePassword,hashPassword} from '../middleware/bcrypt/hashing';
 import {mySqlConnection} from '../middleware/db/mysql';
 import {createTokens} from '../middleware/jwt/jwtImplementation';
-import { addNewUser, addNewUserGoogle} from '../user/addUser';
-import { populateUserDataObject } from '../user/addUser';
+import { addNewUser, addNewUserGoogle, populateUserDataObject} from '../user/addUser';
 import { getUserByEmail } from '../user/getUser';
+import { checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
+import { Next } from 'mysql2/typings/mysql/lib/parsers/typeCast';
+import { customRequestExtender } from '../types/extendRequestInterface';
 
 const userRouter : Router = express.Router();
+customRequestExtender();
 
-userRouter.post('/signin', async function(req : Request,res : Response) {
+userRouter.post('/signin', async function(req : Request ,res : Response, next : Next) {
     const permissionLevel = "Comum";
     const userData = populateUserDataObject(req, permissionLevel);
     
@@ -17,7 +20,8 @@ userRouter.post('/signin', async function(req : Request,res : Response) {
         if(results.length == 0) res.send({error : "email ou senha inválidos"});
         else {
             await comparePassword(req.body.password, results[0].Senha).then((isPasswordEqual) => {
-                if(isPasswordEqual) createTokens(res, results);
+                req.user = results[0];
+                if(isPasswordEqual) createTokens(req, res , next);
                 else if(!isPasswordEqual){
                     res.send({error : "email ou senha inválidos"});
                 }
@@ -26,7 +30,7 @@ userRouter.post('/signin', async function(req : Request,res : Response) {
     })
 })
 
-userRouter.post('/signup', async function(req : Request, res : Response) {
+userRouter.post('/signup', async function(req : Request, res : Response, next : Next) {
     if(req.body.password.length < 8 ) {
         res.status(400).send({error : "password must have 8 or more characters"});
     }
@@ -39,22 +43,29 @@ userRouter.post('/signup', async function(req : Request, res : Response) {
         password : hashedPassword,
         permissionLevel : permissionLevel
     }
-    addNewUser(mySqlConnection,userData,permissionLevel,res);
+    addNewUser(mySqlConnection,userData,permissionLevel, next);
 });
 
-userRouter.post('/googleSignIn', async function(req : Request,res :Response) {
+userRouter.use(checkIfUsernameOrEmailAlreadyTaken);
+userRouter.use((err,req,res,next) => {
+    res.status(500).send('Something went wrong');
+})
+
+userRouter.post('/googleSignIn', async function(req : Request ,res :Response, next : Next) {
     const permissionLevel = "Comum";
     const userData = populateUserDataObject(req, permissionLevel);  
     if(req.body.isNewUser) {
         addNewUserGoogle(mySqlConnection, userData).then(() => {
             getUserByEmail(mySqlConnection, userData.email).then((results) => {
-                createTokens(res, results);
+                req.user = results[0];
+                createTokens(req, res , next);
             })
         });
     }
     else {
         getUserByEmail(mySqlConnection, userData.email).then((results) => {
-            createTokens(res, results);
+            req.user = results[0];
+            createTokens(req, res , next);
         })
     }
 })

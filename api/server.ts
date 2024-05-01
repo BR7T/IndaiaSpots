@@ -16,6 +16,7 @@ import {userRouter} from "./Routes/userRoutes";
 import {restaurantRouter} from "./Routes/restaurantRoutes"; 
 import { ratingRouter } from './Routes/ratingRoutes';
 import { addressRouter } from './Routes/adressRoutes';
+import { Next } from 'mysql2/typings/mysql/lib/parsers/typeCast';
 
 app.use(express.json());  
 app.use(helmet());     
@@ -34,12 +35,12 @@ app.use('/restaurant', restaurantRouter);
 app.use('/rating', ratingRouter);
 app.use('/address', addressRouter);
 
-app.get('/token', async function(req : Request,res : Response) {
+app.get('/token', async function(req : Request,res : Response, next : Next) {
     if(isTokenValid(req)) {
         res.redirect('/home');
     }
     else {
-        refreshToken(req,res);
+        refreshToken(req,res, next);
     }
 })
 

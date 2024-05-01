@@ -10,14 +10,14 @@ const s3Client = new S3Client({
     region: "sa-east-1",
 })
 
-export async function generateSignedUrl(key, expiresIn, res) {
+export async function generateSignedUrl(req, res, next) {
     const command = new PutObjectCommand({
         Bucket : bucketName,
-        Key : key
+        Key : req.file.key
     })
     
     const signedUrl = await getSignedUrl(s3Client, command, {
-        expiresIn : expiresIn
+        expiresIn : req.file.expirationTime
     })
     res.send({signedUrl : signedUrl});
 }

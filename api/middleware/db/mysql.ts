@@ -1,10 +1,11 @@
 import * as mysql from 'mysql2';
 import { Connection } from 'mysql2/typings/mysql/lib/Connection';
+import { MySQLParams } from './paramsInterface';
 
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const config = {
+const config : MySQLParams = {
     host : process.env.MY_SQL_HOSTNAME_LOCAL,
     user : process.env.MY_SQL_USER_LOCAL,
     database : process.env.MY_SQL_DATABASE_LOCAL,
