@@ -5,47 +5,16 @@ import { PromoData } from "../types/promoData";
 
 export const adicionarPromocao = async (req: Request, res: Response) => {
   try {
-    const {
-      ID_Restaurante,
-      Data_Inicio,
-      Data_Final,
-      Hora_Inicio,
-      Hora_Final,
-      Regras,
-      Pratos,
-    }: PromoData = req.body;
-
-    if (
-      !ID_Restaurante ||
-      !Data_Inicio ||
-      !Data_Final ||
-      !Hora_Inicio ||
-      !Hora_Final ||
-      !Regras ||
-      !Pratos
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Todos os campos são obrigatórios" });
+      const promoData = populatePromoDataObject(req.body);
+      const result = await criarPromocao(promoData);
+      res.status(201).send({
+        message: "Promoção criada com sucesso",
+        id: (result as RowDataPacket).insertId,
+      });
+    } catch (error) {
+      console.error("Erro ao criar promoção:", error);
+      res.status(500).send({ error: "Erro interno do servidor" });
     }
-
-    const result = await criarPromocao(
-      ID_Restaurante,
-      Data_Inicio,
-      Data_Final,
-      Hora_Inicio,
-      Hora_Final,
-      Regras,
-      Pratos
-    );
-    res.status(201).json({
-      message: "Promoção criada com sucesso",
-      id: (result as RowDataPacket).insertId,
-    });
-  } catch (error) {
-    console.error("Erro ao criar promoção:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
-  }
 };
 
 export const deletarPromocao = async (req: Request, res: Response) => {
@@ -59,28 +28,20 @@ export const deletarPromocao = async (req: Request, res: Response) => {
   }
 };
 
-const criarPromocao = (
-  ID_Restaurante: number,
-  Data_Inicio: string,
-  Data_Final: string,
-  Hora_Inicio: string,
-  Hora_Final: string,
-  Regras: string,
-  Pratos: string
-) => {
+const criarPromocao = (promoData) => {
   return new Promise((resolve, reject) => {
     const query =
       "INSERT INTO Promocoes (ID_Restaurante, Data_Inicio, Data_Final, Hora_Inicio, Hora_Final, Regras, Pratos) VALUES (?, ?, ?, ?, ?, ?, ?)";
     mySqlConnection.query(
       query,
       [
-        ID_Restaurante,
-        Data_Inicio,
-        Data_Final,
-        Hora_Inicio,
-        Hora_Final,
-        Regras,
-        Pratos,
+        promoData.ID_Restaurante,
+        promoData.Data_Inicio,
+        promoData.Data_Final,
+        promoData.Hora_Inicio,
+        promoData.Hora_Final,
+        promoData.Regras,
+        promoData.Pratos,
       ],
       (err, results) => {
         if (err) {
@@ -105,3 +66,16 @@ const deletarPromocaoDB = (promocaoId: string) => {
     });
   });
 };
+
+export function populatePromoDataObject(promoData) {
+  const promoDataObject : PromoData = {
+    ID_Restaurante : promoData.ID_Restaurante,
+    Data_Inicio : promoData.Data_Inicio,
+    Data_Final : promoData.Data_Final,
+    Hora_Inicio : promoData.Hora_Inicio,
+    Hora_Final : promoData.Hora_Final,
+    Regras : promoData.Regras,
+    Pratos :promoData.Pratos,
+  }
+  return promoDataObject;
+}
