@@ -1,4 +1,4 @@
-export interface PromoData {
+export type PromoData = {
     ID_Restaurante: number;
     Data_Inicio: string;
     Data_Final: string;
@@ -6,4 +6,4 @@ export interface PromoData {
     Hora_Final: string;
     Regras: string;
     Pratos: string;
-  }
+}

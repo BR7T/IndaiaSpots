@@ -1,8 +1,8 @@
 import express, { NextFunction, Request, Response, Router } from "express";
 import { mySqlConnection } from "../middleware/db/mysql";
-import { addPromotion, populatePromoDataObject } from "../promote/addPromo";
-import { deletePromo } from "../promote/DeletePromo";
-import { getPromoById, getPromos } from "../promote/getPromo";
+import { addPromotion, populatePromoDataObject } from "../promotion/addPromo";
+import { deletePromo } from "../promotion/DeletePromo";
+import { getPromoById, getPromos } from "../promotion/getPromo";
 
 const promotionRouter : Router = express.Router();
 
