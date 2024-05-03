@@ -1,7 +1,7 @@
 import { QueryError } from "mysql2";
 import { userData } from "../types/userData";
 
-export async function addNewUser(mysqlCon, userData, permissionLevel, next): Promise<any> {
+export async function addNewUser(mysqlCon, userData, permissionLevel, next): Promise<void> {
     const authType = "form";
     const addUserQuery: string = 'insert into usuario(nome,email,senha,tipo_autenticacao,permissao) values (?,?,?,?,?)';
     mysqlCon.query(addUserQuery, [userData.username, userData.email, userData.password, authType, permissionLevel], (err: string, results: any) => {
@@ -19,7 +19,7 @@ export function checkIfUsernameOrEmailAlreadyTaken(err, req, res, next) {
     next(err);
 }
 
-export async function addNewUserGoogle(mysqlCon, userData) {
+export async function addNewUserGoogle(mysqlCon, userData) : Promise<void> {
     const googleUserInsertQuery = 'insert into Usuario(Nome,Email,tipo_autenticacao,permissao) values(?,?,"google",?)';
     mysqlCon.query(googleUserInsertQuery, [userData.username, userData.email, userData.permissionLevel], (err: QueryError | null, results: any) => {
         if (err) throw err;

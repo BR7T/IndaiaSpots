@@ -1,4 +1,4 @@
-import express, { Router, Request, Response } from 'express';
+import express, { Router, Request, Response, NextFunction } from 'express';
 import { userData } from '../types/userData';
 import { comparePassword, hashPassword } from '../middleware/bcrypt/hashing';
 import { mySqlConnection } from '../middleware/db/mysql';
@@ -6,13 +6,12 @@ import { createTokens } from '../middleware/jwt/jwtImplementation';
 import { addNewUser, addNewUserGoogle, populateUserDataObject } from '../user/addUser';
 import { getUserByEmail } from '../user/getUser';
 import { checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
-import { Next } from 'mysql2/typings/mysql/lib/parsers/typeCast';
-import { customRequestExtender } from '../types/extendRequestInterface';
+import { customRequestExtender } from '../interfaces/extendRequestInterface';
 
 const userRouter: Router = express.Router();
 customRequestExtender();
 
-userRouter.post('/signin', async function (req: Request, res: Response, next: Next) {
+userRouter.post('/signin', async function (req: Request, res: Response, next: NextFunction) {
     const permissionLevel = "Comum";
     const userData = populateUserDataObject(req, permissionLevel);
 
@@ -32,7 +31,7 @@ userRouter.post('/signin', async function (req: Request, res: Response, next: Ne
     })
 })
 
-userRouter.post('/signup', async function (req: Request, res: Response, next: Next) {
+userRouter.post('/signup', async function (req: Request, res: Response, next: NextFunction) {
     if (req.body.password.length < 8) {
         res.status(400).send({ error: "password must have 8 or more characters" });
     }
@@ -49,11 +48,8 @@ userRouter.post('/signup', async function (req: Request, res: Response, next: Ne
 });
 
 userRouter.use(checkIfUsernameOrEmailAlreadyTaken);
-userRouter.use((err, req, res, next) => {
-    res.status(500).send('Something went wrong');
-})
 
-userRouter.post('/googleSignIn', async function (req: Request, res: Response, next: Next) {
+userRouter.post('/googleSignIn', async function (req: Request, res: Response, next: NextFunction) {
     const permissionLevel = "Comum";
     const userData = populateUserDataObject(req, permissionLevel);
     if (req.body.isNewUser) {
@@ -70,6 +66,10 @@ userRouter.post('/googleSignIn', async function (req: Request, res: Response, ne
             createTokens(req, res, next);
         })
     }
+})
+
+userRouter.use((err, req, res, next) => {
+    res.status(500).send('Something went wrong');
 })
 
 export { userRouter };

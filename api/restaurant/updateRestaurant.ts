@@ -11,8 +11,9 @@ export function updateRestaurant(mysqlCon,restaurantId: number,updatedData: Rest
       updatedData.dia_atendimento,
       updatedData.tipo_cozinha,
       updatedData.CNPJ,
+      restaurantId
     ],(err, results) => {
-      if(err) reject(err);
+        if(err) reject(err);
       });
     });
 }

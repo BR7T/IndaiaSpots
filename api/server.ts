@@ -1,6 +1,6 @@
 //Express
 import express from 'express';
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request} from "express";
 const port = 3100;
 const app = express();
 
@@ -15,6 +15,7 @@ import { userRouter } from "./Routes/userRoutes";
 import { restaurantRouter } from "./Routes/restaurantRoutes";
 import { ratingRouter } from './Routes/ratingRoutes';
 import { addressRouter } from './Routes/adressRoutes';
+import { promotionRouter } from './Routes/promotionRoutes';
 
 app.use(express.json());
 app.use(helmet());
@@ -32,6 +33,7 @@ app.use('/user', userRouter);
 app.use('/restaurant', restaurantRouter);
 app.use('/rating', ratingRouter);
 app.use('/address', addressRouter);
+app.use('/promotion', promotionRouter);
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Server listening on port ${port}!`));
 

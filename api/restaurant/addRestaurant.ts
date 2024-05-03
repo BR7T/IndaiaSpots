@@ -11,12 +11,8 @@ export function addRestaurant(mysqlCon,restaurantData) : Promise<void> {
             restaurantData.tipo_cozinha,
             restaurantData.CNPJ,
         ], (err,results) => {
-            if(err){
-                reject(err)
-            } else{
-                resolve(results)
-            }
-        })
+                if(err) reject(err)
+            })
     })
 }
 
@@ -26,9 +22,6 @@ export function addImage(mySqlConnection, filename) {
     return new Promise((resolve, reject) => {
         mySqlConnection.query(insertQuery,[url], (err, results) => {
             if(err) reject(err);
-            else {
-                resolve(results)
-            }
         })
     })
 }

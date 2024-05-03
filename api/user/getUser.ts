@@ -12,7 +12,7 @@ export function getUserById(mysqlCon, userId: number) {
     })
 }
 
-export async function getUserByEmail(mysqlCon, email: string): Promise<Array<any>> {
+export async function getUserByEmail(mysqlCon, email): Promise<Array<any>> {
     const getUserQuery = 'select * from usuario where email = ?';
     return new Promise((resolve, reject) => {
         mysqlCon.query(getUserQuery, [email], (err: string, results: Array<JSON>) => {
@@ -47,9 +47,7 @@ export function checkIfUserExists(mysqlCon, userData): Promise<boolean> {
             else if (results && results.length > 0) {
                 resolve(true)
             }
-            else {
-                resolve(false)
-            }
+            resolve(false)
         })
     })
 }
