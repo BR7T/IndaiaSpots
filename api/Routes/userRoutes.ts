@@ -18,15 +18,17 @@ userRouter.post('/signin', async function (req: Request, res: Response, next: Ne
     getUserByEmail(mySqlConnection, userData.email).then(async (results) => {
         if (results.length == 0) res.send({ error: "email ou senha inválidos" });
         else {
-            await comparePassword(req.body.password, results[0].Senha).then((isPasswordEqual) => {
-                req.user = results[0];
-                if (!isPasswordEqual) {
-                    res.send({ error: "email ou senha inválidos" });
-                }
-                else {
-                    createTokens(req, res, next);
-                }
-            })
+            if (typeof results[0] === 'object' && 'Senha' in results[0]) {
+                await comparePassword(req.body.password, results[0].Senha).then((isPasswordEqual) => {
+                    req.user = results[0];
+                    if (!isPasswordEqual) {
+                        res.send({ error: "email ou senha inválidos" });
+                    }
+                    else {
+                        createTokens(req, res, next);
+                    }
+                })
+            }   
         }
     })
 })

@@ -3,6 +3,7 @@ import { Connection } from 'mysql2/typings/mysql/lib/Connection';
 import { MySQLParams } from './paramsInterface';
 
 import * as dotenv from "dotenv";
+import { QueryError } from 'mysql2';
 dotenv.config();
 
 const config : MySQLParams = {
@@ -14,7 +15,7 @@ const config : MySQLParams = {
 }
 
 let con  : Connection = mysql.createConnection(config);
-con.connect(function(err : any) {
+con.connect(function(err : QueryError | null) {
     console.log("Connection to database Successful");
 });
 

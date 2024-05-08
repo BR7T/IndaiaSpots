@@ -12,7 +12,7 @@ export function getUserById(mysqlCon, userId: number) {
     })
 }
 
-export async function getUserByEmail(mysqlCon, email): Promise<Array<any>> {
+export async function getUserByEmail(mysqlCon, email): Promise<Array<JSON> | string> {
     const getUserQuery = 'select * from usuario where email = ?';
     return new Promise((resolve, reject) => {
         mysqlCon.query(getUserQuery, [email], (err: string, results: Array<JSON>) => {
@@ -24,7 +24,7 @@ export async function getUserByEmail(mysqlCon, email): Promise<Array<any>> {
     })
 }
 
-export function getAllUsers(mysqlCon): Promise<Array<JSON>> {
+export function getAllUsers(mysqlCon): Promise<Array<JSON> | string> {
     const getUserQuery = 'select * from establishments';
     return new Promise((resolve, reject) => {
         mysqlCon.query(getUserQuery, (err: string, results: Array<any>) => {

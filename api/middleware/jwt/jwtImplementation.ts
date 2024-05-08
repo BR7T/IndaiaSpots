@@ -1,20 +1,25 @@
 import * as jwt from 'jsonwebtoken';
 import * as jwtSecret from '../../../jwtSecret.json';
 
-export function isTokenValid(request) {
-    if(!request.cookies.authorization) {
+export function isTokenValid(req) {
+    if(!req.cookies.authorization) {
         return false;
     }
-    const decoded = jwt.verify(request.cookies.authorization.toString(), jwtSecret.key);
+    const decoded = jwt.verify(req.cookies.authorization.toString(), jwtSecret.key);
     if(!decoded) {
         return false;
     }
     return true;
 }
 
+function createToken(id, expireTime) {
+    const token = jwt.sign({userId : id},jwtSecret.key, {'expiresIn' : expireTime});
+    return token
+}
+
 export function createTokens(req, res , next) {
-    const token = jwt.sign({userId : req.user.ID_Usuario},jwtSecret.key, {'expiresIn' : '1h'});
-    const refreshToken = jwt.sign({userId : req.user.ID_Usuario},jwtSecret.key, {'expiresIn' : '30d'});
+    const token = createToken(req.user.ID_Usuario, '1h');
+    const refreshToken = createToken(req.user.ID_Usuario, '30d');
     res.cookie('authorization',[token], {secure : true, httpOnly : true}).cookie('refreshToken',[refreshToken], {secure : true, httpOnly : true});
     res.send({Accepted : true});
 }

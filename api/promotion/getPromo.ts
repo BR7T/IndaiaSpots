@@ -8,7 +8,7 @@ export async function getPromos(mysqlCon) : Promise<string | JSON[]> {
         resolve(results);
       });
     });
-};
+}
 
 export async function getPromoById(mysqlCon, promoId, next) {
     const query = "SELECT * FROM Promocoes WHERE ID_Promocoes = ?";

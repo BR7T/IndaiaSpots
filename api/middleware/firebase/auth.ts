@@ -1,11 +1,12 @@
-const admin = require('firebase-admin');
+import admin from 'firebase-admin';
 const firebaseCredentials = require("../../../serviceAccountKey.json");
+
 admin.initializeApp({
     credential : admin.credential.cert(firebaseCredentials)
 })
 
 export async function checkGoogleToken(token : string) : Promise<any> {
-    return await fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`, {
+    await fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`, {
         method: 'GET',
         mode: 'cors',
         cache: 'default',

@@ -1,9 +1,8 @@
-import { RowDataPacket } from "mysql2";
-import { Request, Response } from "express";
+import { QueryError } from "mysql2";
 import { mySqlConnection } from "../middleware/db/mysql";
 import { PromoData } from "../types/promoData";
 
-export async function addPromotion(mysqlCon, promoData, next) {
+export async function addPromotion(mysqlCon, promoData, next) : Promise<QueryError | string> {
     return new Promise((resolve, reject) => {
         const query ="INSERT INTO Promocoes (ID_Restaurante, Data_Inicio, Data_Final, Hora_Inicio, Hora_Final, Regras, Pratos) VALUES (?, ?, ?, ?, ?, ?, ?)";
         mySqlConnection.query(query,
@@ -20,7 +19,7 @@ export async function addPromotion(mysqlCon, promoData, next) {
               if (err) {
                   next(err);
               } else {
-                  resolve(results);
+                  resolve('success');
               }
           }
         );

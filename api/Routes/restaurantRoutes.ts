@@ -32,12 +32,12 @@ restaurantRouter.get('/addRestaurant', async function (req: any, res: Response, 
         filename: filename,
         expirationTime: 60
     }
-    generateSignedUrl(req.file, res, next);
-    /*const data = populateRestaurantDataObject(req);
-    addRestaurant(mySqlConnection,data).then(function() {
-        const file = req.file;
-        //res.send({process : true}); 
-    })*/
+    generateSignedUrl(req, res, next).then(() => {
+        const data = populateRestaurantDataObject(req);
+        addRestaurant(mySqlConnection,data).then(function() {
+            res.send({process : true}); 
+        })
+    })
 })
 
 restaurantRouter.post('/addImage', async function (req: Request, res: Response, next : NextFunction) {

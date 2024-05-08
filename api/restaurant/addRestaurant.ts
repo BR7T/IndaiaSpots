@@ -1,6 +1,7 @@
+import { QueryError } from "mysql2";
 import { RestaurantData } from "../types/restaurantData";
 
-export function addRestaurant(mysqlCon,restaurantData) : Promise<void> {
+export function addRestaurant(mysqlCon,restaurantData) : Promise<QueryError | void> {
     const insertQuery = 'insert into restaurante(nome,contato,horario_atendimento,dia_atendimento,tipo_cozinha,CNPJ) values(?,?,?,?,?,?)';
     return new Promise((resolve,reject) => {
         mysqlCon.query(insertQuery,[
@@ -16,12 +17,15 @@ export function addRestaurant(mysqlCon,restaurantData) : Promise<void> {
     })
 }
 
-export function addImage(mySqlConnection, filename) {
+export function addImage(mySqlConnection, filename) : Promise<QueryError | string> {
     const url = `https://d1rz3fbu8zmjz5.cloudfront.net/${filename}`;
     const insertQuery = 'insert into imagem(url) values (?)';
     return new Promise((resolve, reject) => {
         mySqlConnection.query(insertQuery,[url], (err, results) => {
             if(err) reject(err);
+            else {
+                resolve('success');
+            }
         })
     })
 }
