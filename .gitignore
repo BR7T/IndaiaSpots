@@ -3,4 +3,5 @@
 /PrivateKey.key
 **/node_modules
 /.env
+functions/node_modules
 

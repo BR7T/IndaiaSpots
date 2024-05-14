@@ -1,22 +1,19 @@
 {
   "dependencies": {
     "@aws-sdk/client-s3": "^3.564.0",
-    "@aws-sdk/credential-providers": "^3.563.0",
-    "@aws-sdk/lib-storage": "^3.563.0",
-    "@aws-sdk/s3-presigned-post": "^3.564.0",
     "@aws-sdk/s3-request-presigner": "^3.564.0",
-    "aws-sdk": "^2.1605.0",
+    "@types/express": "^4.17.21",
     "bcrypt": "^5.1.1",
     "concurrently": "^8.2.2",
     "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
     "dotenv": "^16.4.5",
+    "eslint": "^9.2.0",
     "express": "^4.19.2",
-    "firebase": "^10.7.1",
     "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.0.1",
     "helmet": "^7.1.0",
     "jest": "^29.7.0",
-    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.9.7",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
@@ -24,7 +21,7 @@
   },
   "scripts": {
     "test": "jest",
-    "start": "nodemon api/server.ts",
+    "start": "ts-node functions/src/index.ts",
     "build": "tsc api/server.ts"
   }
 }
