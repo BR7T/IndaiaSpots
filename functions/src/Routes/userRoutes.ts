@@ -7,10 +7,8 @@ import { createTokens } from '../middleware/jwt/jwtImplementation';
 import { addNewUser, addNewUserGoogle, populateUserDataObject } from '../user/addUser';
 import { getUserByEmail } from '../user/getUser';
 import { checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
-//import { customRequestExtender } from '../interfaces/extendRequestInterface';
 
 const userRouter: Router = express.Router();
-//customRequestExtender();
 
 userRouter.post('/signin', async function (req: Request, res: Response, next: NextFunction) {
     const permissionLevel = "Comum";
@@ -21,7 +19,7 @@ userRouter.post('/signin', async function (req: Request, res: Response, next: Ne
         else {
             if (typeof results[0] === 'object' && 'Senha' in results[0] && typeof results[0].Senha === 'string') {
                 await comparePassword(req.body.password, results[0].Senha).then((isPasswordEqual) => {
-                    req.body = results[0];
+                    req.body.User = results[0];
                     if (!isPasswordEqual) {
                         res.send({ error: "email ou senha inválidos" });
                     }
@@ -35,19 +33,21 @@ userRouter.post('/signin', async function (req: Request, res: Response, next: Ne
 })
 
 userRouter.post('/signup', async function (req: Request, res: Response, next: NextFunction) {
-    if (req.body.password.length < 8) {
+    if (req.body.confirmPassword.length < 8) {
         res.status(400).send({ error: "password must have 8 or more characters" });
     }
 
     const permissionLevel = "Comum";
-    let hashedPassword: string = await hashPassword(req.body.password, 12);
+    let hashedPassword: string = await hashPassword(req.body.confirmPassword, 12);
     const userData: userData = {
         username: req.body.name,
         email: req.body.email,
         password: hashedPassword,
         permissionLevel: permissionLevel
     }
-    addNewUser(mySqlConnection, userData, permissionLevel, next);
+    addNewUser(mySqlConnection, userData, next).then(processState => {
+        if(processState) res.send({process : true})
+    })
 });
 
 userRouter.use(checkIfUsernameOrEmailAlreadyTaken);
@@ -58,14 +58,14 @@ userRouter.post('/googleSignIn', async function (req: Request, res: Response, ne
     if (req.body.isNewUser) {
         addNewUserGoogle(mySqlConnection, userData).then(() => {
             getUserByEmail(mySqlConnection, userData.email).then((results) => {
-                req.body = results[0];
+                req.body.User = results[0];
                 createTokens(req, res, next);
             })
         });
     }
     else {
         getUserByEmail(mySqlConnection, userData.email).then((results) => {
-            req.body = results[0];
+            req.body.User = results[0];
             createTokens(req, res, next);
         })
     }

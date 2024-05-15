@@ -3,7 +3,7 @@ import { Connection } from "mysql2/typings/mysql/lib/Connection";
 import { userData } from "../types/userData";
 
 export function getUserById(mysqlCon : Connection, userId: number) {
-    const getUserQuery = 'select * from usuario where ID_Usuario = ?';
+    const getUserQuery = 'select * from Usuario where ID_Usuario = ?';
     return new Promise((resolve, reject) => {
         mysqlCon.query(getUserQuery, [userId], (err: QueryError | null, results: QueryResult) => {
             if (err) reject(err)
@@ -15,7 +15,7 @@ export function getUserById(mysqlCon : Connection, userId: number) {
 }
 
 export async function getUserByEmail(mysqlCon : Connection, email : string): Promise<Array<JSON> | string> {
-    const getUserQuery = 'select * from usuario where email = ?';
+    const getUserQuery = 'select * from Usuario where email = ?';
     return new Promise((resolve, reject) => {
         mysqlCon.query(getUserQuery, [email], (err: QueryError | null, results: any) => {
             if (err) reject(err)

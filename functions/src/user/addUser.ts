@@ -4,12 +4,15 @@ import { Connection } from "mysql2/typings/mysql/lib/Connection";
 import { Request, Response ,NextFunction } from "express";
 
 
-export async function addNewUser(mysqlCon : Connection, userData : any, permissionLevel : string, next : NextFunction): Promise< QueryError | void> {
+export async function addNewUser(mysqlCon : Connection, userData : any, next : NextFunction): Promise< QueryError | void> {
     const authType = "form";
-    const addUserQuery: string = 'insert into usuario(nome,email,senha,tipo_autenticacao,permissao) values (?,?,?,?,?)';
-    mysqlCon.query(addUserQuery, [userData.username, userData.email, userData.password, authType, permissionLevel], (err: QueryError | null, results: any) => {
+    const addUserQuery: string = 'insert into Usuario(nome,email,senha,tipo_autenticacao,Nivel_Permissao) values (?,?,?,?,?)';
+    mysqlCon.query(addUserQuery, [userData.username, userData.email, userData.password, authType, userData.permissionLevel], (err: QueryError | null, results: any) => {
         if (err) {
             return next(err);
+        }
+        else {
+            return true;
         }
     });
 }
@@ -23,7 +26,7 @@ export function checkIfUsernameOrEmailAlreadyTaken(err : any, req : Request , re
 }
 
 export async function addNewUserGoogle(mysqlCon : Connection, userData : userData) : Promise<QueryError | void> {
-    const googleUserInsertQuery = 'insert into Usuario(Nome,Email,tipo_autenticacao,permissao) values(?,?,"google",?)';
+    const googleUserInsertQuery = 'insert into Usuario(Nome,Email,tipo_autenticacao,Nivel_Permissao) values(?,?,"google",?)';
     mysqlCon.query(googleUserInsertQuery, [userData.username, userData.email, userData.permissionLevel], (err: QueryError | null, results: any) => {
         if (err) throw err;
     });

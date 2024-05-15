@@ -19,8 +19,8 @@ function createToken(id : any, expireTime : any) {
 }
 
 export function createTokens(req : Request, res : Response , next : NextFunction) {
-    const token = createToken(req.body.ID_Usuario, '1h');
-    const refreshToken = createToken(req.body.ID_Usuario, '30d');
+    const token = createToken(req.body.User.ID_Usuario, '1h');
+    const refreshToken = createToken(req.body.User.ID_Usuario, '30d');
     res.cookie('authorization',[token], {secure : true, httpOnly : true}).cookie('refreshToken',[refreshToken], {secure : true, httpOnly : true});
     res.send({Accepted : true});
 }

@@ -1,14 +1,14 @@
 //Express
-import * as express from 'express';
+import express = require('express');
 import { NextFunction, Request, Response} from "express";
-const port = 8764;
+const port = 3100;
 const app = express();
 
 // Firebase
 import * as functions from 'firebase-functions';
 
 //JWT
-import  * as cookieParser from 'cookie-parser';
+import cookieParser = require('cookie-parser');
 
 //Helmet
 import helmet from 'helmet';
