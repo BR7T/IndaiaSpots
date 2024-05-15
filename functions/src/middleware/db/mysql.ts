@@ -7,10 +7,10 @@ import { QueryError } from 'mysql2';
 dotenv.config();
 
 const config : MySQLParams = {
-    host :  'indaiaspotsdb.cxuugeg8q9uf.sa-east-1.rds.amazonaws.com',
-    user : 'admin',
+    host :  'localhost',
+    user : 'root',
     database :  'indaiaspots',
-    password :  '39r#:8jcAedyE0d$I_UP6#vBrd_O',
+    password :  'MyJoaol',
     multipleStatements : true
 }
 

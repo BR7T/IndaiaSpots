@@ -1,7 +1,6 @@
 //Express
 import express = require('express');
 import { NextFunction, Request, Response} from "express";
-const port = 3100;
 const app = express();
 
 // Firebase
@@ -19,6 +18,7 @@ import { restaurantRouter } from "./Routes/restaurantRoutes";
 import { ratingRouter } from './Routes/ratingRoutes';
 import { addressRouter } from './Routes/adressRoutes';
 import { promotionRouter } from './Routes/promotionRoutes';
+
 
 app.use(express.json());
 app.use(helmet());
@@ -41,7 +41,5 @@ app.use('/promotion', promotionRouter);
 app.get('/hi', function (req: Request, res: Response, next: NextFunction) {
     res.send('working as intended');
 })
-
-app.listen(port, () => console.log(`Server listening on port ${port}!`));
 
 exports.app = functions.https.onRequest(app);
