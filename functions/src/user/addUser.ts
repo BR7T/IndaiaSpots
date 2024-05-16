@@ -11,9 +11,6 @@ export async function addNewUser(mysqlCon : Connection, userData : any, next : N
         if (err) {
             return next(err);
         }
-        else {
-            return true;
-        }
     });
 }
 

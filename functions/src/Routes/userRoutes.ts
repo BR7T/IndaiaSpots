@@ -46,7 +46,7 @@ userRouter.post('/signup', async function (req: Request, res: Response, next: Ne
         permissionLevel: permissionLevel
     }
     addNewUser(mySqlConnection, userData, next).then(processState => {
-        if(processState) res.send({process : true})
+        res.send({process : true})
     })
 });
 

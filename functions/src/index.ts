@@ -18,6 +18,7 @@ import { restaurantRouter } from "./Routes/restaurantRoutes";
 import { ratingRouter } from './Routes/ratingRoutes';
 import { addressRouter } from './Routes/adressRoutes';
 import { promotionRouter } from './Routes/promotionRoutes';
+import { isTokenValid } from './middleware/jwt/jwtImplementation';
 
 
 app.use(express.json());
@@ -40,6 +41,21 @@ app.use('/promotion', promotionRouter);
 
 app.get('/hi', function (req: Request, res: Response, next: NextFunction) {
     res.send('working as intended');
+})
+
+app.get('/checkToken', async function (req: Request, res: Response, next: NextFunction) {
+    const isValid = isTokenValid(req);
+    res.send({isValid : isValid});
+})
+
+app.get('logout', async function (req: Request, res: Response, next: NextFunction) {
+    if(!req.cookies.authorization && !req.cookies.refreshToken) {
+        res.status(400).send({error : "No cookie found"})
+    }
+    else {
+        res.clearCookie('authorization', {domain : 'http://localhost:5173'});
+        res.clearCookie('refreshToken', {domain : 'http://localhost:5173'});
+    }
 })
 
 exports.app = functions.https.onRequest(app);

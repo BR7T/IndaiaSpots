@@ -1,7 +1,5 @@
 /serviceAccountKey.json
-/jwtSecret.json
 /PrivateKey.key
-**/node_modules
-/.env
+functions/.env
 functions/node_modules
-
+functions/jwtSecret.json
