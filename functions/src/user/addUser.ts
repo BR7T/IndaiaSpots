@@ -4,21 +4,23 @@ import { Connection } from "mysql2/typings/mysql/lib/Connection";
 import { Request, Response ,NextFunction } from "express";
 
 
-export async function addNewUser(mysqlCon : Connection, userData : any, next : NextFunction): Promise< QueryError | void> {
+export async function addNewUser(mysqlCon : Connection, userData : any, next : NextFunction): Promise< QueryError | void | boolean> {
     const authType = "form";
     const addUserQuery: string = 'insert into Usuario(nome,email,senha,tipo_autenticacao,Nivel_Permissao) values (?,?,?,?,?)';
     mysqlCon.query(addUserQuery, [userData.username, userData.email, userData.password, authType, userData.permissionLevel], (err: QueryError | null, results: any) => {
         if (err) {
             return next(err);
         }
+        return true;
     });
 }
 
 export function checkIfUsernameOrEmailAlreadyTaken(err : any, req : Request , res : Response, next : NextFunction) {
-    if (err.code == "ER_DUP_ENTRY") {   
-        if (err.sqlMessage.includes("nome")) return res.send({ error: "nome de usuário já está em uso" });
-        if (err.sqlMessage.includes("email")) return res.send({ error: "email já está em uso" });
-    }
+    console.log(err);
+    if (err.code === "ER_DUP_ENTRY") {   
+        if (err.sqlMessage.includes("email")) return res.status(200).send({ error: "Esse email já está em uso!" });
+        if (err.sqlMessage.includes("Nome")) return res.status(200).send({ error: "Esse nome de usuário já está em uso!" });
+    } 
     return next(err);
 }
 

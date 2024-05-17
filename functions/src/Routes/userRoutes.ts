@@ -45,9 +45,9 @@ userRouter.post('/signup', async function (req: Request, res: Response, next: Ne
         password: hashedPassword,
         permissionLevel: permissionLevel
     }
-    addNewUser(mySqlConnection, userData, next).then(processState => {
+   addNewUser(mySqlConnection, userData, next).then(() => {
         res.send({process : true})
-    })
+   })
 });
 
 userRouter.use(checkIfUsernameOrEmailAlreadyTaken);

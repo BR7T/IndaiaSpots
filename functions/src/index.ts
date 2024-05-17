@@ -57,5 +57,7 @@ app.get('logout', async function (req: Request, res: Response, next: NextFunctio
         res.clearCookie('refreshToken', {domain : 'http://localhost:5173'});
     }
 })
-
+app.listen(3100 , function(){
+    console.log('Server running on port: '+3100)
+})
 exports.app = functions.https.onRequest(app);

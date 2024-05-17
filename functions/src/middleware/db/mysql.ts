@@ -7,13 +7,12 @@ import { QueryError } from 'mysql2';
 dotenv.config();
 
 const config : MySQLParams = {
-    host :  process.env.MY_SQL_HOSTNAME,
+    host : process.env.MY_SQL_HOSTNAME ,
     user : process.env.MY_SQL_USER,
     database :  process.env.MY_SQL_DATABASE,
-    password :  process.env.MY_SQL_PASSWORD,
+    password : process.env.MY_SQL_PASSWORD,
     multipleStatements : true
 }
-
 
 let con  : Connection = mysql.createConnection(config);
 con.connect(function(err : QueryError | null) {
