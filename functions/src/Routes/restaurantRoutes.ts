@@ -7,6 +7,7 @@ import { generateSignedUrl } from '../middleware/aws/aws';
 import { updateRestaurant } from '../restaurant/updateRestaurant';
 import { deleteRestaurant } from '../restaurant/deleteRestaurant';
 
+
 const restaurantRouter: Router = express.Router();
 
 restaurantRouter.get('/getRestaurants', function (req: Request, res: Response ,next : NextFunction) {

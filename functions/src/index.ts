@@ -19,6 +19,7 @@ import { ratingRouter } from './Routes/ratingRoutes';
 import { addressRouter } from './Routes/adressRoutes';
 import { promotionRouter } from './Routes/promotionRoutes';
 import { isTokenValid } from './middleware/jwt/jwtImplementation';
+import { appCheckVerification } from './middleware/firebase/auth';
 
 
 app.use(express.json());
@@ -39,7 +40,7 @@ app.use('/rating', ratingRouter);
 app.use('/address', addressRouter);
 app.use('/promotion', promotionRouter);
 
-app.get('/hi', function (req: Request, res: Response, next: NextFunction) {
+app.get('/hi', appCheckVerification ,function (req: Request, res: Response, next: NextFunction) {
     res.send('working as intended');
 })
 
@@ -57,7 +58,8 @@ app.get('logout', async function (req: Request, res: Response, next: NextFunctio
         res.clearCookie('refreshToken', {domain : 'http://localhost:5173'});
     }
 })
-app.listen(3100 , function(){
+/* app.listen(3100 , function(){
     console.log('Server running on port: '+3100)
-})
-exports.app = functions.https.onRequest(app);
+}) */
+
+exports.app = functions.region('southamerica-east1').https.onRequest(app);

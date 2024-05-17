@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-const jwtSecret = require("../../../jwtSecret.json");
+const jwtSecret = require("../../../secrets/jwtSecret.json");
 
 export function isTokenValid(req : any) {
     if(!req.cookies.authorization) {

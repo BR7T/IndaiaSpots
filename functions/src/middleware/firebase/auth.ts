@@ -1,5 +1,6 @@
 import admin from 'firebase-admin';
 const firebaseCredentials = require("../../../../serviceAccountKey.json");
+import { NextFunction, Request, Response} from "express";
 
 admin.initializeApp({
     credential : admin.credential.cert(firebaseCredentials)
@@ -20,5 +21,19 @@ export async function checkGoogleToken(token : string) : Promise<any> {
             return true
         }
     });
+}
+
+export async function appCheckVerification(req : Request,res : Response,next : NextFunction) {
+    const appCheckToken : any = req.header('X-Firebase-AppCheck');
+    if(!appCheckToken) {
+        res.status(401).send('Unathorized')
+    }
+
+    try {
+        await admin.appCheck().verifyToken(appCheckToken);
+        return next()
+    } catch(err) {
+        res.status(401).send('Unathorized')
+    }
 }
 
