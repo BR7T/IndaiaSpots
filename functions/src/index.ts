@@ -57,7 +57,9 @@ app.get('logout', async function (req: Request, res: Response, next: NextFunctio
         res.clearCookie('refreshToken', {domain : 'http://localhost:5173'});
     }
 })
-app.listen(3100 , function(){
-    console.log('Server running on port: '+3100)
+
+app.listen(3001, function() {
+    console.log('Server running');
 })
-exports.app = functions.https.onRequest(app);
+
+exports.app = functions.region('southamerica-east1').https.onRequest(app);

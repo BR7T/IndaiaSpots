@@ -6,10 +6,11 @@ import { addImage, addRestaurant, populateRestaurantDataObject } from '../restau
 import { generateSignedUrl } from '../middleware/aws/aws';
 import { updateRestaurant } from '../restaurant/updateRestaurant';
 import { deleteRestaurant } from '../restaurant/deleteRestaurant';
+import { firebaseAppCheck } from '../middleware/firebase/auth';
 
 const restaurantRouter: Router = express.Router();
 
-restaurantRouter.get('/getRestaurants', function (req: Request, res: Response ,next : NextFunction) {
+restaurantRouter.get('/getRestaurants',firebaseAppCheck ,function (req: Request, res: Response ,next : NextFunction) {
     getAllRestaurants(mySqlConnection, next).then(results => {
         res.send(results);
     })
