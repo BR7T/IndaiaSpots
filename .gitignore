@@ -2,5 +2,7 @@
 /PrivateKey.key
 functions/.env
 functions/node_modules
+functions/lib
 functions/jwtSecret.json
+functions/serviceAccountKey.json
 /node_modules
