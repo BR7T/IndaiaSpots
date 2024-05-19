@@ -7,10 +7,11 @@ import { createTokens } from '../middleware/jwt/jwtImplementation';
 import { addNewUser, addNewUserGoogle, populateUserDataObject } from '../user/addUser';
 import { getUserByEmail } from '../user/getUser';
 import { checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
+import { appCheckVerification } from '../middleware/firebase/auth';
 
 const userRouter: Router = express.Router();
 
-userRouter.post('/signin', async function (req: Request, res: Response, next: NextFunction) {
+userRouter.post('/signin',appCheckVerification ,async function (req: Request, res: Response, next: NextFunction) {
     const permissionLevel = "Comum";
     const userData = populateUserDataObject(req, permissionLevel);
 
@@ -32,7 +33,7 @@ userRouter.post('/signin', async function (req: Request, res: Response, next: Ne
     })
 })
 
-userRouter.post('/signup', async function (req: Request, res: Response, next: NextFunction) {
+userRouter.post('/signup', appCheckVerification,  async function (req: Request, res: Response, next: NextFunction) {
     if (req.body.confirmPassword.length < 8) {
         res.status(400).send({ error: "password must have 8 or more characters" });
     }
@@ -52,7 +53,7 @@ userRouter.post('/signup', async function (req: Request, res: Response, next: Ne
 
 userRouter.use(checkIfUsernameOrEmailAlreadyTaken);
 
-userRouter.post('/googleSignIn', async function (req: Request, res: Response, next: NextFunction) {
+userRouter.post('/googleSignIn', appCheckVerification , async function (req: Request, res: Response, next: NextFunction) {
     const permissionLevel = "Comum";
     const userData = populateUserDataObject(req, permissionLevel);
     if (req.body.isNewUser) {

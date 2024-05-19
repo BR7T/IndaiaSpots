@@ -4,10 +4,11 @@ import { mySqlConnection } from "../middleware/db/mysql";
 import { addPromotion, populatePromoDataObject } from "../promotion/addPromo";
 import { deletePromo } from "../promotion/DeletePromo";
 import { getPromoById, getPromos } from "../promotion/getPromo";
+import { appCheckVerification } from "../middleware/firebase/auth";
 
 const promotionRouter : Router = express.Router();
 
-promotionRouter.get("/getPromotion", async function(req: Request, res: Response, next: NextFunction) {
+promotionRouter.get("/getPromotion", appCheckVerification , async function(req: Request, res: Response, next: NextFunction) {
     getPromos(mySqlConnection).then(results => {
         if(results.length == 0) {
             res.send({error : "nenhuma promoção foi encontrada"})
@@ -18,19 +19,19 @@ promotionRouter.get("/getPromotion", async function(req: Request, res: Response,
     })
 });
 
-promotionRouter.get("/getPromotion/:id", async function (req: Request, res: Response, next: NextFunction) {
+promotionRouter.get("/getPromotion/:id", appCheckVerification , async function (req: Request, res: Response, next: NextFunction) {
     const promocaoId = req.params.id;
     getPromoById(mySqlConnection, promocaoId, next).then(results => {
         res.send(results)
     })  
 });
 
-promotionRouter.post("/add", async function (req: Request, res: Response, next: NextFunction) {
+promotionRouter.post("/add", appCheckVerification , async function (req: Request, res: Response, next: NextFunction) {
     const promoData = populatePromoDataObject(req.body);
     addPromotion(mySqlConnection , promoData, next)
 });
 
-promotionRouter.delete("/delete/:id", async function (req: Request, res: Response, next: NextFunction) {
+promotionRouter.delete("/delete/:id", appCheckVerification , async function (req: Request, res: Response, next: NextFunction) {
     const promoId = req.params.id;
     deletePromo(mySqlConnection, promoId);
 });
