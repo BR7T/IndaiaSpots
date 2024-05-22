@@ -8,7 +8,6 @@ import { updateRestaurant } from '../restaurant/updateRestaurant';
 import { deleteRestaurant } from '../restaurant/deleteRestaurant';
 import { appCheckVerification } from '../middleware/firebase/auth';
 
-
 const restaurantRouter: Router = express.Router();
 
 restaurantRouter.get('/getRestaurants', appCheckVerification , function (req: Request, res: Response ,next : NextFunction) {
