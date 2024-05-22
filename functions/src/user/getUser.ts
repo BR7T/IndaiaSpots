@@ -1,14 +1,32 @@
-import { QueryError, QueryResult } from "mysql2";
+import {QueryError} from "mysql2";
 import { Connection } from "mysql2/typings/mysql/lib/Connection";
 import { userData } from "../types/userData";
 
-export function getUserById(mysqlCon : Connection, userId: number) {
+export function getUserById(mysqlCon : Connection, userId: number): Promise<Array<JSON> | string> {
     const getUserQuery = 'select * from Usuario where ID_Usuario = ?';
     return new Promise((resolve, reject) => {
-        mysqlCon.query(getUserQuery, [userId], (err: QueryError | null, results: QueryResult) => {
+        mysqlCon.query(getUserQuery, [userId], (err: QueryError | null, results: any) => {
             if (err) reject(err)
             else {
                 resolve(results);
+            }
+        })
+    })
+}
+
+export function getUsernameById(mysqlCon : Connection, userId: string): Promise<Array<JSON> | string | any> {
+    const getUserQuery = 'select * from Usuario where ID_Usuario = ?';
+    return new Promise((resolve, reject) => {
+        mysqlCon.query(getUserQuery, [userId], (err: QueryError | null, results: any) => {
+            if (err) reject(err)
+            else {
+                const email : string = results[0].email;
+                const username : string = results[0].Nome;
+                const array = {
+                    email : email,
+                    username : username
+                }
+                resolve(array);
             }
         })
     })

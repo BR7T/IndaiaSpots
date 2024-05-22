@@ -20,6 +20,10 @@ import { addressRouter } from './Routes/adressRoutes';
 import { promotionRouter } from './Routes/promotionRoutes';
 import { isTokenValid } from './middleware/jwt/jwtImplementation';
 import { appCheckVerification } from './middleware/firebase/auth';
+import { decodeJwt } from './middleware/jwt/jwtImplementation';
+import { getUsernameById } from './user/getUser';
+import { mySqlConnection } from './middleware/db/mysql';
+
 
 app.use(express.json());
 app.use(helmet());
@@ -37,8 +41,17 @@ app.get('/hi', appCheckVerification ,function (req: Request, res: Response, next
 })
 
 app.get('/checkToken', appCheckVerification , async function (req: Request, res: Response, next: NextFunction) {
-    const isValid = isTokenValid(req);
-    res.send({isValid : isValid});
+    if(req.cookies.__session) {
+        const cookie = decodeJwt(req.cookies.__session);
+        getUsernameById(mySqlConnection , cookie.userId).then(results => {
+            const isValid = isTokenValid(req);
+            res.send({isValid : isValid, username : results.username, email : results.email});
+        })
+    } 
+    else {
+        const isValid = isTokenValid(req);
+        res.send({isValid : isValid});
+    } 
 })
 
 app.get('/logout', appCheckVerification ,async function (req: Request, res: Response, next: NextFunction) {
@@ -46,7 +59,7 @@ app.get('/logout', appCheckVerification ,async function (req: Request, res: Resp
         res.status(400).send({error : "Error on logout"})
     }
     else {
-        res.status(200).clearCookie('__session', {domain : ""}).send({process : 'success'});
+        res.status(200).clearCookie('__session', {domain : "", sameSite : 'none', secure : true}).send({process : 'success'});
     }
 })
 

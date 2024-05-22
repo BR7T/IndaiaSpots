@@ -13,6 +13,15 @@ export function isTokenValid(req : any) {
     return true;
 }
 
+interface jwt {
+    userId : any
+}
+
+export function decodeJwt(cookie: any) {
+    const decoded : jwt | string | any = jwt.verify(cookie.toString(), jwtSecret.key);
+    return decoded;
+}
+
 function createToken(id : any) {
     const token = jwt.sign({userId : id},jwtSecret.key, {expiresIn : '30d'});
     return token;
