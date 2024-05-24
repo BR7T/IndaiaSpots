@@ -3,7 +3,7 @@ import { RestaurantData } from "../types/restaurantData";
 import { Connection } from "mysql2/typings/mysql/lib/Connection";
 
 export function addRestaurant(mysqlCon : Connection,restaurantData : any) : Promise<QueryError | void> {
-    const insertQuery = 'insert into restaurante(nome,contato,horario_atendimento,dia_atendimento,tipo_cozinha,CNPJ) values(?,?,?,?,?,?)';
+    const insertQuery = 'insert into restaurante(nome,contato,horario_atendimento,dia_atendimento,tipo_cozinha,icone) values(?,?,?,?,?)';
     return new Promise((resolve,reject) => {
         mysqlCon.query(insertQuery,[
             restaurantData.nome,
@@ -11,7 +11,6 @@ export function addRestaurant(mysqlCon : Connection,restaurantData : any) : Prom
             restaurantData.horario_atendimento,
             restaurantData.dia_atendimento,
             restaurantData.tipo_cozinha,
-            restaurantData.CNPJ,
         ], (err : QueryError | null,results : any) => {
                 if(err) reject(err)
             })
@@ -20,7 +19,7 @@ export function addRestaurant(mysqlCon : Connection,restaurantData : any) : Prom
 
 export function addImage(mySqlConnection : Connection , filename : string) : Promise<QueryError | string> {
     const url = `https://d1rz3fbu8zmjz5.cloudfront.net/${filename}`;
-    const insertQuery = 'insert into imagem(url) values (?)';
+    const insertQuery = 'insert into Imagem(URL) values (?)';
     return new Promise((resolve, reject) => {
         mySqlConnection.query(insertQuery,[url], (err : QueryError | null, results : any) => {
             if(err) reject(err);
@@ -38,7 +37,7 @@ export function populateRestaurantDataObject(data : any) {
         horario_atendimento: data.body.horario,
         dia_atendimento: data.body.diaAtendimento,
         tipo_cozinha: data.body.tipoCozinha,
-        CNPJ: data.body.CNPJ
+        icone : data.body.icone
     }
     return restaurantData;
 }

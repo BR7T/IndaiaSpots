@@ -12,7 +12,6 @@ export function updateRestaurant(mysqlCon : Connection,restaurantId: number,upda
       updatedData.horario_atendimento,
       updatedData.dia_atendimento,
       updatedData.tipo_cozinha,
-      updatedData.CNPJ,
       restaurantId
     ],(err : QueryError | null , results : any) => {
         if(err) {

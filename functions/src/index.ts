@@ -19,7 +19,7 @@ import { ratingRouter } from './Routes/ratingRoutes';
 import { addressRouter } from './Routes/adressRoutes';
 import { promotionRouter } from './Routes/promotionRoutes';
 import { isTokenValid } from './middleware/jwt/jwtImplementation';
-import { appCheckVerification } from './middleware/firebase/auth';
+import { appCheckVerification } from './middleware/firebase/firebase';
 import { decodeJwt } from './middleware/jwt/jwtImplementation';
 import { getUsernameById } from './user/getUser';
 import { mySqlConnection } from './middleware/db/mysql';

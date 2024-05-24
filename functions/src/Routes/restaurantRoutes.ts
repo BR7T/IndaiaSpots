@@ -2,11 +2,11 @@ import { Router, Request, Response, NextFunction } from 'express';
 import * as express from 'express';
 import { mySqlConnection } from '../middleware/db/mysql';
 import { getRestaurant, getAllRestaurants, searchRestaurant } from '../restaurant/getRestaurant';
-import { addImage, addRestaurant, populateRestaurantDataObject } from '../restaurant/addRestaurant';
+import { addImage} from '../restaurant/addRestaurant';
 import { generateSignedUrl } from '../middleware/aws/aws';
 import { updateRestaurant } from '../restaurant/updateRestaurant';
 import { deleteRestaurant } from '../restaurant/deleteRestaurant';
-import { appCheckVerification } from '../middleware/firebase/auth';
+import { appCheckVerification } from '../middleware/firebase/firebase';
 
 
 const restaurantRouter: Router = express.Router();
@@ -31,16 +31,11 @@ restaurantRouter.get('/getRestaurant/:id', appCheckVerification , function (req:
 restaurantRouter.get('/addRestaurant', appCheckVerification , async function (req: any, res: Response, next: NextFunction) {
     if (!req.query.filename) res.status(400);
     const filename = req.query.filename;
-    req.file = {
+    req.body.file = {
         filename: filename,
         expirationTime: 60
     }
-    generateSignedUrl(req, res, next).then(() => {
-        const data = populateRestaurantDataObject(req);
-        addRestaurant(mySqlConnection,data).then(function() {
-            res.send({process : true}); 
-        })
-    })
+    generateSignedUrl(req.body.file, res, next).then(() => {})
 })
 
 restaurantRouter.post('/addImage', appCheckVerification , async function (req: Request, res: Response, next : NextFunction) {

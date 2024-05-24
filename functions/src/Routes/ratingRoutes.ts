@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import * as express from 'express';
 import { mySqlConnection } from '../middleware/db/mysql';
 import { addRating } from '../rating/addRating';
-import { appCheckVerification } from '../middleware/firebase/auth';
+import { appCheckVerification } from '../middleware/firebase/firebase';
 
 const ratingRouter: Router = express.Router();
 

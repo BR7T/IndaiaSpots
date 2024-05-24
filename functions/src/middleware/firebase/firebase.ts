@@ -34,7 +34,6 @@ export async function appCheckVerification(req : Request, res : Response, next :
         await admin.appCheck().verifyToken(appCheckToken);
         return next();
     } catch (err) {
-        console.error('Error verifying AppCheck token:', err);
         return res.status(401).send('Unauthorized: Invalid AppCheck token.');
     }
 }

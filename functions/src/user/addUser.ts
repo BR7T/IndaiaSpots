@@ -15,6 +15,17 @@ export async function addNewUser(mysqlCon : Connection, userData : any, next : N
     });
 }
 
+export async function addNewUserRestaurant(mysqlCon : Connection, userData : any, next : NextFunction): Promise< QueryError | void | boolean> {
+    const authType = "form";
+    const addUserQuery: string = 'insert into Usuario(nome,email,senha,tipo_autenticacao,Nivel_Permissao) values (?,?,?,?,?)';
+    mysqlCon.query(addUserQuery, [userData.username, userData.email, userData.password, authType, userData.permissionLevel], (err: QueryError | null, results: any) => {
+        if (err) {
+            return next(err);
+        }
+        return true;
+    });
+}
+
 export function checkIfUsernameOrEmailAlreadyTaken(err : any, req : Request , res : Response, next : NextFunction) {
     console.log(err);
     if (err.code === "ER_DUP_ENTRY") {   

@@ -4,7 +4,7 @@ import { mySqlConnection } from "../middleware/db/mysql";
 import { addPromotion, populatePromoDataObject } from "../promotion/addPromo";
 import { deletePromo } from "../promotion/DeletePromo";
 import { getPromoById, getPromos } from "../promotion/getPromo";
-import { appCheckVerification } from "../middleware/firebase/auth";
+import { appCheckVerification } from "../middleware/firebase/firebase";
 
 const promotionRouter : Router = express.Router();
 

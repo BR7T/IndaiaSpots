@@ -4,10 +4,10 @@ import { userData } from '../types/userData';
 import { comparePassword, hashPassword } from '../middleware/bcrypt/hashing';
 import { mySqlConnection } from '../middleware/db/mysql';
 import { createTokens } from '../middleware/jwt/jwtImplementation';
-import { addNewUser, addNewUserGoogle, populateUserDataObject } from '../user/addUser';
+import { addNewUser, addNewUserGoogle, addNewUserRestaurant, populateUserDataObject } from '../user/addUser';
 import { getUserByEmail } from '../user/getUser';
 import { checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
-import { appCheckVerification } from '../middleware/firebase/auth';
+import { appCheckVerification } from '../middleware/firebase/firebase';
 
 const userRouter: Router = express.Router();
 
@@ -47,6 +47,24 @@ userRouter.post('/signup', appCheckVerification,  async function (req: Request, 
         permissionLevel: permissionLevel
     }
    addNewUser(mySqlConnection, userData, next).then(() => {
+        res.send({process : true})
+   })
+});
+
+userRouter.post('/signupRestaurant', appCheckVerification,  async function (req: Request, res: Response, next: NextFunction) {
+    if (req.body.confirm.length < 8) {
+        res.status(400).send({ error: "password must have 8 or more characters" });
+    }
+
+    const permissionLevel = "Restaurante";
+    let hashedPassword: string = await hashPassword(req.body.confirm, 12);
+    const userData: userData = {
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword,
+        permissionLevel: permissionLevel
+    }
+   addNewUserRestaurant(mySqlConnection, userData, next).then(() => {
         res.send({process : true})
    })
 });

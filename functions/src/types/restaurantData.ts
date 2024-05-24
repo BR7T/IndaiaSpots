@@ -4,5 +4,5 @@ export type RestaurantData = {
     horario_atendimento : string,
     dia_atendimento : string,
     tipo_cozinha : string,
-    CNPJ : number,
+    icone : string,
 }
