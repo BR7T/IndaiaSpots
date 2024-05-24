@@ -23,6 +23,7 @@ import { appCheckVerification } from './middleware/firebase/firebase';
 import { decodeJwt } from './middleware/jwt/jwtImplementation';
 import { getUsernameById } from './user/getUser';
 import { mySqlConnection } from './middleware/db/mysql';
+import { imageRouter } from './Routes/imageRoutes';
 
 
 app.use(express.json());
@@ -35,6 +36,7 @@ app.use('/restaurant', restaurantRouter);
 app.use('/rating', ratingRouter);
 app.use('/address', addressRouter);
 app.use('/promotion', promotionRouter);
+app.use('/image', imageRouter);
 
 app.get('/hi', appCheckVerification ,function (req: Request, res: Response, next: NextFunction) {
     res.send('working as intended');

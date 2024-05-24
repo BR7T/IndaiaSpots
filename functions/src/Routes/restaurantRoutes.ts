@@ -2,8 +2,6 @@ import { Router, Request, Response, NextFunction } from 'express';
 import * as express from 'express';
 import { mySqlConnection } from '../middleware/db/mysql';
 import { getRestaurant, getAllRestaurants, searchRestaurant } from '../restaurant/getRestaurant';
-import { addImage} from '../restaurant/addRestaurant';
-import { generateSignedUrl } from '../middleware/aws/aws';
 import { updateRestaurant } from '../restaurant/updateRestaurant';
 import { deleteRestaurant } from '../restaurant/deleteRestaurant';
 import { appCheckVerification } from '../middleware/firebase/firebase';
@@ -26,21 +24,6 @@ restaurantRouter.get('/getRestaurant/:id', appCheckVerification , function (req:
             res.send(results);
         }
     })
-})
-
-restaurantRouter.get('/addRestaurant', appCheckVerification , async function (req: any, res: Response, next: NextFunction) {
-    if (!req.query.filename) res.status(400);
-    const filename = req.query.filename;
-    req.body.file = {
-        filename: filename,
-        expirationTime: 60
-    }
-    generateSignedUrl(req.body.file, res, next).then(() => {})
-})
-
-restaurantRouter.post('/addImage', appCheckVerification , async function (req: Request, res: Response, next : NextFunction) {
-    const url = req.body.filename;
-    addImage(mySqlConnection, url);
 })
 
 restaurantRouter.post('/searchRestaurant', appCheckVerification , function (req: Request, res: Response, next: NextFunction) {
