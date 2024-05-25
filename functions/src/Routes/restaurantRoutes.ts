@@ -50,6 +50,8 @@ restaurantRouter.use((err : string,req : Request, res : Response , next : NextFu
     res.status(500).send('Erro interno do servidor');
 });
 
+
+
 export { restaurantRouter };
 
 

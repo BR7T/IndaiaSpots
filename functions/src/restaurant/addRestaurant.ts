@@ -29,3 +29,7 @@ export function populateRestaurantDataObject(data : any) {
     return restaurantData;
 }
 
+export function completeRegister(mysqlCon : Connection,restaurantData : any) {
+    
+}
+

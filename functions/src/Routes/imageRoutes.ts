@@ -18,8 +18,10 @@ imageRouter.get('/signedUrl', appCheckVerification , async function (req:Request
 })
 
 imageRouter.post('/addImage', appCheckVerification , async function (req: Request, res: Response, next : NextFunction) {
-    const url = req.body.filename;
-    addImage(mySqlConnection, url);
+    const body = req.body;
+    addImage(mySqlConnection, body).then(response => {
+        res.send(response);
+    })
 })
 
 export {imageRouter};

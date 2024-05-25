@@ -12,3 +12,16 @@ export function deleteUser(mysqlCon : Connection, userId : any): Promise<QueryEr
       });
     });
 }
+
+export async function deleteUserByEmail(mysqlCon : Connection, email : any): Promise<QueryError | string> {
+    const deleteUserQuery = "DELETE FROM Usuario WHERE email=?";
+    console.log(email);
+    return new Promise((resolve, reject) => {
+        mysqlCon.query(deleteUserQuery, [email], (err : QueryError | null, results : any) => {
+          if (err) {
+            reject(err);
+          }
+          resolve('success');
+        });
+    });
+}

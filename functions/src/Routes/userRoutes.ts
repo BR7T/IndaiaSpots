@@ -5,9 +5,12 @@ import { comparePassword, hashPassword } from '../middleware/bcrypt/hashing';
 import { mySqlConnection } from '../middleware/db/mysql';
 import { createTokens } from '../middleware/jwt/jwtImplementation';
 import { addNewUser, addNewUserGoogle, addNewUserRestaurant, populateUserDataObject } from '../user/addUser';
-import { getUserByEmail } from '../user/getUser';
+import { getUserByEmail, getUserIdByEmail } from '../user/getUser';
 import { checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
 import { appCheckVerification } from '../middleware/firebase/firebase';
+import { deleteUserByEmail } from '../user/deleteUser';
+import { addAddress } from '../address/addAdress';
+const util = require('util');
 
 const userRouter: Router = express.Router();
 
@@ -64,9 +67,11 @@ userRouter.post('/signupRestaurant', appCheckVerification,  async function (req:
         password: hashedPassword,
         permissionLevel: permissionLevel
     }
-   addNewUserRestaurant(mySqlConnection, userData, next).then(() => {
-        res.send({process : true})
-   })
+    addNewUserRestaurant(mySqlConnection, userData, next).then(() => {
+        getUserIdByEmail(mySqlConnection, userData.email).then(response => {
+            res.send({process : true, restaurantId : response})
+        })
+    })
 });
 
 userRouter.use(checkIfUsernameOrEmailAlreadyTaken);
@@ -90,8 +95,31 @@ userRouter.post('/googleSignIn', appCheckVerification , async function (req: Req
     }
 })
 
+userRouter.post('/delete', async function (req: Request, res: Response, next: NextFunction) {
+    if(!req.query.email) res.send(500);
+    deleteUserByEmail(mySqlConnection , req.query.email).then(response => {
+        res.send({process : true});
+    })
+})
+
 userRouter.use((err : string ,req : Request, res : Response , next : NextFunction) : void => {
     res.status(500).send('Something went wrong');
 })
+
+userRouter.post('/registerRestaurant', appCheckVerification,  async function (req: Request, res: Response, next: NextFunction) {
+    const beginTransactionAsync = util.promisify(mySqlConnection.beginTransaction).bind(mySqlConnection);
+    
+    (async () => {
+        try {
+            await beginTransactionAsync();
+            console.log('Transaction started');
+            addNewUserRestaurant(mySqlConnection,req.body.Login, next);
+
+            addAddress()
+        } catch (error) {
+            console.error('Error starting transaction:', error);
+        }
+    })();
+});
 
 export { userRouter };

@@ -44,6 +44,18 @@ export async function getUserByEmail(mysqlCon : Connection, email : string): Pro
     })
 }
 
+export async function getUserIdByEmail(mysqlCon : Connection, email : string): Promise<Array<JSON> | string> {
+    const getUserQuery = 'select * from Usuario where email = ?';
+    return new Promise((resolve, reject) => {
+        mysqlCon.query(getUserQuery, [email], (err: QueryError | null, results: any) => {
+            if (err) reject(err)
+            else {
+                resolve(results[0].ID_Usuario);
+            }
+        })
+    })
+}
+
 export function getAllUsers(mysqlCon : Connection): Promise<Array<JSON> | string> {
     const getUserQuery = 'select * from establishments';
     return new Promise((resolve, reject) => {

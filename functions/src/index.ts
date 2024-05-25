@@ -16,7 +16,7 @@ import helmet from 'helmet';
 import { userRouter } from "./Routes/userRoutes";
 import { restaurantRouter } from "./Routes/restaurantRoutes";
 import { ratingRouter } from './Routes/ratingRoutes';
-import { addressRouter } from './Routes/adressRoutes';
+import { addressRouter } from './Routes/addressRoutes';
 import { promotionRouter } from './Routes/promotionRoutes';
 import { isTokenValid } from './middleware/jwt/jwtImplementation';
 import { appCheckVerification } from './middleware/firebase/firebase';
