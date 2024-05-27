@@ -1,0 +1,666 @@
+[debug] [2024-05-26T17:19:18.560Z] ----------------------------------------------------------------------
+[debug] [2024-05-26T17:19:18.561Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\João Vitor\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --only functions
+[debug] [2024-05-26T17:19:18.562Z] CLI Version:   13.10.0
+[debug] [2024-05-26T17:19:18.562Z] Platform:      win32
+[debug] [2024-05-26T17:19:18.562Z] Node Version:  v18.18.0
+[debug] [2024-05-26T17:19:18.563Z] Time:          Sun May 26 2024 14:19:18 GMT-0300 (Brasilia Standard Time)
+[debug] [2024-05-26T17:19:18.563Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-05-26T17:19:18.674Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-05-26T17:19:18.675Z] > authorizing via signed-in user (jv232479@gmail.com)
+[info] i  emulators: Starting emulators: functions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions"}}
+[debug] [2024-05-26T17:19:18.684Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2024-05-26T17:19:18.684Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2024-05-26T17:19:18.690Z] [hub] writing locator at C:\Users\JOOVIT~1\AppData\Local\Temp\hub-indaiaspots.json
+[debug] [2024-05-26T17:19:18.705Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2024-05-26T17:19:18.706Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2024-05-26T17:19:18.706Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] !  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: auth, firestore, database, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mauth, firestore, database, hosting, pubsub, storage, dataconnect\u001b[22m"}}
+[debug] [2024-05-26T17:19:18.710Z] defaultcredentials: writing to file C:\Users\João Vitor\AppData\Roaming\firebase\jv232479_gmail_com_application_default_credentials.json
+[debug] [2024-05-26T17:19:18.712Z] Setting GAC to C:\Users\João Vitor\AppData\Roaming\firebase\jv232479_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to C:\\Users\\João Vitor\\AppData\\Roaming\\firebase\\jv232479_gmail_com_application_default_credentials.json"}}
+[debug] [2024-05-26T17:19:18.714Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/indaiaspots/adminSdkConfig [none]
+[debug] [2024-05-26T17:19:19.125Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/indaiaspots/adminSdkConfig 200
+[debug] [2024-05-26T17:19:19.125Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/indaiaspots/adminSdkConfig {"projectId":"indaiaspots","storageBucket":"indaiaspots.appspot.com"}
+[debug] [2024-05-26T17:19:19.148Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2024-05-26T17:19:19.148Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2024-05-26T17:19:19.148Z] Starting Emulator UI with command {"binary":"node","args":["C:\\Users\\João Vitor\\.cache\\firebase\\emulators\\ui-v1.12.1\\server\\server.mjs"],"optionalArgs":[],"joinArgs":false,"shell":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"C:\\\\Users\\\\João Vitor\\\\.cache\\\\firebase\\\\emulators\\\\ui-v1.12.1\\\\server\\\\server.mjs\"],\"optionalArgs\":[],\"joinArgs\":false,\"shell\":false}"}}
+[info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
+[debug] [2024-05-26T17:19:19.280Z] Web / API server started at 127.0.0.1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at 127.0.0.1:4000\n"}}
+[debug] [2024-05-26T17:19:19.281Z] Web / API server started at ::1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at ::1:4000\n"}}
+[info] i  functions: Watching "C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\" for Cloud Functions..."}}
+[debug] [2024-05-26T17:19:19.379Z] Validating nodejs source
+[debug] [2024-05-26T17:19:21.319Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
+    "@types/express-serve-static-core": "^4.19.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "helmet": "^7.1.0",
+    "jest": "^29.7.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "commonjs",
+  "private": true
+}
+[debug] [2024-05-26T17:19:21.319Z] Building nodejs source
+[debug] [2024-05-26T17:19:21.319Z] Failed to find version of module node: reached end of search path C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2024-05-26T17:19:21.323Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-05-26T17:19:21.330Z] Found firebase-functions binary at 'C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8938
+
+[debug] [2024-05-26T17:19:22.250Z] Got response from /__/functions.yaml {"endpoints":{"app":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"region":["southamerica-east1"],"httpsTrigger":{},"entryPoint":"app"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] Connection to database Successful
+
+[info] +  functions: Loaded functions definitions from source: app. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: app."}}
+[info] +  functions[southamerica-east1-app]: http function initialized (http://127.0.0.1:5001/indaiaspots/southamerica-east1/app). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/indaiaspots/southamerica-east1/app)."}}
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌───────────┬────────────────┬─────────────────────────────────┐
+│ Emulator  │ Host:Port      │ View in Emulator UI             │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Functions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions │
+└───────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub running at 127.0.0.1:4400
+  Other reserved ports: 4500
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[debug] [2024-05-26T17:19:43.050Z] [work-queue] {"queuedWork":["/indaiaspots/southamerica-east1/app/restaurant/registerRestaurant-2024-05-26T17:19:43.050Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2024-05-26T17:19:43.051Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/indaiaspots/southamerica-east1/app/restaurant/registerRestaurant-2024-05-26T17:19:43.050Z"],"workRunningCount":1}
+[debug] [2024-05-26T17:19:43.051Z] Accepted request OPTIONS /indaiaspots/southamerica-east1/app/restaurant/registerRestaurant --> southamerica-east1-app
+[debug] [2024-05-26T17:19:43.053Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2024-05-26T17:19:43.054Z] [functions] Got req.url=/indaiaspots/southamerica-east1/app/restaurant/registerRestaurant, mapping to path=/restaurant/registerRestaurant {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/indaiaspots/southamerica-east1/app/restaurant/registerRestaurant, mapping to path=/restaurant/registerRestaurant"}}
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2024-05-26T17:19:43.064Z] [worker-pool] addWorker(southamerica-east1-app) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] addWorker(southamerica-east1-app)"}}
+[debug] [2024-05-26T17:19:43.065Z] [worker-pool] Adding worker with key southamerica-east1-app, total=1 {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Adding worker with key southamerica-east1-app, total=1"}}
+[debug] [2024-05-26T17:19:44.393Z] [runtime-status] [13136] Resolved module firebase-admin {"declared":true,"installed":true,"version":"12.1.0","resolution":"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\node_modules\\firebase-admin\\lib\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"12.1.0\",\"resolution\":\"C:\\\\VScode_projects\\\\IndaiaSpots\\\\IndaiaSpots\\\\functions\\\\node_modules\\\\firebase-admin\\\\lib\\\\index.js\"}"}}
+[debug] [2024-05-26T17:19:44.394Z] [runtime-status] [13136] Resolved module firebase-functions {"declared":true,"installed":true,"version":"5.0.1","resolution":"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\node_modules\\firebase-functions\\lib\\v1\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"5.0.1\",\"resolution\":\"C:\\\\VScode_projects\\\\IndaiaSpots\\\\IndaiaSpots\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v1\\\\index.js\"}"}}
+[debug] [2024-05-26T17:19:44.394Z] [runtime-status] [13136] Outgoing network have been stubbed. [{"name":"http","status":"mocked"},{"name":"http","status":"mocked"},{"name":"https","status":"mocked"},{"name":"https","status":"mocked"},{"name":"net","status":"mocked"}] {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Outgoing network have been stubbed. [{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"net\",\"status\":\"mocked\"}]"}}
+[debug] [2024-05-26T17:19:44.395Z] [runtime-status] [13136] Resolved module firebase-functions {"declared":true,"installed":true,"version":"5.0.1","resolution":"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\node_modules\\firebase-functions\\lib\\v1\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"5.0.1\",\"resolution\":\"C:\\\\VScode_projects\\\\IndaiaSpots\\\\IndaiaSpots\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v1\\\\index.js\"}"}}
+[debug] [2024-05-26T17:19:44.657Z] [runtime-status] [13136] Checked functions.config() {"config":{}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Checked functions.config() {\"config\":{}}"}}
+[debug] [2024-05-26T17:19:44.658Z] [runtime-status] [13136] firebase-functions has been stubbed. {"functionsResolution":{"declared":true,"installed":true,"version":"5.0.1","resolution":"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\node_modules\\firebase-functions\\lib\\v1\\index.js"}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] firebase-functions has been stubbed. {\"functionsResolution\":{\"declared\":true,\"installed\":true,\"version\":\"5.0.1\",\"resolution\":\"C:\\\\VScode_projects\\\\IndaiaSpots\\\\IndaiaSpots\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v1\\\\index.js\"}}"}}
+[debug] [2024-05-26T17:19:44.658Z] [runtime-status] [13136] Resolved module firebase-functions {"declared":true,"installed":true,"version":"5.0.1","resolution":"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\node_modules\\firebase-functions\\lib\\v1\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"5.0.1\",\"resolution\":\"C:\\\\VScode_projects\\\\IndaiaSpots\\\\IndaiaSpots\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v1\\\\index.js\"}"}}
+[debug] [2024-05-26T17:19:44.660Z] [runtime-status] [13136] Resolved module firebase-admin {"declared":true,"installed":true,"version":"12.1.0","resolution":"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\node_modules\\firebase-admin\\lib\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"12.1.0\",\"resolution\":\"C:\\\\VScode_projects\\\\IndaiaSpots\\\\IndaiaSpots\\\\functions\\\\node_modules\\\\firebase-admin\\\\lib\\\\index.js\"}"}}
+[debug] [2024-05-26T17:19:44.663Z] [runtime-status] [13136] Resolved module firebase-functions {"declared":true,"installed":true,"version":"5.0.1","resolution":"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\node_modules\\firebase-functions\\lib\\v1\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"5.0.1\",\"resolution\":\"C:\\\\VScode_projects\\\\IndaiaSpots\\\\IndaiaSpots\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v1\\\\index.js\"}"}}
+[debug] [2024-05-26T17:19:44.663Z] [runtime-status] [13136] firebase-admin has been stubbed. {"adminResolution":{"declared":true,"installed":true,"version":"12.1.0","resolution":"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\node_modules\\firebase-admin\\lib\\index.js"}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] firebase-admin has been stubbed. {\"adminResolution\":{\"declared\":true,\"installed\":true,\"version\":\"12.1.0\",\"resolution\":\"C:\\\\VScode_projects\\\\IndaiaSpots\\\\IndaiaSpots\\\\functions\\\\node_modules\\\\firebase-admin\\\\lib\\\\index.js\"}}"}}
+[debug] [2024-05-26T17:19:45.184Z] [runtime-status] [13136] Functions runtime initialized. {"cwd":"C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions","node_version":"18.18.0"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Functions runtime initialized. {\"cwd\":\"C:\\\\VScode_projects\\\\IndaiaSpots\\\\IndaiaSpots\\\\functions\",\"node_version\":\"18.18.0\"}"}}
+[debug] [2024-05-26T17:19:45.184Z] [runtime-status] [13136] Listening to port: \\?\pipe\fire_emu_c273dad138a3a410 {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[runtime-status] [13136] Listening to port: \\\\?\\pipe\\fire_emu_c273dad138a3a410"}}
+[info] >  Connection to database Successful {"user":"Connection to database Successful","metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"\u001b[90m> \u001b[39m Connection to database Successful"}}
+[debug] [2024-05-26T17:19:45.286Z] [worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: IDLE"}}
+[debug] [2024-05-26T17:19:45.286Z] [worker-pool] submitRequest(triggerId=southamerica-east1-app) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=southamerica-east1-app)"}}
+[info] i  functions: Beginning execution of "southamerica-east1-app" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Beginning execution of \"southamerica-east1-app\""}}
+[debug] [2024-05-26T17:19:45.287Z] [worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: BUSY"}}
+[debug] [2024-05-26T17:19:45.294Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "southamerica-east1-app" in 7.6931ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Finished \"southamerica-east1-app\" in 7.6931ms"}}
+[debug] [2024-05-26T17:19:45.295Z] [worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: IDLE"}}
+[debug] [2024-05-26T17:19:45.295Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2024-05-26T17:19:45.295Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2024-05-26T17:19:45.296Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2024-05-26T17:19:45.298Z] [work-queue] {"queuedWork":["/indaiaspots/southamerica-east1/app/restaurant/registerRestaurant-2024-05-26T17:19:45.298Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2024-05-26T17:19:45.298Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/indaiaspots/southamerica-east1/app/restaurant/registerRestaurant-2024-05-26T17:19:45.298Z"],"workRunningCount":1}
+[debug] [2024-05-26T17:19:45.298Z] Accepted request POST /indaiaspots/southamerica-east1/app/restaurant/registerRestaurant --> southamerica-east1-app
+[debug] [2024-05-26T17:19:45.300Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2024-05-26T17:19:45.300Z] [functions] Got req.url=/indaiaspots/southamerica-east1/app/restaurant/registerRestaurant, mapping to path=/restaurant/registerRestaurant {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/indaiaspots/southamerica-east1/app/restaurant/registerRestaurant, mapping to path=/restaurant/registerRestaurant"}}
+[debug] [2024-05-26T17:19:45.300Z] [worker-pool] submitRequest(triggerId=southamerica-east1-app) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=southamerica-east1-app)"}}
+[info] i  functions: Beginning execution of "southamerica-east1-app" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Beginning execution of \"southamerica-east1-app\""}}
+[debug] [2024-05-26T17:19:45.301Z] [worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: BUSY"}}
+[info] >  undefined {"user":"undefined","metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"\u001b[90m> \u001b[39m undefined"}}
+[info] >  Cannot read properties of undefined (reading 'ID_Usuario') {"user":"Cannot read properties of undefined (reading 'ID_Usuario')","metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"\u001b[90m> \u001b[39m Cannot read properties of undefined (reading 'ID_Usuario')"}}
+[debug] [2024-05-26T17:19:45.574Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "southamerica-east1-app" in 273.7567ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Finished \"southamerica-east1-app\" in 273.7567ms"}}
+[debug] [2024-05-26T17:19:45.575Z] [worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: IDLE"}}
+[debug] [2024-05-26T17:19:45.575Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2024-05-26T17:19:45.575Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2024-05-26T17:19:45.575Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2024-05-26T17:24:49.063Z] File C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\src\user\getUser.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\src\\user\\getUser.ts changed, reloading triggers"}}
+[debug] [2024-05-26T17:24:50.069Z] Validating nodejs source
+[debug] [2024-05-26T17:24:52.100Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
+    "@types/express-serve-static-core": "^4.19.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "helmet": "^7.1.0",
+    "jest": "^29.7.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "commonjs",
+  "private": true
+}
+[debug] [2024-05-26T17:24:52.100Z] Building nodejs source
+[debug] [2024-05-26T17:24:52.101Z] Failed to find version of module node: reached end of search path C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2024-05-26T17:24:52.103Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-05-26T17:24:52.108Z] Found firebase-functions binary at 'C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules\.bin\firebase-functions'
+[debug] [2024-05-26T17:24:52.350Z] File C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\src\user\getUser.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\src\\user\\getUser.ts changed, reloading triggers"}}
+[info] Serving at port 8705
+
+[debug] [2024-05-26T17:24:53.114Z] Got response from /__/functions.yaml {"endpoints":{"app":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"region":["southamerica-east1"],"httpsTrigger":{},"entryPoint":"app"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] Connection to database Successful
+
+[debug] [2024-05-26T17:24:53.357Z] Validating nodejs source
+[debug] [2024-05-26T17:24:54.716Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
+    "@types/express-serve-static-core": "^4.19.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "helmet": "^7.1.0",
+    "jest": "^29.7.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "commonjs",
+  "private": true
+}
+[debug] [2024-05-26T17:24:54.716Z] Building nodejs source
+[debug] [2024-05-26T17:24:54.716Z] Failed to find version of module node: reached end of search path C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2024-05-26T17:24:54.718Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-05-26T17:24:54.722Z] Found firebase-functions binary at 'C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules\.bin\firebase-functions'
+[debug] [2024-05-26T17:24:54.726Z] File C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\src\user\getUser.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\src\\user\\getUser.ts changed, reloading triggers"}}
+[info] Serving at port 8657
+
+[debug] [2024-05-26T17:24:55.654Z] Got response from /__/functions.yaml {"endpoints":{"app":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"region":["southamerica-east1"],"httpsTrigger":{},"entryPoint":"app"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] Connection to database Successful
+
+[debug] [2024-05-26T17:24:55.729Z] Validating nodejs source
+[debug] [2024-05-26T17:24:57.123Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
+    "@types/express-serve-static-core": "^4.19.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "helmet": "^7.1.0",
+    "jest": "^29.7.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "commonjs",
+  "private": true
+}
+[debug] [2024-05-26T17:24:57.124Z] Building nodejs source
+[debug] [2024-05-26T17:24:57.124Z] Failed to find version of module node: reached end of search path C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2024-05-26T17:24:57.126Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-05-26T17:24:57.131Z] Found firebase-functions binary at 'C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules\.bin\firebase-functions'
+[debug] [2024-05-26T17:24:57.135Z] File C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\src\user\getUser.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\src\\user\\getUser.ts changed, reloading triggers"}}
+[info] Serving at port 8720
+
+[debug] [2024-05-26T17:24:58.114Z] Got response from /__/functions.yaml {"endpoints":{"app":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"region":["southamerica-east1"],"httpsTrigger":{},"entryPoint":"app"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[debug] [2024-05-26T17:24:58.143Z] Validating nodejs source
+[debug] [2024-05-26T17:24:59.514Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
+    "@types/express-serve-static-core": "^4.19.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "helmet": "^7.1.0",
+    "jest": "^29.7.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "commonjs",
+  "private": true
+}
+[debug] [2024-05-26T17:24:59.515Z] Building nodejs source
+[debug] [2024-05-26T17:24:59.515Z] Failed to find version of module node: reached end of search path C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[info] Connection to database Successful
+
+[debug] [2024-05-26T17:24:59.517Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-05-26T17:24:59.521Z] Found firebase-functions binary at 'C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8453
+
+[debug] [2024-05-26T17:25:00.449Z] Got response from /__/functions.yaml {"endpoints":{"app":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"region":["southamerica-east1"],"httpsTrigger":{},"entryPoint":"app"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] Connection to database Successful
+
+[debug] [2024-05-26T17:25:02.144Z] File C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\src\user\getUser.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\src\\user\\getUser.ts changed, reloading triggers"}}
+[info] +  functions: Loaded functions definitions from source: app. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: app."}}
+[debug] [2024-05-26T17:25:03.127Z] [worker-pool] Shutting down IDLE worker (southamerica-east1-app) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Shutting down IDLE worker (southamerica-east1-app)"}}
+[debug] [2024-05-26T17:25:03.127Z] [worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: FINISHING {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: FINISHING"}}
+[debug] [2024-05-26T17:25:03.137Z] [worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: exited {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: exited"}}
+[debug] [2024-05-26T17:25:03.137Z] [worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: FINISHED {"metadata":{"emulator":{"name":"functions"},"function":{"name":"southamerica-east1-app"},"extension":{},"message":"[worker-southamerica-east1-app-2fc965ab-eebb-4391-8c7a-6b21cfa06305]: FINISHED"}}
+[debug] [2024-05-26T17:25:03.156Z] Validating nodejs source
+[debug] [2024-05-26T17:25:04.558Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
+    "@types/express-serve-static-core": "^4.19.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "helmet": "^7.1.0",
+    "jest": "^29.7.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "commonjs",
+  "private": true
+}
+[debug] [2024-05-26T17:25:04.558Z] Building nodejs source
+[debug] [2024-05-26T17:25:04.558Z] Failed to find version of module node: reached end of search path C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2024-05-26T17:25:04.560Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-05-26T17:25:04.564Z] Found firebase-functions binary at 'C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules\.bin\firebase-functions'
+[debug] [2024-05-26T17:25:04.569Z] File C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\src\user\getUser.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\src\\user\\getUser.ts changed, reloading triggers"}}
+[info] Serving at port 8190
+
+[debug] [2024-05-26T17:25:05.477Z] Got response from /__/functions.yaml {"endpoints":{"app":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"region":["southamerica-east1"],"httpsTrigger":{},"entryPoint":"app"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] Connection to database Successful
+
+[debug] [2024-05-26T17:25:05.579Z] Validating nodejs source
+[debug] [2024-05-26T17:25:06.927Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
+    "@types/express-serve-static-core": "^4.19.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "helmet": "^7.1.0",
+    "jest": "^29.7.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "commonjs",
+  "private": true
+}
+[debug] [2024-05-26T17:25:06.927Z] Building nodejs source
+[debug] [2024-05-26T17:25:06.927Z] Failed to find version of module node: reached end of search path C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2024-05-26T17:25:06.929Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-05-26T17:25:06.933Z] Found firebase-functions binary at 'C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules\.bin\firebase-functions'
+[info] +  functions: Loaded functions definitions from source: app. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: app."}}
+[info] Serving at port 8549
+
+[debug] [2024-05-26T17:25:07.887Z] Got response from /__/functions.yaml {"endpoints":{"app":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"region":["southamerica-east1"],"httpsTrigger":{},"entryPoint":"app"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] Connection to database Successful
+
+[info] +  functions: Loaded functions definitions from source: app. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: app."}}
+[debug] [2024-05-26T17:25:09.118Z] File C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\src\user\getUser.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\src\\user\\getUser.ts changed, reloading triggers"}}
+[debug] [2024-05-26T17:25:10.132Z] Validating nodejs source
+[debug] [2024-05-26T17:25:11.512Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
+    "@types/express-serve-static-core": "^4.19.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "helmet": "^7.1.0",
+    "jest": "^29.7.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "commonjs",
+  "private": true
+}
+[debug] [2024-05-26T17:25:11.512Z] Building nodejs source
+[debug] [2024-05-26T17:25:11.512Z] Failed to find version of module node: reached end of search path C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2024-05-26T17:25:11.514Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-05-26T17:25:11.518Z] Found firebase-functions binary at 'C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules\.bin\firebase-functions'
+[info] +  functions: Loaded functions definitions from source: app. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: app."}}
+[info] Serving at port 8140
+
+[debug] [2024-05-26T17:25:12.433Z] Got response from /__/functions.yaml {"endpoints":{"app":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"region":["southamerica-east1"],"httpsTrigger":{},"entryPoint":"app"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] Connection to database Successful
+
+[info] +  functions: Loaded functions definitions from source: app. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: app."}}
+[info] +  functions: Loaded functions definitions from source: app. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: app."}}
+[debug] [2024-05-26T17:25:20.978Z] File C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\src\user\getUser.ts changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\VScode_projects\\IndaiaSpots\\IndaiaSpots\\functions\\src\\user\\getUser.ts changed, reloading triggers"}}
+[debug] [2024-05-26T17:25:21.989Z] Validating nodejs source
+[debug] [2024-05-26T17:25:23.455Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.564.0",
+    "@aws-sdk/s3-request-presigner": "^3.564.0",
+    "@types/express-serve-static-core": "^4.19.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "depcheck": "^1.4.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0",
+    "helmet": "^7.1.0",
+    "jest": "^29.7.0",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^5.4.5"
+  },
+  "type": "commonjs",
+  "private": true
+}
+[debug] [2024-05-26T17:25:23.455Z] Building nodejs source
+[debug] [2024-05-26T17:25:23.455Z] Failed to find version of module node: reached end of search path C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules
+[info] +  functions: Using node@18 from host. 
+[info] i  functions: Loaded environment variables from .env. 
+[debug] [2024-05-26T17:25:23.457Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-05-26T17:25:23.462Z] Found firebase-functions binary at 'C:\VScode_projects\IndaiaSpots\IndaiaSpots\functions\node_modules\.bin\firebase-functions'
+[info] +  functions: Loaded functions definitions from source: app. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: app."}}
+[info] Serving at port 8591
+
+[debug] [2024-05-26T17:25:24.470Z] Got response from /__/functions.yaml {"endpoints":{"app":{"platform":"gcfv1","availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"region":["southamerica-east1"],"httpsTrigger":{},"entryPoint":"app"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] Connection to database Successful
+
+[info] +  functions: Loaded functions definitions from source: app. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: app."}}

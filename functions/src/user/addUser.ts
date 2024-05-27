@@ -2,6 +2,7 @@ import { QueryError } from "mysql2";
 import { userData } from "../types/userData";
 import { Connection } from "mysql2/typings/mysql/lib/Connection";
 import { Request, Response ,NextFunction } from "express";
+import { sanitizeParams } from "../Routes/restaurantRoutes";
 
 
 export async function addNewUser(mysqlCon : Connection, userData : any, next : NextFunction): Promise< QueryError | void | boolean> {
@@ -15,15 +16,16 @@ export async function addNewUser(mysqlCon : Connection, userData : any, next : N
     });
 }
 
-export async function addNewUserRestaurant(mysqlCon : Connection, userData : any, next : NextFunction): Promise< QueryError | void | boolean> {
+export async function addNewUserRestaurant(mysqlCon : Connection, userData : any): Promise< QueryError | void | boolean> {
     const authType = "form";
     const addUserQuery: string = 'insert into Usuario(nome,email,senha,tipo_autenticacao,Nivel_Permissao) values (?,?,?,?,?)';
-    mysqlCon.query(addUserQuery, [userData.username, userData.email, userData.password, authType, userData.permissionLevel], (err: QueryError | null, results: any) => {
+    const sanitizedParams = sanitizeParams([userData.username, userData.email, userData.password, authType, userData.permissionLevel])
+    mysqlCon.promise().execute(addUserQuery, sanitizedParams) /* (err: QueryError | null, results: any) => {
         if (err) {
             return next(err);
         }
         return true;
-    });
+    }); */
 }
 
 export function checkIfUsernameOrEmailAlreadyTaken(err : any, req : Request , res : Response, next : NextFunction) {

@@ -1,15 +1,17 @@
 import { Request, Response , NextFunction } from "express";
-import { QueryError } from "mysql2";
+//import { QueryError } from "mysql2";
 import { Connection } from "mysql2/typings/mysql/lib/Connection";
+import { sanitizeParams } from "../Routes/restaurantRoutes";
 
-export async function addAddress(mysqlCon : Connection, data : any, next : NextFunction) : Promise<void | Boolean> {
-    const adressQuery = 'insert into Endereco(Razao_Social,Bairro, Numero, CNPJ, Rua, ID_Restaurante) values(?,?,?,?,?,?)';
-    mysqlCon.query(adressQuery, [data.RazaoSocial,data.Bairro, data.Numero, data.CNPJ, data.Rua, data.ID_Restaurante], (err : QueryError | null, results : any)  => {
+export async function addAddress(mysqlCon : Connection, data : any) : Promise<void> {
+    const addressQuery = 'INSERT INTO Endereco(Razao_Social, Bairro, Numero, CNPJ, Rua, ID_Restaurante) VALUES (?, ?, ?, ?, ?, ?)';
+    const sanitizedParams = sanitizeParams([data.RazaoSocial, data.Bairro, data.Numero, data.CNPJ, data.Rua, data.ID_Restaurante]);
+    await mysqlCon.execute(addressQuery, sanitizedParams) /* (err : QueryError | null)  => {
         if(err) {
             return next(err);
         };
         return true;
-    })
+    }) */
 }
 
 export function checkIfInfoAlreadyTaken(err : any, req : Request , res : Response, next : NextFunction) {

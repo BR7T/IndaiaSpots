@@ -5,6 +5,9 @@ import { getRestaurant, getAllRestaurants, searchRestaurant } from '../restauran
 import { updateRestaurant } from '../restaurant/updateRestaurant';
 import { deleteRestaurant } from '../restaurant/deleteRestaurant';
 import { appCheckVerification } from '../middleware/firebase/firebase';
+import { addNewUserRestaurant } from '../user/addUser';
+import { getUserIdByEmail } from '../user/getUser';
+import { addAddress } from '../address/addAdress';
 
 
 const restaurantRouter: Router = express.Router();
@@ -50,6 +53,46 @@ restaurantRouter.use((err : string,req : Request, res : Response , next : NextFu
     res.status(500).send('Erro interno do servidor');
 });
 
+export function sanitizeParams(params : any) {
+    return params.map((param: undefined) => param === undefined ? null : param);
+}
+
+
+restaurantRouter.post('/registerRestaurant', appCheckVerification , async function (req: Request, res: Response, next: NextFunction) {
+    try {
+        await mySqlConnection.promise().beginTransaction();
+
+        const userLogin = req.body.Login;
+        userLogin.permissionLevel = 'Restaurante';
+        const address = req.body.Address;
+        
+        await addNewUserRestaurant(mySqlConnection, userLogin)
+    
+        getUserIdByEmail(mySqlConnection, userLogin.email).then(restaurantId => {
+            address.ID_Restaurante = restaurantId;
+            addAddress(mySqlConnection, address); 
+        })
+
+        await mySqlConnection.promise().commit();
+        res.status(201).json({ message: 'Restaurant registered successfully' });
+    } 
+      catch (error : any) {
+        await mySqlConnection.promise().rollback();
+        console.log(error.message)
+        let step;
+        if (error.message.includes('Usuario')) {
+          step = 'Usuario';
+        } else if (error.message.includes('Endereco')) {
+          step = 'Endereço';
+        } else {
+          step = 'Outros';
+          step = "OUtros 2"
+        }
+        res.status(400).json({ error: `Erro no registro do ${step}`});
+    } finally {
+        
+    } 
+});
 
 
 export { restaurantRouter };

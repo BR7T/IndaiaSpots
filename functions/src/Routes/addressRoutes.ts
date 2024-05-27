@@ -7,10 +7,10 @@ import { appCheckVerification } from '../middleware/firebase/firebase';
 const addressRouter: Router = express.Router();
 
 addressRouter.post('/addAddress', appCheckVerification , function (req: Request, res: Response, next : NextFunction) {
-    addAddress(mySqlConnection, req.body, next).then(response => {
-        if(response) {
+    addAddress(mySqlConnection, req.body).then(response => {
+/*         if(response) {
             res.send({process : response})
-        }
+        } */
     })
 })
 

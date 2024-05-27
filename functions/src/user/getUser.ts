@@ -1,6 +1,7 @@
 import {QueryError} from "mysql2";
 import { Connection } from "mysql2/typings/mysql/lib/Connection";
 import { userData } from "../types/userData";
+import { sanitizeParams } from "../Routes/restaurantRoutes";
 
 export function getUserById(mysqlCon : Connection, userId: number): Promise<Array<JSON> | string> {
     const getUserQuery = 'select * from Usuario where ID_Usuario = ?';
@@ -44,7 +45,7 @@ export async function getUserByEmail(mysqlCon : Connection, email : string): Pro
     })
 }
 
-export async function getUserIdByEmail(mysqlCon : Connection, email : string): Promise<Array<JSON> | string> {
+export async function getUserIdByEmail(mysqlCon : Connection, email : string): Promise<number | Error> {
     const getUserQuery = 'select * from Usuario where email = ?';
     return new Promise((resolve, reject) => {
         mysqlCon.query(getUserQuery, [email], (err: QueryError | null, results: any) => {
@@ -54,6 +55,14 @@ export async function getUserIdByEmail(mysqlCon : Connection, email : string): P
             }
         })
     })
+/*     const sanitizedParams = sanitizeParams([email]);
+    const rows : any = await mysqlCon.promise().execute(getUserQuery, sanitizedParams);
+    console.log(rows);
+    if (rows.length == 0) {
+        throw new Error('User not found');
+    }
+
+    return rows[0].ID_Usuario; */
 }
 
 export function getAllUsers(mysqlCon : Connection): Promise<Array<JSON> | string> {
