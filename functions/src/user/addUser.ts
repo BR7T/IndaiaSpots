@@ -7,16 +7,13 @@ import { sanitizeParams } from "../Routes/restaurantRoutes";
 
 export async function addNewUser(mysqlCon : Connection, userData : any, next : NextFunction): Promise< QueryError | void | boolean> {
     const authType = "form";
-    const addUserQuery: string = 'insert into Usuario (nome,email,senha,tipo_autenticacao,Nivel_Permissao) values (?,?,?,?,?)';
-    try {
-        await mysqlCon.promise().query(addUserQuery, [userData.username, userData.email, userData.password, authType, userData.permissionLevel])
-        return true;
-    }
-    catch (err: any | null)  {
+    const addUserQuery: string = 'insert into Usuario(nome,email,senha,tipo_autenticacao,Nivel_Permissao) values (?,?,?,?,?)';
+    mysqlCon.query(addUserQuery, [userData.username, userData.email, userData.password, authType, userData.permissionLevel], (err: QueryError | null, results: any) => {
         if (err) {
             return next(err);
         }
-    };
+        return true;
+    });
 }
 
 export async function addNewUserRestaurant(mysqlCon : Connection, userData : any): Promise< QueryError | void | boolean> {
@@ -24,18 +21,6 @@ export async function addNewUserRestaurant(mysqlCon : Connection, userData : any
     const addUserQuery: string = 'insert into Usuario (nome,email,senha,tipo_autenticacao,Nivel_Permissao) values (?,?,?,?,?)';
     const sanitizedParams = sanitizeParams([userData.username, userData.email, userData.password, authType, userData.permissionLevel])
     await mysqlCon.promise().query(addUserQuery, sanitizedParams)
-
-/*     try {
-        await mysqlCon.promise().query(addUserQuery, sanitizedParams) 
-        return true;
-    }
-    catch (err: any | null)  {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        
-    }; */
 }
 
 export function checkIfUsernameOrEmailAlreadyTaken(err : any, req : Request , res : Response, next : NextFunction) {
@@ -64,7 +49,4 @@ export function populateUserDataObject(data : any, permissionLevels : any) {
     return userData;
 }
 
-/* function next(err: any): boolean | void | QueryError | PromiseLike<boolean | void | QueryError> {
-    throw new Error("Function not implemented.");
-} */
 

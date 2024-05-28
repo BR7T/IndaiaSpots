@@ -8,6 +8,8 @@ import { appCheckVerification } from '../middleware/firebase/firebase';
 import { addNewUserRestaurant, checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
 import { getUserIdByEmail } from '../user/getUser';
 import { addAddress, checkIfInfoAlreadyTaken } from '../address/addAdress';
+import { hashPassword } from '../middleware/bcrypt/hashing';
+import { addImage } from '../image/addImage';
 
 
 const restaurantRouter: Router = express.Router();
@@ -34,31 +36,33 @@ restaurantRouter.post('/registerRestaurant', appCheckVerification , async functi
         if(req.body.Login.confirm.length < 8) res.status(400).send({error : 'Tamanho mínimo para senha não atingido'});
         await mySqlConnection.promise().beginTransaction();
 
+        let hashedPassword: string = await hashPassword(req.body.Login.password, 12);
         const userLogin = req.body.Login;
+        userLogin.password = hashedPassword;
         userLogin.permissionLevel = 'Restaurante';
         const address = req.body.Address;
-        await addNewUserRestaurant(mySqlConnection, userLogin)
+        await addNewUserRestaurant(mySqlConnection, userLogin);
         
         const restaurantId = await getUserIdByEmail(mySqlConnection, userLogin.email);
         console.log(restaurantId);
         address.ID_Restaurante = restaurantId;
-        await addAddress(mySqlConnection, address); 
+        await addAddress(mySqlConnection, address);
 
+        const filename = req.body.Image.url;
+        await addImage(mySqlConnection, {filename, restaurantId});
+        
         await mySqlConnection.promise().commit();
         res.status(201).json({ message: 'Restaurant registered successfully' });
     } 
       catch (error : any) {
         await mySqlConnection.promise().rollback();
-        let form;
-        console.log(error.message);
         if (error.message.includes('Usuario')) {
-           checkIfUsernameOrEmailAlreadyTaken(error, req, res, next);
+            checkIfUsernameOrEmailAlreadyTaken(error, req, res, next);
         } else if (error.message.includes('Endereco')) {
             checkIfInfoAlreadyTaken(error, req, res, next);
         } else {
-          form = 'Imagem';
+            res.status(500).send('Erro no servidor');
         }
-        res.status(200).json({ error: form});
     } 
 });
 
