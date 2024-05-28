@@ -5,9 +5,9 @@ import { getRestaurant, getAllRestaurants, searchRestaurant } from '../restauran
 import { updateRestaurant } from '../restaurant/updateRestaurant';
 import { deleteRestaurant } from '../restaurant/deleteRestaurant';
 import { appCheckVerification } from '../middleware/firebase/firebase';
-import { addNewUserRestaurant } from '../user/addUser';
+import { addNewUserRestaurant, checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
 import { getUserIdByEmail } from '../user/getUser';
-import { addAddress } from '../address/addAdress';
+import { addAddress, checkIfInfoAlreadyTaken } from '../address/addAdress';
 
 
 const restaurantRouter: Router = express.Router();
@@ -28,6 +28,39 @@ restaurantRouter.get('/getRestaurant/:id', appCheckVerification , function (req:
         }
     })
 })
+
+restaurantRouter.post('/registerRestaurant', appCheckVerification , async function (req: Request, res: Response, next: NextFunction) {
+    try {
+        if(req.body.Login.confirm.length < 8) res.status(400).send({error : 'Tamanho mínimo para senha não atingido'});
+        await mySqlConnection.promise().beginTransaction();
+
+        const userLogin = req.body.Login;
+        userLogin.permissionLevel = 'Restaurante';
+        const address = req.body.Address;
+        await addNewUserRestaurant(mySqlConnection, userLogin)
+        
+        const restaurantId = await getUserIdByEmail(mySqlConnection, userLogin.email);
+        console.log(restaurantId);
+        address.ID_Restaurante = restaurantId;
+        await addAddress(mySqlConnection, address); 
+
+        await mySqlConnection.promise().commit();
+        res.status(201).json({ message: 'Restaurant registered successfully' });
+    } 
+      catch (error : any) {
+        await mySqlConnection.promise().rollback();
+        let form;
+        console.log(error.message);
+        if (error.message.includes('Usuario')) {
+           checkIfUsernameOrEmailAlreadyTaken(error, req, res, next);
+        } else if (error.message.includes('Endereco')) {
+            checkIfInfoAlreadyTaken(error, req, res, next);
+        } else {
+          form = 'Imagem';
+        }
+        res.status(200).json({ error: form});
+    } 
+});
 
 restaurantRouter.post('/searchRestaurant', appCheckVerification , function (req: Request, res: Response, next: NextFunction) {
     const keyword: string = req.body.keyword;
@@ -56,44 +89,6 @@ restaurantRouter.use((err : string,req : Request, res : Response , next : NextFu
 export function sanitizeParams(params : any) {
     return params.map((param: undefined) => param === undefined ? null : param);
 }
-
-
-restaurantRouter.post('/registerRestaurant', appCheckVerification , async function (req: Request, res: Response, next: NextFunction) {
-    try {
-        await mySqlConnection.promise().beginTransaction();
-
-        const userLogin = req.body.Login;
-        userLogin.permissionLevel = 'Restaurante';
-        const address = req.body.Address;
-        
-        await addNewUserRestaurant(mySqlConnection, userLogin)
-    
-        getUserIdByEmail(mySqlConnection, userLogin.email).then(restaurantId => {
-            address.ID_Restaurante = restaurantId;
-            addAddress(mySqlConnection, address); 
-        })
-
-        await mySqlConnection.promise().commit();
-        res.status(201).json({ message: 'Restaurant registered successfully' });
-    } 
-      catch (error : any) {
-        await mySqlConnection.promise().rollback();
-        console.log(error.message)
-        let step;
-        if (error.message.includes('Usuario')) {
-          step = 'Usuario';
-        } else if (error.message.includes('Endereco')) {
-          step = 'Endereço';
-        } else {
-          step = 'Outros';
-          step = "OUtros 2"
-        }
-        res.status(400).json({ error: `Erro no registro do ${step}`});
-    } finally {
-        
-    } 
-});
-
 
 export { restaurantRouter };
 

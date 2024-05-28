@@ -1,7 +1,7 @@
 import {QueryError} from "mysql2";
 import { Connection } from "mysql2/typings/mysql/lib/Connection";
 import { userData } from "../types/userData";
-import { sanitizeParams } from "../Routes/restaurantRoutes";
+
 
 export function getUserById(mysqlCon : Connection, userId: number): Promise<Array<JSON> | string> {
     const getUserQuery = 'select * from Usuario where ID_Usuario = ?';
@@ -47,22 +47,13 @@ export async function getUserByEmail(mysqlCon : Connection, email : string): Pro
 
 export async function getUserIdByEmail(mysqlCon : Connection, email : string): Promise<number | Error> {
     const getUserQuery = 'select * from Usuario where email = ?';
-    return new Promise((resolve, reject) => {
-        mysqlCon.query(getUserQuery, [email], (err: QueryError | null, results: any) => {
-            if (err) reject(err)
-            else {
-                resolve(results[0].ID_Usuario);
-            }
-        })
-    })
-/*     const sanitizedParams = sanitizeParams([email]);
-    const rows : any = await mysqlCon.promise().execute(getUserQuery, sanitizedParams);
-    console.log(rows);
-    if (rows.length == 0) {
-        throw new Error('User not found');
-    }
-
-    return rows[0].ID_Usuario; */
+    try {
+        const results : any = await mysqlCon.promise().query(getUserQuery, [email]);
+        return Promise.resolve(results[0][0].ID_Usuario);
+    } catch(error : any) {
+        console.log('aqui');
+        return Promise.reject();
+    } 
 }
 
 export function getAllUsers(mysqlCon : Connection): Promise<Array<JSON> | string> {

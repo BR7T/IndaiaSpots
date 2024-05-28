@@ -65,10 +65,6 @@ app.get('/logout', appCheckVerification ,async function (req: Request, res: Resp
     }
 })
 
-/* app.listen(3100 , function(){
-    console.log('Server running on port: '+3100)
-}) */
-
 const allowedOrigins = [
     'http://127.0.0.1:5000',
     'http://localhost:5173',
