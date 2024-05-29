@@ -10,13 +10,14 @@ import { checkIfUsernameOrEmailAlreadyTaken } from '../user/addUser';
 import { appCheckVerification } from '../middleware/firebase/firebase';
 import { deleteUserByEmail } from '../user/deleteUser';
 
+
 const userRouter: Router = express.Router();
 
 userRouter.post('/signin',appCheckVerification ,async function (req: Request, res: Response, next: NextFunction) {
     const permissionLevel = "Comum";
     const userData = populateUserDataObject(req, permissionLevel);
 
-    getUserByEmail(mySqlConnection, userData.email).then(async (results) => {
+    getUserByEmail(mySqlConnection, userData.email, next).then(async (results) => {
         if (results.length == 0) res.send({ error: "email ou senha inválidos" });
         else {
             if (typeof results[0] === 'object' && 'Senha' in results[0] && typeof results[0].Senha === 'string') {
@@ -47,11 +48,10 @@ userRouter.post('/signup', appCheckVerification,  async function (req: Request, 
         password: hashedPassword,
         permissionLevel: permissionLevel
     }
-   addNewUser(mySqlConnection, userData, next).then(response => {
-        if(response) {
-            res.send({process : true})
-        }
-   })
+    console.log(userData);
+    addNewUser(mySqlConnection, userData, next).then(response => {
+        res.send({process : true})
+   }) 
 });
 
 userRouter.post('/signupRestaurant', appCheckVerification,  async function (req: Request, res: Response, next: NextFunction) {
@@ -81,14 +81,14 @@ userRouter.post('/googleSignIn', appCheckVerification , async function (req: Req
     const userData = populateUserDataObject(req, permissionLevel);
     if (req.body.isNewUser) {
         addNewUserGoogle(mySqlConnection, userData).then(() => {
-            getUserByEmail(mySqlConnection, userData.email).then((results) => {
+            getUserByEmail(mySqlConnection, userData.email, next).then((results) => {
                 req.body.User = results[0];
                 createTokens(req, res, next);
             })
         });
     }
     else {
-        getUserByEmail(mySqlConnection, userData.email).then((results) => {
+        getUserByEmail(mySqlConnection, userData.email , next).then(results => {
             req.body.User = results[0];
             createTokens(req, res, next);
         })

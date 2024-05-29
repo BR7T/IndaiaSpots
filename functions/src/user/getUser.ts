@@ -1,6 +1,7 @@
 import {QueryError} from "mysql2";
 import { Connection } from "mysql2/typings/mysql/lib/Connection";
 import { userData } from "../types/userData";
+import { NextFunction } from "express-serve-static-core";
 
 
 export function getUserById(mysqlCon : Connection, userId: number): Promise<Array<JSON> | string> {
@@ -33,20 +34,20 @@ export function getUsernameById(mysqlCon : Connection, userId: string): Promise<
     })
 }
 
-export async function getUserByEmail(mysqlCon : Connection, email : string): Promise<Array<JSON> | string> {
-    const getUserQuery = 'select * from Usuario where email = ?';
+export async function getUserByEmail(mysqlCon : Connection, email : string, next : NextFunction): Promise<Array<JSON> | Error | any> {
+    const getAllRestaurantQuery = `select * from Usuario where email=?`;
     return new Promise((resolve, reject) => {
-        mysqlCon.query(getUserQuery, [email], (err: QueryError | null, results: any) => {
-            if (err) reject(err)
-            else {
-                resolve(results);
+        mysqlCon.query(getAllRestaurantQuery,[email], (err : QueryError | null, results : Array<any>) => {
+            if (err) {
+                next(err);
             }
-        })
-    })
+            resolve(results);
+        });
+    });
 }
 
 export async function getUserIdByEmail(mysqlCon : Connection, email : string): Promise<number | Error> {
-    const getUserQuery = 'select * from Usuario where email = ?';
+    const getUserQuery = 'select * from Usuario where email =?';
     try {
         const results : any = await mysqlCon.promise().query(getUserQuery, [email]);
         return Promise.resolve(results[0][0].ID_Usuario);
