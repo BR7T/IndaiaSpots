@@ -3,14 +3,14 @@ import { RestaurantData } from "../types/restaurantData";
 import { Connection } from "mysql2/typings/mysql/lib/Connection";
 
 export function addRestaurant(mysqlCon : Connection,restaurantData : any) : Promise<QueryError | void> {
-    const insertQuery = 'insert into restaurante(nome,contato,horario_atendimento,dia_atendimento,tipo_cozinha,icone) values(?,?,?,?,?)';
+    const insertQuery = 'insert into Restaurante(nome,horario_atendimento,dia_atendimento,tipo_cozinha,icone) values(?,?,?,?,?)';
     return new Promise((resolve,reject) => {
         mysqlCon.query(insertQuery,[
-            restaurantData.nome,
-            restaurantData.contato,
-            restaurantData.horario_atendimento,
-            restaurantData.dia_atendimento,
-            restaurantData.tipo_cozinha,
+            restaurantData.Nome,
+            restaurantData.Horas,
+            restaurantData.Dias,
+            restaurantData.Tipo,
+            restaurantData.Icone
         ], (err : QueryError | null,results : any) => {
                 if(err) reject(err)
             })

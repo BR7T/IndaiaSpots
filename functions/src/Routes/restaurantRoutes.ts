@@ -9,7 +9,8 @@ import { addNewUserRestaurant, checkIfUsernameOrEmailAlreadyTaken } from '../use
 import { getUserIdByEmail } from '../user/getUser';
 import { addAddress, checkIfInfoAlreadyTaken } from '../address/addAdress';
 import { hashPassword } from '../middleware/bcrypt/hashing';
-import { addImage } from '../image/addImage';
+import { addImage } from '../image/addImage'; 
+import { addRestaurant } from '../restaurant/addRestaurant';
 
 
 const restaurantRouter: Router = express.Router();
@@ -46,9 +47,17 @@ restaurantRouter.post('/registerRestaurant', appCheckVerification , async functi
         const restaurantId = await getUserIdByEmail(mySqlConnection, userLogin.email);
         console.log(restaurantId);
         address.ID_Restaurante = restaurantId;
-        await addAddress(mySqlConnection, address);
+        await addAddress(mySqlConnection, address); 
+        const restaurantData : any = {};
+        restaurantData.Nome = address.RazaoSocial;
+        restaurantData.Tipo = req.body.Tipo;
+        restaurantData.Horas = req.body.WorkTime.Horas.Abre + "," + req.body.WorkTime.Horas.Fecha;
+        restaurantData.Icone = req.body.Icone;
+        restaurantData.Dias = req.body.WorkTime.Dias;
+        addRestaurant(mySqlConnection, restaurantData);
 
-        const filename = req.body.Image.url;
+
+        const filename : any = req.body.Image;
         await addImage(mySqlConnection, {filename, restaurantId});
         
         await mySqlConnection.promise().commit();
@@ -61,7 +70,7 @@ restaurantRouter.post('/registerRestaurant', appCheckVerification , async functi
         } else if (error.message.includes('Endereco')) {
             checkIfInfoAlreadyTaken(error, req, res, next);
         } else {
-            res.status(500).send('Erro no servidor');
+            res.status(500).send(error.message);
         }
     } 
 });
