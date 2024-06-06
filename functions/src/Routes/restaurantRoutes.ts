@@ -51,9 +51,10 @@ restaurantRouter.post('/registerRestaurant', appCheckVerification , async functi
         const restaurantData : any = {};
         restaurantData.Nome = address.RazaoSocial;
         restaurantData.Tipo = req.body.Tipo;
-        restaurantData.Horas = req.body.WorkTime.Horas.Abre + "," + req.body.WorkTime.Horas.Fecha;
+        restaurantData.Horas = req.body.WorkTime.Horas.Abre + "-" + req.body.WorkTime.Horas.Fecha;
         restaurantData.Icone = req.body.Icone;
         restaurantData.Dias = req.body.WorkTime.Dias;
+        restaurantData.restaurantId = restaurantId;
         addRestaurant(mySqlConnection, restaurantData);
 
 
