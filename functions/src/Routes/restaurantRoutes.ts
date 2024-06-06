@@ -45,7 +45,6 @@ restaurantRouter.post('/registerRestaurant', appCheckVerification , async functi
         await addNewUserRestaurant(mySqlConnection, userLogin);
         
         const restaurantId = await getUserIdByEmail(mySqlConnection, userLogin.email);
-        console.log(restaurantId);
         address.ID_Restaurante = restaurantId;
         await addAddress(mySqlConnection, address); 
         const restaurantData : any = {};
