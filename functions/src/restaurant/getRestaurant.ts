@@ -23,11 +23,15 @@ export function getAllRestaurants(mysqlCon : any , next : NextFunction) : Promis
     });
 }
 
-export function searchRestaurant(mysqlCon : any,keyword : string) : Promise<Array<JSON>> {
-    const searchQuery : string = "select * from Restaurante  where nome like CONCAT('%',?,'%')";
+export function searchRestaurant(mysqlCon : any ,next : NextFunction, keyword : string) : Promise<Array<JSON>> {
+    const searchQuery : string = "SELECT r.Nome,r.ID_Restaurante,r.Dia_Atendimento,r.Horario_Atendimento,r.icone,r.Tipo_Cozinha,e.Bairro,e.Rua,e.Numero,i.Url, CASE WHEN r.Nome LIKE ? THEN 1 WHEN r.Tipo_Cozinha LIKE ? THEN 2 END AS Ordem FROM Restaurante r INNER JOIN Imagem i ON r.ID_Usuario = i.ID_Restaurante INNER JOIN Endereco e ON r.ID_Usuario = e.ID_Restaurante WHERE r.Nome LIKE ? OR r.Tipo_Cozinha LIKE ? ORDER BY Ordem, r.Nome";
+    keyword = '%' + keyword + '%';
     return new Promise((resolve,reject) => {
-        mysqlCon.query(searchQuery,[keyword], (err : string,results : Array<JSON>) => {
-            if(err) reject(err);
+        mysqlCon.query(searchQuery,[keyword,keyword,keyword,keyword], (err : string,results : Array<JSON>) => {
+            if(err) {
+                console.log(err)
+                next(err);
+            }
             resolve(results);
         })
     })

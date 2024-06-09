@@ -77,7 +77,7 @@ restaurantRouter.post('/registerRestaurant', appCheckVerification , async functi
 
 restaurantRouter.post('/searchRestaurant', appCheckVerification , function (req: Request, res: Response, next: NextFunction) {
     const keyword: string = req.body.keyword;
-    searchRestaurant(mySqlConnection, keyword).then(results => {
+    searchRestaurant(mySqlConnection, next, keyword).then(results => {
         res.send(results);
     })
 })

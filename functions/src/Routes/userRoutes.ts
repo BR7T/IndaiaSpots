@@ -48,9 +48,7 @@ userRouter.post('/signup', appCheckVerification,  async function (req: Request, 
         password: hashedPassword,
         permissionLevel: permissionLevel
     }
-    console.log(userData);
-    addNewUser(mySqlConnection, userData, next).then(response => {
-        res.send({process : true})
+    addNewUser(mySqlConnection, userData, res, next).then(response => {
    }) 
 });
 

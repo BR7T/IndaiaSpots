@@ -5,13 +5,14 @@ import { Request, Response ,NextFunction } from "express";
 import { sanitizeParams } from "../Routes/restaurantRoutes";
 
 
-export async function addNewUser(mysqlCon : Connection, userData : any, next : NextFunction): Promise< QueryError | void | boolean> {
+export async function addNewUser(mysqlCon : Connection, userData : any, res : Response , next : NextFunction): Promise< QueryError | void | boolean | any> {
     const authType = "form";
     const addUserQuery: string = 'insert into Usuario(nome,email,senha,tipo_autenticacao,Nivel_Permissao) values (?,?,?,?,?)';
     mysqlCon.query(addUserQuery, [userData.username, userData.email, userData.password, authType, userData.permissionLevel], (err: QueryError | null, results: any) => {
         if (err) {
-            return next(err);
+            next(err);
         }
+        res.send({process : true});
     });
 }
 
