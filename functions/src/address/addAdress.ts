@@ -12,7 +12,7 @@ export function checkIfInfoAlreadyTaken(err : any, req : Request , res : Respons
     console.log(err.code);
     if (err.code == "ER_DUP_ENTRY") {   
         if (err.sqlMessage.includes("CNPJ")) return res.status(200).send({ error: "Esse CNPJ já está em uso", form : 'Endereco' });
-        if (err.sqlMessage.includes("Razao_Social")) return res.status(200).send({ error: "Essa Razão Social já está em uso" , form : 'Endereco' });
+        if (err.sqlMessage.includes("Razao_Social")) return res.status(200).send({ error: "Esse Nome já está em uso" , form : 'Endereco' });
     } 
     return next(err);
 }
